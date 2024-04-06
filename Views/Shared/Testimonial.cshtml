@@ -1,7 +1,7 @@
 ﻿@model  List<Model.EF.Company>
 
 <div class="container">
-    <h1 class="text-center mb-5">Kết nối với doanh nghiệp</h1>
+    <h1 class="text-center mb-5">Connect with businesses</h1>
     <div class="owl-carousel testimonial-carousel">
         @foreach (var item in Model.Take(10))
         {
@@ -11,7 +11,7 @@
                     <div class="ps-3">
                         <div class="title">
                             <a href="cong-ty/@item.MetaTitle-@item.ID" class="mb-1 text" style="width: 220px;height:19px;font-size: 15px; text-transform: uppercase; font-weight: 600;">@item.Name</a>
-                            <p style="color: #2B9BFF !important;">Nổi bật</p>
+                            <p style="color: #2B9BFF !important;">Featured</p>
                         </div>
                         <div class="location">
                             <i class="bi bi-geo-alt"></i>
@@ -28,18 +28,19 @@
                         height: 100px;
                         overflow: hidden;
                     }
-                    .box-description > p,.box-description > ul, .box-description > ol {
-                        display: none;
-                    }
 
-                        .box-description > p:first-child {
-                            display: block;
-                            display: -webkit-box;
-                            -webkit-line-clamp: 3;
-                            -webkit-box-orient: vertical;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
+                        .box-description > p, .box-description > ul, .box-description > ol {
+                            display: none;
                         }
+
+                            .box-description > p:first-child {
+                                display: block;
+                                display: -webkit-box;
+                                -webkit-line-clamp: 3;
+                                -webkit-box-orient: vertical;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                            }
 
                     .box-name {
                         height: max-content;
@@ -51,6 +52,7 @@
                             font-weight: 800;
                             text-transform: uppercase;
                         }
+
                     .text {
                         display: -webkit-box;
                         -webkit-line-clamp: 1;
@@ -59,11 +61,12 @@
                         text-overflow: ellipsis;
                     }
                 </style>
-                <a href="cong-ty/@item.MetaTitle-@item.ID" class="button" style="color: #2B9BFF !important;">Xem chi tiết</a>
+                <a href="cong-ty/@item.MetaTitle-@item.ID" class="button" style="color: #2B9BFF !important;">View detail</a>
                 <style>
                     .testimonial-item .button:hover {
                         color: #0d6efd !important;
                     }
+
                     .testimonial-carousel .owl-dots {
                         margin-top: 24px;
                         display: flex;
@@ -84,6 +87,6 @@
                 </style>
             </div>
         }
-        </div>
-    <a class="btn btn-primary py-3 px-5 btn-viewAll mt-5" href="/cong-ty">Xem nhiều doanh nghiệp hơn</a>
+    </div>
+    <a class="btn btn-primary py-3 px-5 btn-viewAll mt-5" href="/cong-ty">View more businesses</a>
 </div>

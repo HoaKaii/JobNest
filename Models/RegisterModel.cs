@@ -11,20 +11,21 @@ namespace JobsFinder_Main.Models
         [Key]
         public long ID { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng nhập tên đăng nhập")]
+        [StringLength(32, MinimumLength = 6, ErrorMessage = "The username must contain at least 6 characters.")]
+        [Required(ErrorMessage = "Please enter your username.")]
         public string UserName { get; set; }
 
-        [StringLength(32, MinimumLength = 6, ErrorMessage = "Mật khẩu phải chứa ít nhất 6 kí tự.")]
-        [Required(ErrorMessage = "Vui lòng nhập mật khẩu")]
+        [StringLength(32, MinimumLength = 6, ErrorMessage = "The password must contain at least 6 characters.")]
+        [Required(ErrorMessage = "Please enter your password.")]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng nhập họ và tên")]
+        [Required(ErrorMessage = "Please enter your fullname.")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng nhập số điện thoại")]
+        [Required(ErrorMessage = "Please enter your phone number.")]
         public string Phone { get; set; }
 
-        [Required(ErrorMessage ="Vui lòng nhập Email")]
+        [Required(ErrorMessage = "Please enter your email.")]
         public string Email { get; set; }
 
         public string Avatar { get; set; }

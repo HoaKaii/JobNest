@@ -4,13 +4,13 @@
     <div class="box-filter p-4" style="margin-bottom: 24px; background: #f6faff; border-radius: 4px; text-align: start;">
         <div class="d-flex justify-content-between align-items-center mb-2">
             <h4 class="m-0">Ngành nghề</h4>
-            <button class="btn p-0" type="submit" style="color: #4CA6A8;border: none; font-size: 14px; font-weight: 400; text-decoration: underline; text-transform:capitalize;">Lọc</button>
+            <button class="btn p-0" type="submit" style="color: #4CA6A8;border: none; font-size: 14px; font-weight: 400; text-decoration: underline; text-transform:capitalize;">Fillter</button>
         </div>
 
         <div class="fillter">
             <div class="box-item mb-2">
                 <input type="checkbox" aria-label="Checkbox" aria-describedby="basic-addon2" name="fillterCareer" value=" ">
-                <label>Tất cả</label>
+                <label>All</label>
             </div>
             @{
                 var career = new Model.DAO.CareerDao().ListAll().ToList();
@@ -26,14 +26,14 @@
     </div>
     <div class="box-filter p-4" style="margin-bottom: 24px; background: #f6faff; border-radius: 4px; text-align: start;">
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <h4 class="m-0">Danh mục</h4>
-            <button class="btn p-0" type="submit" style="color: #4CA6A8;border: none; font-size: 14px; font-weight: 400; text-decoration: underline; text-transform:capitalize;">Lọc</button>
+            <h4 class="m-0">Categories</h4>
+            <button class="btn p-0" type="submit" style="color: #4CA6A8;border: none; font-size: 14px; font-weight: 400; text-decoration: underline; text-transform:capitalize;">Fillter</button>
         </div>
 
         <div class="fillter">
             <div class="box-item mb-2">
                 <input type="checkbox" aria-label="Checkbox" aria-describedby="basic-addon2" name="fillterCategory" value="">
-                <label>Tất cả</label>
+                <label>All</label>
             </div>
             @{
                 var category = new Model.DAO.JobCategoryDao().ListAll().ToList();
@@ -50,56 +50,56 @@
 
     <div class="box-filter p-4" style="margin-bottom: 24px; background: #f6faff; border-radius: 4px; text-align: start;">
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <h4 class="m-0">Giới tính</h4>
-            <button class="btn p-0" type="submit" style="color: #4CA6A8;border: none; font-size: 14px; font-weight: 400; text-decoration: underline; text-transform:capitalize;">Lọc</button>
+            <h4 class="m-0">Gender</h4>
+            <button class="btn p-0" type="submit" style="color: #4CA6A8;border: none; font-size: 14px; font-weight: 400; text-decoration: underline; text-transform:capitalize;">Fillter</button>
         </div>
 
         <div class="fillter">
             <div class="box-item mb-2">
                 <input type="radio" aria-label="RadioButton" aria-describedby="basic-addon2" name="fillterGender" value="">
-                <label>Tất cả</label>
+                <label>All</label>
             </div>
             <div class="box-item mb-2">
-                <input type="radio" aria-label="RadioButton" aria-describedby="basic-addon2" name="fillterGender" value="Nam">
-                <label>Nam</label>
+                <input type="radio" aria-label="RadioButton" aria-describedby="basic-addon2" name="fillterGender" value="Male">
+                <label>Male</label>
             </div>
             <div class="box-item mb-2">
-                <input type="radio" aria-label="RadioButton" aria-describedby="basic-addon2" name="fillterGender" value="Nữ">
-                <label>Nữ</label>
+                <input type="radio" aria-label="RadioButton" aria-describedby="basic-addon2" name="fillterGender" value="Female">
+                <label>Female</label>
             </div>
         </div>
     </div>
 
     <div class="box-filter p-4" style="margin-bottom: 24px; background: #f6faff; border-radius: 4px; text-align: start;">
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <h4 class="m-0">Năm kinh nghiệm</h4>
-            <button class="btn p-0" type="submit" style="color: #4CA6A8;border: none; font-size: 14px; font-weight: 400; text-decoration: underline; text-transform:capitalize;">Lọc</button>
+            <h4 class="m-0">Years of experience</h4>
+            <button class="btn p-0" type="submit" style="color: #4CA6A8;border: none; font-size: 14px; font-weight: 400; text-decoration: underline; text-transform:capitalize;">Fillter</button>
         </div>
 
         <div class="fillter">
             <div class="box-item mb-2">
                 <input type="radio" aria-label="RadioButton" aria-describedby="basic-addon2" name="fillterEXP" value="0">
-                <label>Không yêu cầu</label>
+                <label>Not required</label>
             </div>
             <div class="box-item mb-2">
                 <input type="radio" aria-label="RadioButton" aria-describedby="basic-addon2" name="fillterEXP" value="1">
-                <label>1 năm kinh nghiệm</label>
+                <label>1 year of experience</label>
             </div>
             <div class="box-item mb-2">
                 <input type="radio" aria-label="RadioButton" aria-describedby="basic-addon2" name="fillterEXP" value="2">
-                <label>2 năm kinh nghiệm</label>
+                <label>2 years of experience</label>
             </div>
             <div class="box-item mb-2">
                 <input type="radio" aria-label="RadioButton" aria-describedby="basic-addon2" name="fillterEXP" value="3">
-                <label>3 năm kinh nghiệm</label>
+                <label>3 years of experience</label>
             </div>
             <div class="box-item mb-2">
                 <input type="radio" aria-label="RadioButton" aria-describedby="basic-addon2" name="fillterEXP" value="4">
-                <label>4 năm kinh nghiệm</label>
+                <label>3 years of experience</label>
             </div>
             <div class="box-item mb-2">
                 <input type="radio" aria-label="RadioButton" aria-describedby="basic-addon2" name="fillterEXP" value="5">
-                <label>Hơn 5 năm kinh nghiệm</label>
+                <label>More than 5 years of experience</label>
             </div>
         </div>
     </div>

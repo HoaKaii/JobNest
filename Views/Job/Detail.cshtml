@@ -22,7 +22,7 @@
     ViewBag.ForMatTime = jobDao.FormatTime(Model.ID);
     ViewBag.DeadLine = jobDao.CountTime(Model.ID);
 
-    
+
 
     var jobInCompnay = jobDao.GetJobInCompany(Model.CompanyID);
 
@@ -36,7 +36,7 @@
 <div class="container-xxl pt-5">
     <div class="container">
         <div class="title d-flex">
-            <h4 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Chi tiết công việc</h4>
+            <h4 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Job details</h4>
         </div>
         <div class="detail-job">
             <div class="box-top d-flex justify-content-between">
@@ -72,7 +72,7 @@
                 <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center box-action">
                     <div class="d-flex mb-3">
                         <a class="btn btn-light btn-square me-3 btn-save" href=""><i class="far fa-heart text-primary"></i></a>
-                        <a class="btn btn-primary btn-apply" href="">Ứng tuyển ngay</a>
+                        <a class="btn btn-primary btn-apply" href="">Apply now</a>
                     </div>
                     <span class="text-truncate">
                         <i class="bi bi-clock-history"></i>
@@ -85,100 +85,102 @@
                 <div class="bottom-left" style="width: 65%;">
 
                     <div class="box-content p-4" style="margin-bottom: 24px; background: #f6faff; border-radius: 4px; ">
-                        <h4>Mô tả</h4>
+                        <h4>Description</h4>
                         <div class="content">
                             @Html.Raw(Model.Description)
                         </div>
                     </div>
 
                     <div class="box-content p-4" style="margin-bottom: 24px; background: #f6faff; border-radius: 4px; ">
-                        <h4>Yêu cầu ứng viên</h4>
+                        <h4>Candidate requirements</h4>
                         <div class="content">
                             @Html.Raw(Model.RequestCandidate)
                         </div>
                     </div>
 
                     <div class="box-content p-4" style="background: #f6faff; border-radius: 4px; ">
-                        <h4>Quyền lợi</h4>
+                        <h4>Benefits</h4>
                         <div class="content">
                             @Html.Raw(Model.Interest)
                         </div>
                     </div>
 
                     <div class="box-content p-4" style="border-radius: 4px; border: 1px solid #E7F0FA; margin-top: 24px;">
-                        <h4>Ứng tuyển</h4>
+                        <h4>Apply</h4>
 
                         @if (session == null)
                         {
                             <div class="card" style="background-color: #fafafa; margin-top: 24px;">
-                                <p>Ứng viên nộp hồ sơ trực tuyến bằng cách bấm Ứng tuyển ngay dưới đây.</p>
+                                <p>Candidates can submit their applications online by clicking Apply Now below.</p>
 
-                                <a href="/dang-nhap">Ứng tuyển ngay</a>
+                                <a href="/dang-nhap">Apply now</a>
                             </div>
                         }
                         else
                         {
-                    <div class="card" style="background-color: #fafafa; margin-top: 24px;">
-                        @using (Html.BeginForm("Apply", "Job", FormMethod.Post))
-                        {
-                            @Html.AntiForgeryToken()
+                            <div class="card" style="background-color: #fafafa; margin-top: 24px;">
+                                @using (Html.BeginForm("Apply", "Job", FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
 
-                            <div class="form-horizontal">
-                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                                @Html.HiddenFor(model => model.recument.JobID, new { Value = Model.ID })
+                                    <div class="form-horizontal">
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                        @Html.HiddenFor(model => model.recument.JobID, new { Value = Model.ID })
 
-                                <div class="form-group company-section">
-                                    <div class="d-flex flex-row">
-                                        <p style="margin-right: 6px; font-weight: 600">Chọn CV online:</p>
-                                        <strong style="color: #4CA6A8">Khuyên dùng</strong>
+                                        <div class="form-group company-section">
+                                            <div class="d-flex flex-row">
+                                                <p style="margin-right: 6px; font-weight: 600">Select online CV:</p>
+                                                <strong style="color: #4CA6A8">Recommendation</strong>
+                                            </div>
+
+                                            <div class="col-md-10" style="width: 100%;">
+                                                @{
+                                                    var profileDao = new Model.DAO.ProfileDao();
+                                                    ViewBag.ListProfile = new SelectList(profileDao.ListAll(session.UserID), "UserID", "HoVaTen", Model.recument.ProfileID);
+                                                }
+                                                @if (ViewBag.ListProfile != null)
+                                                {
+                                                    @Html.DropDownListFor(model => model.recument.ProfileID, (SelectList)ViewBag.ListProfile, new { @class = "form-control field drop" })
+                                                }
+
+                                                else
+                                                {
+                                                    <a href="/profile/ho-so-ca-nhan">Update personal information</a>
+                                                }
+                                                @Html.ValidationMessageFor(model => model.recument.ProfileID, "", new { @class = "text-danger" })
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group">
+                                            <p style="font-weight: 600;">Introduction letter</p>
+                                            <div class="col-md-10" style="width: 100%;">
+                                                @Html.TextAreaFor(model => model.recument.LetterInfo, new { @class = "form-control field area", @placeholder = "Write a brief self-introduction (strengths, weaknesses) and clearly state your desires and reasons for working at this company. This is a way to impress employers if you have little work experience (or a poor CV)." })
+                                                @Html.ValidationMessageFor(model => model.recument.LetterInfo, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-md-offset-2 col-md-10">
+                                                <input type="submit" value="Submit application" class="btn btn-primary" style="border-radius: 4px !important;" />
+                                            </div>
+                                        </div>
                                     </div>
-
-                                    <div class="col-md-10" style="width: 100%;">
-                                        @{ 
-                                            var profileDao = new Model.DAO.ProfileDao();
-                                            ViewBag.ListProfile = new SelectList(profileDao.ListAll(session.UserID), "UserID", "HoVaTen", Model.recument.ProfileID);
+                                    <style>
+                                        .field {
+                                            border: 1px solid #CCC !important;
                                         }
-                                        @if (ViewBag.ListProfile != null)
-                                        {
-                                            @Html.DropDownListFor(model => model.recument.ProfileID, (SelectList)ViewBag.ListProfile, new { @class = "form-control field drop" })
-                                        }
 
-                                        else
-                                        {
-                                            <a href="/profile/ho-so-ca-nhan">Cập nhật thông tin cá nhân</a>
-                                        }
-                                        @Html.ValidationMessageFor(model => model.recument.ProfileID, "", new { @class = "text-danger" })
-                                    </div>
+                                            .field.drop {
+                                                padding: 12px;
+                                            }
 
-                                </div>
-
-                                <div class="form-group">
-                                    <p style="font-weight: 600;">Thư giới thiệu</p>
-                                    <div class="col-md-10" style="width: 100%;">
-                                        @Html.TextAreaFor(model => model.recument.LetterInfo, new { @class = "form-control field area", @placeholder = "Viết giới thiệu ngắn gọn về bản thân (điểm mạnh, điểm yếu) và nêu rõ mong muốn, lý do làm việc tại công ty này. Đây là cách gây ấn tượng với nhà tuyển dụng nếu bạn có chưa có kinh nghiệm làm việc (hoặc CV không tốt)." })
-                                        @Html.ValidationMessageFor(model => model.recument.LetterInfo, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <div class="col-md-offset-2 col-md-10">
-                                        <input type="submit" value="Nộp hồ sơ" class="btn btn-primary" style="border-radius: 4px !important;" />
-                                    </div>
-                                </div>
+                                            .field.area {
+                                                padding: 12px;
+                                            }
+                                    </style>
+                                }
                             </div>
-                            <style>
-                                .field{
-                                    border: 1px solid #CCC !important;
-                                }
-                                .field.drop {
-                                    padding: 12px;
-                                }
-                                .field.area {
-                                    padding: 12px;  
-                                }
-                            </style>
-                        }
-                    </div>
                         }
 
 
@@ -188,23 +190,23 @@
 
                 <div class="bottom-right" style="width: 33%;">
                     <div class="box-content p-4" style="background: #f6faff; border-radius: 4px; ">
-                        <h4>Tổng quan</h4>
+                        <h4>Overview</h4>
                         <div class="content">
                             <div class="d-flex">
                                 <i class="bi bi-pencil"></i>
-                                <p style="margin-left: 12px;">@Model.Experience năm kinh nghiệm</p>
+                                <p style="margin-left: 12px;">@Model.Experience Years of experience</p>
                             </div>
                             <div class="d-flex">
                                 <i class="bi bi-person-check"></i>
-                                <p style="margin-left: 12px;">Giới tính: @Model.Gender</p>
+                                <p style="margin-left: 12px;">Gender: @Model.Gender</p>
                             </div>
                             <div class="d-flex">
                                 <i class="bi bi-reception-4"></i>
-                                <p style="margin-left: 12px;">Cấp bậc: @Model.Rank</p>
+                                <p style="margin-left: 12px;">Rank: @Model.Rank</p>
                             </div>
                             <div class="d-flex">
                                 <i class="bi bi-person-plus"></i>
-                                <p style="margin-left: 12px;">@Model.Quantity người</p>
+                                <p style="margin-left: 12px;">@Model.Quantity people</p>
                             </div>
                             <div class="d-flex">
                                 <i class="bi bi-geo"></i>
@@ -214,7 +216,7 @@
                     </div>
 
                     <div class="box-content p-4" style="margin-top: 24px; margin-bottom: 24px; border-radius: 4px; border: 1px solid #E7F0FA;">
-                        <h4>Công ty</h4>
+                        <h4>Company</h4>
                         <div class="content">
                             <div class="top d-flex" style="margin-bottom: 12px;">
                                 <img src="@ViewBag.Avatar" alt="" style="width: 60px; height: 60px; border-radius: 4px; border: 1px solid #E7F0FA;">
@@ -240,19 +242,20 @@
                                         -webkit-line-clamp: 3;
                                     }
                             </style>
-                            <a href="@compannyURL">Xem chi tiết </a>
+                            <a href="@compannyURL">View detail</a>
                         </div>
                     </div>
 
                     <div class="box-content p-4" style="margin-top: 24px; margin-bottom: 24px; border-radius: 4px; border: 1px solid #E7F0FA;">
-                        <h4>Công việc cùng công ty</h4>
+                        <h4>Job at the same company</h4>
                         <div class="content">
-                            @{ 
+                            @{
                                 var listJobInCompany = jobDao.LisInCompany(Model.CompanyID);
                             }
-                            @foreach(var item in listJobInCompany)
+                            @foreach (var item in listJobInCompany)
                             {
-                                <p>@item.ID</p>
+                                <a href="/cong-viec/@item.Code-@item.ID">• @item.Name</a>
+                                <br />
                             }
                         </div>
                     </div>
@@ -261,4 +264,3 @@
         </div>
     </div>
 </div>
-

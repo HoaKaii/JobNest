@@ -28,7 +28,7 @@ namespace JobsFinder_Main.Controllers
         public ActionResult Create(Recument model)
         {
             var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if(session != null)
+            if (session != null)
             {
                 var dao = new RecumentDao();
 
@@ -36,9 +36,9 @@ namespace JobsFinder_Main.Controllers
 
                 if (confirm == false)
                 {
-                    TempData["Message"] = "Cập nhật không thành công!";
+                    TempData["Message"] = "Update unsuccessfull!";
                     TempData["MessageType"] = "error";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Error";
                     return RedirectToAction("Detail", "Job", model);
                 }
                 else
@@ -60,21 +60,22 @@ namespace JobsFinder_Main.Controllers
                     var result = dao.Insert(recument);
                     if (result == true)
                     {
-                        TempData["Message"] = "Cập nhật thành công!";
+                        TempData["Message"] = "Update successfull!";
                         TempData["MessageType"] = "success";
-                        TempData["Type"] = "Thành công";
+                        TempData["Type"] = "Success";
                         return RedirectToAction("Detail", "Job", model.JobID);
                     }
                     else
                     {
-                        TempData["Message"] = "Cập nhật không thành công!";
+                        TempData["Message"] = "Update unsuccessfull!";
                         TempData["MessageType"] = "error";
-                        TempData["Type"] = "Thất bại";
+                        TempData["Type"] = "Error";
                         return RedirectToAction("Detail", "Job", model.JobID);
                     }
                 }
-                
-            } else
+
+            }
+            else
             {
                 return RedirectToAction("Login", "User");
             }
@@ -100,22 +101,22 @@ namespace JobsFinder_Main.Controllers
                     var result = dao.Delete(entity);
                     if (result)
                     {
-                        TempData["Message"] = "Cập nhật thành công!";
+                        TempData["Message"] = "Update successfull!";
                         TempData["MessageType"] = "success";
-                        TempData["Type"] = "Thành công";
+                        TempData["Type"] = "Success";
                         return RedirectToAction("Detail", "Job", model.JobID);
                     }
                     else
                     {
-                        TempData["Message"] = "Cập nhật không thành công!";
+                        TempData["Message"] = "Update unsuccessfull!";
                         TempData["MessageType"] = "error";
-                        TempData["Type"] = "Thất bại";
+                        TempData["Type"] = "Error";
                         return RedirectToAction("Detail", "Job", model.JobID);
                     }
                 }
                 else
                 {
-                    TempData["Message"] = "Có lỗi xảy ra! Vui lòng thử lại!";
+                    TempData["Message"] = "An error occurred! Please try again!";
                     TempData["MessageType"] = "warning";
                     TempData["Type"] = "Thất bại";
                     return RedirectToAction("Detail", "Job", model.JobID);
@@ -148,29 +149,30 @@ namespace JobsFinder_Main.Controllers
             {
                 var dao = new RecumentDao();
                 var entity = dao.ViewDetail(model.ID);
-                if (entity != null){
+                if (entity != null)
+                {
                     var result = dao.Confirm(entity);
                     if (result == true)
                     {
-                        TempData["Message"] = "Cập nhật thành công!";
+                        TempData["Message"] = "Update sucessfull!";
                         TempData["MessageType"] = "success";
-                        TempData["Type"] = "Thành công";
-                        return RedirectToAction("ListJob", "User");
+                        TempData["Type"] = "Success";
+                        return RedirectToAction("ListJobs", "User");
                     }
                     else
                     {
-                        TempData["Message"] = "Cập nhật không thành công!";
+                        TempData["Message"] = "Update unsucessfull!";
                         TempData["MessageType"] = "error";
-                        TempData["Type"] = "Thất bại";
-                        return RedirectToAction("ListJob", "User");
+                        TempData["Type"] = "Error";
+                        return RedirectToAction("ListJobs", "User");
                     }
                 }
                 else
                 {
-                    TempData["Message"] = "Cập nhật không thành công!";
+                    TempData["Message"] = "Update unsucessfull!";
                     TempData["MessageType"] = "error";
-                    TempData["Type"] = "Thất bại";
-                    return RedirectToAction("ListJob", "User");
+                    TempData["Type"] = "Error";
+                    return RedirectToAction("ListJobs", "User");
                 }
             }
             else
@@ -196,28 +198,28 @@ namespace JobsFinder_Main.Controllers
                 var entity = dao.ViewDetail(model.ID);
                 if (entity != null)
                 {
-                    var result = dao.Confirm(entity);
+                    var result = dao.Delete(entity);
                     if (result == true)
                     {
-                        TempData["Message"] = "Cập nhật thành công!";
+                        TempData["Message"] = "Update sucessfull!";
                         TempData["MessageType"] = "success";
-                        TempData["Type"] = "Thành công";
-                        return RedirectToAction("ListJob", "User");
+                        TempData["Type"] = "Success";
+                        return RedirectToAction("ListJobs", "User");
                     }
                     else
                     {
-                        TempData["Message"] = "Cập nhật không thành công!";
+                        TempData["Message"] = "Update unsucessfull!";
                         TempData["MessageType"] = "error";
-                        TempData["Type"] = "Thất bại";
-                        return RedirectToAction("ListJob", "User");
+                        TempData["Type"] = "Error";
+                        return RedirectToAction("ListJobs", "User");
                     }
                 }
                 else
                 {
-                    TempData["Message"] = "Cập nhật không thành công!";
+                    TempData["Message"] = "Update unsucessfull!";
                     TempData["MessageType"] = "error";
-                    TempData["Type"] = "Thất bại";
-                    return RedirectToAction("ListJob", "User");
+                    TempData["Type"] = "Error";
+                    return RedirectToAction("ListJobs", "User");
                 }
             }
             else

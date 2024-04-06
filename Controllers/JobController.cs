@@ -18,7 +18,7 @@ namespace JobsFinder_Main.Controllers
         {
             SetViewBag();
             var dao = new JobDao();
-            var model = dao.ListAllPaging( searchString, searchName, searchLocation, fillterCareer, fillterCategory, fillterGender, fillterEXP, page, pageSize);
+            var model = dao.ListAllPaging(searchString, searchName, searchLocation, fillterCareer, fillterCategory, fillterGender, fillterEXP, page, pageSize);
             ViewBag.SearchName = searchString;
             ViewBag.SearchName = searchName;
             ViewBag.SearchLocation = searchLocation;
@@ -82,9 +82,9 @@ namespace JobsFinder_Main.Controllers
 
                 if (confirm == false)
                 {
-                    TempData["Message"] = "Ứng tuyển không thành công!";
+                    TempData["Message"] = "Unsuccessful application!";
                     TempData["MessageType"] = "error";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Error";
                     return RedirectToAction("Index", "Job", entity.ID);
                 }
                 else
@@ -109,16 +109,16 @@ namespace JobsFinder_Main.Controllers
                     var result = dao.ApplyJob(job);
                     if (result == true)
                     {
-                        TempData["Message"] = "Ứng tuyển thành công!";
+                        TempData["Message"] = "Successful application!";
                         TempData["MessageType"] = "success";
-                        TempData["Type"] = "Thành công";
+                        TempData["Type"] = "Success";
                         return RedirectToAction("Index", "Job", entity.ID);
                     }
                     else
                     {
-                        TempData["Message"] = "Có lỗi xảy ra! Vui lòng thử lại!";
+                        TempData["Message"] = "An error occurred! Please try again!";
                         TempData["MessageType"] = "warning";
-                        TempData["Type"] = "Thất bại";
+                        TempData["Type"] = "Warning";
                         return RedirectToAction("Index", "Job", entity.ID);
                     }
                 }

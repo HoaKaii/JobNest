@@ -29,7 +29,7 @@ namespace JobsFinder_Main.Controllers
         public ActionResult Create(HocVanModel model)
         {
             var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if(session != null)
+            if (session != null)
             {
                 var hocvan = new HocVan();
                 var dao = new HocVanDao();
@@ -45,21 +45,22 @@ namespace JobsFinder_Main.Controllers
                 hocvan.CreatedBy = session.UserName;
 
                 var result = dao.Insert(hocvan);
-                if(result == true)
+                if (result == true)
                 {
-                    TempData["Message"] = "Cập nhật thành công!";
+                    TempData["Message"] = "Create successful!";
                     TempData["MessageType"] = "success";
-                    TempData["Type"] = "Thành công";
+                    TempData["Type"] = "Success";
                     return RedirectToAction("Index", "Profile");
                 }
                 else
                 {
-                    TempData["Message"] = "Cập nhật không thành công!";
+                    TempData["Message"] = "Create unsuccessful!";
                     TempData["MessageType"] = "error";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Error";
                     return RedirectToAction("Index", "Profile");
                 }
-            } else
+            }
+            else
             {
                 return RedirectToAction("Login", "User");
             }
@@ -82,7 +83,7 @@ namespace JobsFinder_Main.Controllers
             {
                 var dao = new HocVanDao();
                 var entity = dao.ViewDetail(model.ID);
-                if(entity != null)
+                if (entity != null)
                 {
                     if (ModelState.IsValid)
                     {
@@ -120,32 +121,32 @@ namespace JobsFinder_Main.Controllers
                         var result = dao.Update(entity);
                         if (result)
                         {
-                            TempData["Message"] = "Cập nhật thành công!";
+                            TempData["Message"] = "Update successful!";
                             TempData["MessageType"] = "success";
-                            TempData["Type"] = "Thành công";
+                            TempData["Type"] = "Success";
                             return RedirectToAction("Index", "Profile");
                         }
                         else
                         {
-                            TempData["Message"] = "Cập nhật không thành công!";
+                            TempData["Message"] = "Update unsuccessful!";
                             TempData["MessageType"] = "error";
-                            TempData["Type"] = "Thất bại";
+                            TempData["Type"] = "Error";
                             return RedirectToAction("Index", "Profile");
                         }
                     }
                     else
                     {
-                        TempData["Message"] = "Có lỗi xảy ra! Vui lòng thử lại!";
+                        TempData["Message"] = "An error occurred! Please try again!";
                         TempData["MessageType"] = "warning";
-                        TempData["Type"] = "Thất bại";
+                        TempData["Type"] = "Warning";
                         return RedirectToAction("Index", "Profile");
                     }
                 }
                 else
                 {
-                    TempData["Message"] = "Có lỗi xảy ra! Vui lòng thử lại!";
+                    TempData["Message"] = "An error occurred! Please try again!";
                     TempData["MessageType"] = "warning";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Warning";
                     return RedirectToAction("Index", "Profile");
                 }
             }
@@ -176,24 +177,24 @@ namespace JobsFinder_Main.Controllers
                     var result = dao.Delete(entity);
                     if (result)
                     {
-                        TempData["Message"] = "Cập nhật thành công!";
+                        TempData["Message"] = "Delete sucessful!";
                         TempData["MessageType"] = "success";
-                        TempData["Type"] = "Thành công";
+                        TempData["Type"] = "Success";
                         return RedirectToAction("Index", "Profile");
                     }
                     else
                     {
-                        TempData["Message"] = "Cập nhật không thành công!";
+                        TempData["Message"] = "Delete unsucessful!";
                         TempData["MessageType"] = "error";
-                        TempData["Type"] = "Thất bại";
+                        TempData["Type"] = "Error";
                         return RedirectToAction("Index", "Profile");
                     }
                 }
                 else
                 {
-                    TempData["Message"] = "Có lỗi xảy ra! Vui lòng thử lại!";
+                    TempData["Message"] = "An error occurred! Please try again!";
                     TempData["MessageType"] = "warning";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Warning";
                     return RedirectToAction("Index", "Profile");
                 }
             }

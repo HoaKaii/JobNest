@@ -29,7 +29,7 @@ namespace JobsFinder_Main.Controllers
         public ActionResult Create(KhoaHocModel model)
         {
             var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if(session != null)
+            if (session != null)
             {
                 var dao = new KhoaHocDao();
 
@@ -49,7 +49,7 @@ namespace JobsFinder_Main.Controllers
                 };
 
                 var result = dao.Insert(khoaHoc);
-                if(result == true)
+                if (result == true)
                 {
                     model = new KhoaHocModel();
                     TempData["Message"] = "Cập nhật thành công!";
@@ -64,7 +64,8 @@ namespace JobsFinder_Main.Controllers
                     TempData["Type"] = "Thất bại";
                     return RedirectToAction("Index", "Profile");
                 }
-            } else
+            }
+            else
             {
                 return RedirectToAction("Login", "User");
             }

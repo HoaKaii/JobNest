@@ -91,7 +91,7 @@ namespace JobsFinder_Main.Controllers
         public int CountCompany()
         {
             var dao = new CompanyDao();
-            int companyCount  = dao.CountCompanies();
+            int companyCount = dao.CountCompanies();
             return companyCount;
         }
 

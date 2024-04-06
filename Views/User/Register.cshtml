@@ -31,43 +31,43 @@
         @using (Html.BeginForm("Register", "User", FormMethod.Post))
         {
             <div class="title">
-                <h3>Đăng ký</h3>
-                <p>Tham gia cộng đồng của chúng tôi và tìm kiếm công việc phù hợp với bạn.</p>
+                <h3>Register</h3>
+                <p>Join our community and search for the job that suits you</p>
             </div>
             @Html.AntiForgeryToken()
             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
             <div class="form-group">
-                <p>Tên đăng nhập</p>
+                <p>Username</p>
                 <div class="d-flex flex-row align-items-center box-input">
                     <i class="bi bi-person-fill"></i>
-                    @Html.TextBoxFor(model => model.UserName, new { @placeholder = "Nhập tên nhập", @class = "form-control" })
+                    @Html.TextBoxFor(model => model.UserName, new { @placeholder = "Enter username", @class = "form-control" })
                 </div>
                 @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
             </div>
 
             <div class="form-group">
-                <p>Mật khẩu</p>
+                <p>Password</p>
                 <div class="d-flex flex-row align-items-center box-input">
                     <i class="bi bi-lock-fill"></i>
-                    @Html.PasswordFor(model => model.Password, new { @placeholder = "Nhập mật khẩu", @class = "form-control" })
+                    @Html.PasswordFor(model => model.Password, new { @placeholder = "Enter password", @class = "form-control" })
                 </div>
                 @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
             </div>
 
             <div class="form-group">
-                <p>Họ và tên</p>
+                <p>Fullname</p>
                 <div class="d-flex flex-row align-items-center box-input">
                     <i class="bi bi-person-fill"></i>
-                    @Html.TextBoxFor(model => model.Name, new { @placeholder = "Nhập họ và tên", @class = "form-control" })
+                    @Html.TextBoxFor(model => model.Name, new { @placeholder = "Enter your fullname", @class = "form-control" })
                 </div>
                 @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
             </div>
 
             <div class="form-group">
-                <p>Số điện thoại</p>
+                <p>Phone number</p>
                 <div class="d-flex flex-row align-items-center box-input">
                     <i class="bi bi-telephone-fill"></i>
-                    @Html.TextBoxFor(model => model.Phone, new { @placeholder = "Nhập số điện thoại", @class = "form-control", @type = "number" })
+                    @Html.TextBoxFor(model => model.Phone, new { @placeholder = "Enter phone number", @class = "form-control", @type = "number" })
                 </div>
                 @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
             </div>
@@ -76,7 +76,7 @@
                 <p>Email</p>
                 <div class="d-flex flex-row align-items-center box-input">
                     <i class="bi bi-envelope-fill"></i>
-                    @Html.TextBoxFor(model => model.Email, new { @placeholder = "Nhập email", @class = "form-control" })
+                    @Html.TextBoxFor(model => model.Email, new { @placeholder = "Enter email", @class = "form-control" })
                 </div>
                 @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
             </div>
@@ -88,25 +88,22 @@
                 </div>
             </div>
 
-
-
             <div class="form-group text-center box-btn">
                 <div class="col-12">
-                    <button class="btn btn-primary btn-lg text-uppercase" type="submit" style="font-size: 14px; font-weight: 500; width: 100%;">Đăng ký</button>
+                    <button class="btn btn-primary btn-lg text-uppercase" type="submit" style="font-size: 14px; font-weight: 500; width: 100%;">Register</button>
                 </div>
             </div>
-            <p style="width: 100%; text-align: center;">Hoặc</p>
-            <a class="btn btn-secondary" style="width: 100%;  font-size: 14px;  font-weight: 500; text-transform: capitalize;">Đăng ký bằng facebook</a>
+            <p style="width: 100%; text-align: center;">Or</p>
+            <a class="btn btn-secondary" style="width: 100%;  font-size: 14px;  font-weight: 500; text-transform: capitalize;">Register with facebook</a>
             <div class="box-options">
                 <div class="box-signup">
-                    <p>Bạn đã có tài khoản?</p>
-                    <a href="/dang-nhap" class="nav-link">Đăng nhập</a>
+                    <p>You already have an account, right?</p>
+                    <a href="/dang-nhap" class="nav-link">Login</a>
                 </div>
-                <a href="/quen-mat-khau">Quên mật khẩu</a>
             </div>
             <div class="box-support">
-                <p>Bạn đang khó khăn trong việc tạo tài khoản?</p>
-                <span>Hãy gọi tới số (84)-386545891 (giờ hành chính)</span>
+                <p>You're having difficulty creating an account?</p>
+                <span>Please call (+84)-366748962 during office hours</span>
             </div>
         }
     </div>
@@ -116,8 +113,8 @@
             <div class="bannerLogin-box-slick">
                 <div class="mini-box d-flex justify-content-center align-items-center" style="flex-direction: column;">
                     <img src="~/Assets/Client/JobsFinder/img/Illustration.png" style="border-radius: 5px; margin: 32px 0; height: 360px; object-fit: cover;" />
-                    <h3 style="font-size: 18px; font-weight: 600; color: #212f3f;">Công cụ viết CV đẹp Miễn phí</h3>
-                    <p style="font-size: 14px; font-weight: 400; color: #212f3f; padding: 0 32px; text-align: center">Nhiều mẫu CV đẹp, phù hợp nhu cầu ứng tuyển các vị trí khác nhau. Dễ dàng chỉnh sửa thông tin, tạo CV online nhanh chóng trong vòng 5 phút.</p>
+                    <h3 style="font-size: 18px; font-weight: 600; color: #212f3f;">Free tool to create beautiful CVs</h3>
+                    <p style="font-size: 14px; font-weight: 400; color: #212f3f; padding: 0 32px; text-align: center">Many beautiful CV templates, suitable for applying to various positions. Easily edit information, create CVs online quickly within 5 minutes</p>
                 </div>
             </div>
         </div>

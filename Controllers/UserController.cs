@@ -40,7 +40,7 @@ namespace JobsFinder_Main.Controllers
         }
 
         [HttpPost]
-        [CaptchaValidationActionFilter("CaptchaCode", "registerCaptcha", "Mã xác nhận không đúng!")]
+        [CaptchaValidationActionFilter("CaptchaCode", "registerCaptcha", "The verification code is incorrect!")]
         public ActionResult Register(RegisterModel model)
         {
             if (ModelState.IsValid)
@@ -48,11 +48,11 @@ namespace JobsFinder_Main.Controllers
                 var dao = new UserDao();
                 if (dao.CheckUserName(model.UserName))
                 {
-                    ModelState.AddModelError("", "Tên đăng nhập đã tồn tại");
+                    ModelState.AddModelError("", "The username already exists.");
                 }
                 else if (dao.CheckEmail(model.Email))
                 {
-                    ModelState.AddModelError("", "Email đã tồn tại");
+                    ModelState.AddModelError("", "The email already exists.");
                 }
                 else
                 {
@@ -71,16 +71,16 @@ namespace JobsFinder_Main.Controllers
                     if (result > 0)
                     {
                         model = new RegisterModel();
-                        TempData["Message"] = "Đăng ký thành công!";
+                        TempData["Message"] = "Registration successful!";
                         TempData["MessageType"] = "success";
-                        TempData["Type"] = "Thành công";
+                        TempData["Type"] = "Success";
                         return RedirectToAction("Login", "User", model);
                     }
                     else
                     {
-                        TempData["Message"] = "Đăng ký không thành công!";
+                        TempData["Message"] = "Registration unsuccessful!";
                         TempData["MessageType"] = "error";
-                        TempData["Type"] = "Thất bại";
+                        TempData["Type"] = "Error";
                         return RedirectToAction("Register", "User");
                     }
                 }
@@ -118,19 +118,19 @@ namespace JobsFinder_Main.Controllers
                 }
                 else if (result == 0)
                 {
-                    ModelState.AddModelError("", "Tài khoản không tồn tại");
+                    ModelState.AddModelError("", "The account does not exist.");
                 }
                 else if (result == -1)
                 {
-                    ModelState.AddModelError("", "Tài khoản đang bị khóa");
+                    ModelState.AddModelError("", "The account is currently locked.");
                 }
                 else if (result == -2)
                 {
-                    ModelState.AddModelError("", "Mật khẩu không đúng");
+                    ModelState.AddModelError("", "The password is incorrect.");
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Tên đăng nhập hoặc mật khẩu không đúng");
+                    ModelState.AddModelError("", "The username or password is incorrect.");
                 }
             }
             return View(model);
@@ -138,7 +138,7 @@ namespace JobsFinder_Main.Controllers
 
         public ActionResult Logout()
         {
-            Session[CommonConstants.USER_SESSION] = null;
+            Session.Remove(CommonConstants.USER_SESSION);
             return Redirect("/");
         }
 
@@ -148,7 +148,7 @@ namespace JobsFinder_Main.Controllers
             dynamic result = fb.Post("oauth/access_token", new
             {
                 client_id = ConfigurationManager.AppSettings["FbAppId"],
-                client_secret = ConfigurationManager.AppSettings["FbAppSecretFbAppSecret"],
+                client_secret = ConfigurationManager.AppSettings["FbAppSecret"],
                 redirect_uri = RedirectUri.AbsoluteUri,
                 code
             });
@@ -156,11 +156,16 @@ namespace JobsFinder_Main.Controllers
             var accessToken = result.access_token;
             if (!string.IsNullOrEmpty(accessToken))
             {
-                dynamic me = fb.Get("me?fieldss=first_name,middle_name,last_name,id,email");
+                // Sử dụng mã truy cập mới để lấy thông tin người dùng từ Facebook
+                fb.AccessToken = accessToken;
+
+                // Lấy thông tin người dùng
+                dynamic me = fb.Get("me?fields=first_name,middle_name,last_name,id,email,picture");
                 string email = me.email;
                 string firstName = me.first_name;
                 string middleName = me.middle_name;
                 string lastName = me.last_name;
+                string pictureUrl = me.picture.data.url;
 
                 var user = new User
                 {
@@ -168,7 +173,8 @@ namespace JobsFinder_Main.Controllers
                     UserName = email,
                     Status = true,
                     Name = firstName + " " + middleName + " " + lastName,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    Avatar = pictureUrl,
                 };
                 var resultInsert = new UserDao().InsertForFacebook(user);
                 if (resultInsert > 0)
@@ -176,7 +182,10 @@ namespace JobsFinder_Main.Controllers
                     var userSession = new UserLogin
                     {
                         UserName = user.UserName,
-                        UserID = user.ID
+                        UserID = user.ID,
+                        Email = user.Email,
+                        Name = user.Name,
+                        Avatar = user.Avatar
                     };
                     Session.Add(CommonConstants.USER_SESSION, userSession);
                 }
@@ -184,17 +193,15 @@ namespace JobsFinder_Main.Controllers
             return Redirect("/");
         }
 
-
-
         public ActionResult LoginFaceBook()
         {
             var fb = new FacebookClient();
             var loginUrl = fb.GetLoginUrl(new
             {
                 client_id = ConfigurationManager.AppSettings["FbAppId"],
-                client_secret = ConfigurationManager.AppSettings["FbAppSecretFbAppSecret"],
+                client_secret = ConfigurationManager.AppSettings["FbAppSecret"],
                 redirect_uri = RedirectUri.AbsoluteUri,
-                respone_type = "code",
+                response_type = "code",
                 scope = "email",
             });
             return Redirect(loginUrl.AbsoluteUri);
@@ -248,24 +255,24 @@ namespace JobsFinder_Main.Controllers
                         session.Phone = userToUpdate.Phone;
                         session.Address = userToUpdate.Address;
                         session.Avatar = userToUpdate.Avatar;
-                        TempData["Message"] = "Cập nhật thành công!";
+                        TempData["Message"] = "Update sucessful!";
                         TempData["MessageType"] = "success";
-                        TempData["Type"] = "Thành công";
+                        TempData["Type"] = "Success";
                         return RedirectToAction("Manager", "User");
                     }
                     else
                     {
-                        TempData["Message"] = "Cập nhật không thành công!";
+                        TempData["Message"] = "Update unsuccessfull!";
                         TempData["MessageType"] = "error";
-                        TempData["Type"] = "Thất bại";
+                        TempData["Type"] = "Error";
                         return RedirectToAction("Manager", "User", user);
                     }
                 }
                 else
                 {
-                    TempData["Message"] = "Có lỗi xảy ra! Vui lòng thử lại!";
+                    TempData["Message"] = "An error occurred! Please try again!";
                     TempData["MessageType"] = "warning";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Warning";
                     return RedirectToAction("Manager", "User", user);
                 }
             }
@@ -303,33 +310,35 @@ namespace JobsFinder_Main.Controllers
         public ActionResult CompanyManager(User user)
         {
             var session = (UserLogin)Session[(CommonConstants.USER_SESSION)];
-            if(session == null)
+            if (session == null)
             {
                 return RedirectToAction("Login", "User");
-            } else
+            }
+            else
             {
                 var dao = new UserDao();
-                var userDetail =dao.GetByID(session.UserName);
-                if(userDetail != null)
+                var userDetail = dao.GetByID(session.UserName);
+                if (userDetail != null)
                 {
                     user.UserName = session.UserName;
                     var companyDao = new CompanyDao();
                     var company = new CompanyModel();
                     var model = companyDao.ListInUser(user.UserName);
 
-                    foreach(var item in model)
+                    foreach (var item in model)
                     {
-                        company.Name  = item.Name;
-                        company.Avatar  = item.Avatar;
-                        company.Background  = item.Background;
-                        company.LinkPage  = item.LinkPage;
-                        company.Employees  = item.Employees;
-                        company.Location  = item.Location;
-                        company.Description  = item.Description;
+                        company.Name = item.Name;
+                        company.Avatar = item.Avatar;
+                        company.Background = item.Background;
+                        company.LinkPage = item.LinkPage;
+                        company.Employees = item.Employees;
+                        company.Location = item.Location;
+                        company.Description = item.Description;
                     }
 
                     return View(company);
-                } else
+                }
+                else
                 {
                     return RedirectToAction("Index", "Home");
                 }
@@ -441,17 +450,18 @@ namespace JobsFinder_Main.Controllers
                 }
             }
         }
-        
+
 
         [HttpDelete]
         public ActionResult DeleteCompany(int ID)
         {
 
             var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if(session == null)
+            if (session == null)
             {
                 return RedirectToAction("Login", "User");
-            } else
+            }
+            else
             {
                 var dao = new CompanyDao();
                 var result = dao.Delete(ID);
@@ -462,7 +472,8 @@ namespace JobsFinder_Main.Controllers
                     TempData["MessageType"] = "success";
                     TempData["Type"] = "Thành công";
                     return RedirectToAction("Manager", "User");
-                } else
+                }
+                else
                 {
                     TempData["Message"] = "Cập nhật không thành công!";
                     TempData["MessageType"] = "error";
@@ -549,7 +560,8 @@ namespace JobsFinder_Main.Controllers
                         TempData["MessageType"] = "success";
                         TempData["Type"] = "Thành công";
                         return RedirectToAction("CompanyManager", "User", new { company.ID });
-                    } else
+                    }
+                    else
                     {
                         TempData["Message"] = "Cập nhật không thành công!";
                         TempData["MessageType"] = "error";
@@ -573,10 +585,11 @@ namespace JobsFinder_Main.Controllers
         public ActionResult CreateJob(JobModel model)
         {
             var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if(session == null)
+            if (session == null)
             {
                 return RedirectToAction("Login", "User");
-            } else
+            }
+            else
             {
                 var job = new Job();
                 var dao = new JobDao();
@@ -747,11 +760,11 @@ namespace JobsFinder_Main.Controllers
                     job.SalaryMax = model.SalaryMax;
 
                     job.Quantity = model.Quantity;
-                    job.CategoryID  = model.CategoryID;
+                    job.CategoryID = model.CategoryID;
                     job.CarrerID = model.CarrerID;
                     job.Deadline = model.Deadline;
                     job.Experience = model.Experience;
-                    job.Gender  = model.Gender;
+                    job.Gender = model.Gender;
                     job.WorkLocation = model.WorkLocation;
                     var result = dao.Update(job);
 
@@ -761,7 +774,8 @@ namespace JobsFinder_Main.Controllers
                         TempData["MessageType"] = "success";
                         TempData["Type"] = "Thành công";
                         return RedirectToAction("ListJobs", "User");
-                    } else
+                    }
+                    else
                     {
                         TempData["Message"] = "Cập nhật không thành công!";
                         TempData["MessageType"] = "error";

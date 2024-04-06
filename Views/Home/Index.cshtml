@@ -10,7 +10,6 @@
     @{ Html.RenderAction("Carousel", "Home"); }
 </div>
 <!-- Carousel End -->
-
 <!-- Category Start -->
 <div class="container-xxl py-1">
     <div class="container">
@@ -20,7 +19,7 @@
                     <i class="bi bi-briefcase"></i>
                     <div class="cat-right">
                         <h6 class="mb-1">@ViewBag.JobCount</h6>
-                        <p class="mb-0">Công việc</p>
+                        <p class="mb-0">Jobs</p>
                     </div>
                 </a>
             </div>
@@ -29,7 +28,7 @@
                     <i class="bi bi-building"></i>
                     <div class="cat-right">
                         <h6 class="mb-1">@ViewBag.CompanyCount</h6>
-                        <p class="mb-0">Công ty</p>
+                        <p class="mb-0">Company</p>
                     </div>
                 </a>
             </div>
@@ -38,7 +37,7 @@
                     <i class="bi bi-people"></i>
                     <div class="cat-right">
                         <h6 class="mb-1">@ViewBag.UserCount</h6>
-                        <p class="mb-0">Người dùng</p>
+                        <p class="mb-0">User</p>
                     </div>
                 </a>
             </div>
@@ -47,7 +46,7 @@
                     <i class="bi bi-card-checklist"></i>
                     <div class="cat-right">
                         <h6 class="mb-1">@ViewBag.JobCountNew</h6>
-                        <p class="mb-0">Công việc mới</p>
+                        <p class="mb-0">New Job</p>
                     </div>
                 </a>
             </div>
@@ -59,9 +58,9 @@
 <div class="container-xxl py-5 box-categoryJob">
     <div class="container">
         <div class="title d-flex">
-            <h4 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Ngành nghề phổ biến</h4>
+            <h4 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Popular professions</h4>
             <a href="/nganh-nghe" class="button" style="font-size: 14px; height: max-content; border: none; background: none; color: #25316D;">
-                Xem tất cả
+                View all
                 <i class="bi bi-arrow-right-short"></i>
             </a>
         </div>
@@ -75,9 +74,9 @@
 <div class="container-xxl py-5">
     <div class="container">
         <div class="title d-flex">
-            <h4 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Công việc nổi bật</h4>
+            <h4 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Featured jobs</h4>
             <a href="/cong-viec" class="button" style="font-size: 14px; height: max-content; border: none; background: none; color: #25316D;">
-                Xem tất cả
+                View all
                 <i class="bi bi-arrow-right-short"></i>
             </a>
         </div>
@@ -85,7 +84,7 @@
             <div class="tab-content">
                 <div id="tab-1" class="tab-pane fade show p-0 active">
                     @Html.Partial("JobNewList")
-                    <a class="btn btn-primary py-3 px-5 btn-viewAll" href="/cong-viec">Xem nhiều công việc hơn</a>
+                    <a class="btn btn-primary py-3 px-5 btn-viewAll" href="/cong-viec">See more jobs</a>
                 </div>
             </div>
         </div>
@@ -96,9 +95,9 @@
 <div class="container-xxl py-1 jobsCategory py-5" style="background: #E7F0FA;">
     <div class="container">
         <div class="title d-flex">
-            <h4 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Danh mục</h4>
+            <h4 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Categories</h4>
             <a href="/danh-muc-cong-viec" class="button" style="font-size: 14px; height: max-content; border: none; background: none; color: #25316D;">
-                Xem tất cả
+                View all
                 <i class="bi bi-arrow-right-short"></i>
             </a>
         </div>
@@ -106,7 +105,6 @@
     </div>
 </div>
 <!-- Category End -->
-
 <!-- About Start -->
 <div class="container-xxl py-5">
     <div class="container">
@@ -128,12 +126,12 @@
                 </div>
             </div>
             <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                <h1 class="mb-4">Hỗ trợ tìm kiếm việc làm tốt nhất và ứng viên tiềm năng.</h1>
-                <p class="mb-4">Tìm việc mơ ước dễ dàng - duyệt hàng nghìn việc làm và nộp đơn ngay hôm nay trên nền tảng tìm kiếm việc làm của chúng tôi.</p>
-                <p><i class="fa fa-check text-primary me-3"></i>Hàng ngàn công việc khác nhau</p>
-                <p><i class="fa fa-check text-primary me-3"></i>Kết nối doanh nghiệp dễ dàng</p>
-                <p><i class="fa fa-check text-primary me-3"></i>Hoàn toàn miễn phí</p>
-                <a class="btn btn-primary py-3 px-5 mt-3 btn-viewAll" href="">Xem thêm các bài viết</a>
+                <h1 class="mb-4">Support for finding the best job opportunities and potential candidates</h1>
+                <p class="mb-4">Find your dream job easily - browse thousands of job listings and apply today on our job search platform</p>
+                <p><i class="fa fa-check text-primary me-3"></i>Thousands of different jobs</p>
+                <p><i class="fa fa-check text-primary me-3"></i>Easily connect with businesses</p>
+                <p><i class="fa fa-check text-primary me-3"></i>Completely free of charge</p>
+                <a class="btn btn-primary py-3 px-5 mt-3 btn-viewAll" href="">View more articles</a>
             </div>
         </div>
     </div>
@@ -148,7 +146,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-4 mb-5" data-wow-delay="0.5s">
-                <h2 class="h5 section-title">Dành cho bạn</h2>
+                <h2 class="h5 section-title">For you</h2>
                 <article class="card">
                     <div class="post-slider slider-sm">
                         <img src="~/Assets/Client/Blog/images/post/post-1.jpg" class="card-img-top" alt="post-thumb">
@@ -183,7 +181,7 @@
                 </article>
             </div>
             <div class="col-lg-4 mb-5" data-wow-delay="0.7s">
-                <h2 class="h5 section-title">Xu hướng</h2>
+                <h2 class="h5 section-title">Trends</h2>
 
                 <article class="card mb-4">
                     <div class="card-body d-flex">
@@ -238,7 +236,7 @@
             </div>
 
             <div class="col-lg-4 mb-5" data-wow-delay="0.9s">
-                <h2 class="h5 section-title">Phổ biến</h2>
+                <h2 class="h5 section-title">Popular</h2>
 
                 <article class="card">
                     <div class="post-slider slider-sm">
@@ -276,6 +274,6 @@
                 <div class="border-bottom border-default"></div>
             </div>
         </div>
-        <a class="btn btn-primary py-3 px-5 btn-viewAll mt-5" href="/tin-tuc">Xem nhiều tin tức hơn</a>
+        <a class="btn btn-primary py-3 px-5 btn-viewAll mt-5" href="/tin-tuc">View more blogs</a>
     </div>
 </section>

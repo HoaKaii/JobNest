@@ -9,10 +9,10 @@ namespace JobsFinder_Main.Models
     public class LoginModel
     {
         [Key]
-        [Required(ErrorMessage = "Tên đăng nhập không được để trống")]
+        [Required(ErrorMessage = "Username cannot be left empty.")]
         public string UserName { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng nhập mật khẩu")]
+        [Required(ErrorMessage = "Please enter a password.")]
         public string Password { get; set; }
     }
 }

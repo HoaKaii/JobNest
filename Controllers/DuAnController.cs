@@ -29,7 +29,7 @@ namespace JobsFinder_Main.Controllers
         public ActionResult Create(DuAnModel model)
         {
             var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if(session != null)
+            if (session != null)
             {
                 var dao = new DuAnDao();
 
@@ -43,7 +43,7 @@ namespace JobsFinder_Main.Controllers
                     CongNgheSuDung = model.CongNgheSuDung,
                     ThangBatDau = model.ThangBatDau,
                     NamBatDau = model.NamBatDau,
-                    ThangKetThuc =  model.ThangKetThuc,
+                    ThangKetThuc = model.ThangKetThuc,
                     NamKetThuc = model.NamKetThuc,
                     MoTaChiTiet = model.MoTaChiTiet,
                     Img = model.Img,
@@ -53,7 +53,7 @@ namespace JobsFinder_Main.Controllers
                 };
 
                 var result = dao.Insert(duAn);
-                if(result == true)
+                if (result == true)
                 {
                     model = new DuAnModel();
                     TempData["Message"] = "Cập nhật thành công!";
@@ -68,7 +68,8 @@ namespace JobsFinder_Main.Controllers
                     TempData["Type"] = "Thất bại";
                     RedirectToAction("Index", "Profile");
                 }
-            } else
+            }
+            else
             {
                 TempData["Message"] = "Có lỗi xảy ra! Vui lòng thử lại!";
                 TempData["MessageType"] = "warning";

@@ -11,25 +11,25 @@ namespace JobsFinder_Main.Models
         [Key]
         public int ID { get; set; }
 
-        [Required(ErrorMessage = "Tên công ty không được trống")]
+        [Required(ErrorMessage = "The company name cannot be empty.")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "Trang chủ công ty không được trống")]
+        [Required(ErrorMessage = "The company homepage cannot be empty.")]
         public string LinkPage { get; set; }
 
-        [Required(ErrorMessage = "Mô tả công ty không được trống")]
+        [Required(ErrorMessage = "The company description cannot be empty.")]
         public string Description { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng tải lên ảnh đại diện cho công ty")]
+        [Required(ErrorMessage = "Please upload a company logo.")]
         public string Avatar { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng tải lên ảnh bìa cho công ty")]
+        [Required(ErrorMessage = "Please upload a cover photo for the company.")]
         public string Background { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng nhập số lượng nhân lực trong công ty")]
+        [Required(ErrorMessage = "Please enter the number of employees in the company.")]
         public int? Employees { get; set; }
 
-        [Required(ErrorMessage = "Vị trí công ty không được trống")]
+        [Required(ErrorMessage = "The company location cannot be empty.")]
         public string Location { get; set; }
     }
 }

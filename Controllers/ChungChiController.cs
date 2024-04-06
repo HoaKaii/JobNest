@@ -29,7 +29,7 @@ namespace JobsFinder_Main.Controllers
         public ActionResult Create(ChungChiModel model)
         {
             var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if(session != null)
+            if (session != null)
             {
                 var dao = new ChungChiDao();
 
@@ -48,7 +48,7 @@ namespace JobsFinder_Main.Controllers
                 };
 
                 var result = dao.Insert(chungChi);
-                if(result == true)
+                if (result == true)
                 {
                     model = new ChungChiModel();
                     TempData["Message"] = "Cập nhật thành công!";
@@ -63,7 +63,8 @@ namespace JobsFinder_Main.Controllers
                     TempData["Type"] = "Thất bại";
                     return RedirectToAction("Index", "Profile");
                 }
-            } else
+            }
+            else
             {
                 return RedirectToAction("Login", "User");
             }

@@ -19,7 +19,7 @@ namespace JobsFinder_Main
 
             routes.MapRoute(
                 name: "Profile",
-                url: "profile/ho-so-ca-nhan",
+                url: "profile/personal-profile",
                 defaults: new { controller = "Profile", action = "index", id = UrlParameter.Optional },
                 namespaces: new[] { "JobsFinder_Main.Controllers" }
             );
@@ -61,7 +61,7 @@ namespace JobsFinder_Main
 
             routes.MapRoute(
                 name: "Register",
-                url: "dang-ky",
+                url: "register",
                 defaults: new { controller = "User", action = "Register", id = UrlParameter.Optional },
                 namespaces: new[] { "JobsFinder_Main.Controllers" }
             );

@@ -1,4 +1,4 @@
-﻿@model JobsFinder_Main.Models.HoatDongModel
+﻿﻿@model JobsFinder_Main.Models.HoatDongModel
 
 @{
     var session = (JobsFinder_Main.Common.UserLogin)Session[JobsFinder_Main.Common.CommonConstants.USER_SESSION];
@@ -107,19 +107,19 @@
                 </div>
 
                 @*<div class="form-group">
-                    <p>Thêm hình ảnh hay liên kết về kinh nghiệm của bạn</p>
-                    <div class="d-flex flex-row justify-content-between">
-                        <div class="col-md-10" style="width:48%;">
-                            @Html.TextBoxFor(model => model.Img, new { @class = "form-control" })
-                            <a class="btn btn-outline-primary" id="btnChooseImage_1" style="white-space: nowrap; border-radius: 4px; margin-left: 24px; font-size: 14px; font-weight: 400; text-transform: capitalize" href="#">Tải lên</a>
-                            @Html.ValidationMessageFor(model => model.Img, "", new { @class = "text-danger" })
+                        <p>Thêm hình ảnh hay liên kết về kinh nghiệm của bạn</p>
+                        <div class="d-flex flex-row justify-content-between">
+                            <div class="col-md-10" style="width:48%;">
+                                @Html.TextBoxFor(model => model.Img, new { @class = "form-control" })
+                                <a class="btn btn-outline-primary" id="btnChooseImage_1" style="white-space: nowrap; border-radius: 4px; margin-left: 24px; font-size: 14px; font-weight: 400; text-transform: capitalize" href="#">Tải lên</a>
+                                @Html.ValidationMessageFor(model => model.Img, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-10" style="width: 48%;">
+                                @Html.TextBoxFor(model => model.LienKet, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.LienKet, "", new { @class = "text-danger" })
+                            </div>
                         </div>
-                        <div class="col-md-10" style="width: 48%;">
-                            @Html.TextBoxFor(model => model.LienKet, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.LienKet, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                </div>*@
+                    </div>*@
 
                 <div class="form-group mb-2">
                     <div class="col-md-offset-2 col-md-10 d-flex justify-content-center" style="width: 100%">

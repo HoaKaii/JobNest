@@ -6,13 +6,13 @@
             <div class="container">
                 <div class="row justify-content-start">
                     <div class="col-10 col-lg-8">
-                        <h1 class="display-3 text-white animated slideInDown mb-4 title">Tìm một công việc phù hợp với sở thích và kỹ năng của bạn.</h1>
-                        <p class="fs-5 fw-medium text-white mb-4 pb-2 pt-4 caption" style="font-size: 16px !important;">Tìm việc mơ ước dễ dàng - duyệt hàng nghìn việc làm và nộp đơn ngay hôm nay trên nền tảng tìm kiếm việc làm của chúng tôi.</p>
+                        <h1 class="display-3 text-white animated slideInDown mb-4 title">Find a job that matches your interests and skills</h1>
+                        <p class="fs-5 fw-medium text-white mb-4 pb-2 pt-4 caption" style="font-size: 16px !important;">Easily find your dream job - browse thousands of job listings and apply today on our job search platform</p>
                         @using (Html.BeginForm("Index", "Job", FormMethod.Get, new { @class = "form-search" }))
                         {
                             <div class="box-input" style="border: none;">
                                 <i class="bi bi-search m-0"></i>
-                                <input type="text" placeholder="Tìm kiếm ..." aria-label="Search" aria-describedby="basic-addon2" name="searchName" value="@ViewBag.SearchName">
+                                <input type="text" placeholder="Keyword ..." aria-label="Search" aria-describedby="basic-addon2" name="searchName" value="@ViewBag.SearchName">
                             </div>
                             <div class="box-input" style="border: none;">
                                 <i class="bi bi-geo-alt m-0"></i>
@@ -24,7 +24,7 @@
                                 </select>
 
                             </div>
-                            <button class="btn btn-primary searchBtn" type="submit" style="border-radius: 4px;">Tìm kiếm</button>
+                            <button class="btn btn-primary searchBtn" type="submit" style="border-radius: 4px;">Search</button>
                         }
                     </div>
                 </div>

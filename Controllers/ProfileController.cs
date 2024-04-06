@@ -88,15 +88,16 @@ namespace JobsFinder_Main.Controllers
                     var result = dao.Update(updateProfile);
                     if (result)
                     {
-                        TempData["Message"] = "Cập nhật thành công!";
+                        TempData["Message"] = "Update successfull!";
                         TempData["MessageType"] = "success";
-                        TempData["Type"] = "Thành công";
+                        TempData["Type"] = "Success";
                         return RedirectToAction("Index", "Profile");
-                    } else
+                    }
+                    else
                     {
-                        TempData["Message"] = "Cập nhật không thành công!";
+                        TempData["Message"] = "Update unsuccessfull!";
                         TempData["MessageType"] = "error";
-                        TempData["Type"] = "Thất bại";
+                        TempData["Type"] = "Error";
                         return RedirectToAction("Index", "Profile");
                     }
                 }
@@ -112,15 +113,16 @@ namespace JobsFinder_Main.Controllers
                     var result = dao.Insert(profile);
                     if (result > 0)
                     {
-                        TempData["Message"] = "Cập nhật thành công!";
+                        TempData["Message"] = "Update successfull!";
                         TempData["MessageType"] = "success";
-                        TempData["Type"] = "Thành công";
+                        TempData["Type"] = "Success";
                         return RedirectToAction("Index", "Profile");
-                    } else
+                    }
+                    else
                     {
-                        TempData["Message"] = "Cập nhật không thành công!";
+                        TempData["Message"] = "Update unsuccessfull!";
                         TempData["MessageType"] = "error";
-                        TempData["Type"] = "Thất bại";
+                        TempData["Type"] = "Error";
                         return RedirectToAction("Index", "Profile");
                     }
                 }
@@ -158,16 +160,16 @@ namespace JobsFinder_Main.Controllers
                 var result = dao.Confirm(recument);
                 if (result == true)
                 {
-                    TempData["Message"] = "Cập nhật thành công!";
+                    TempData["Message"] = "Update successfull!";
                     TempData["MessageType"] = "success";
-                    TempData["Type"] = "Thành công";
+                    TempData["Type"] = "Success";
                     return RedirectToAction("Index", "Profile");
                 }
                 else
                 {
-                    TempData["Message"] = "Cập nhật không thành công!";
+                    TempData["Message"] = "Update unsuccessfull!";
                     TempData["MessageType"] = "error";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Error";
                     return RedirectToAction("Index", "Profile");
                 }
             }

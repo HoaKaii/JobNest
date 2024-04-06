@@ -1,53 +1,54 @@
 ﻿@model Model.EF.KinhNghiem
+
 @{
     var session = (JobsFinder_Main.Common.UserLogin)Session[JobsFinder_Main.Common.CommonConstants.USER_SESSION];
 }
 
 @if (session != null)
 {
-    <div id="formKinhNghiem@(Model.ID)" class="p-4 form-profile">
+    <div id="formUpdateKinhNghiem@(Model.ID)" class="p-4 form-profile">
         @using (Html.BeginForm("Update", "KinhNghiem", FormMethod.Post))
         {
             @Html.AntiForgeryToken()
 
             <div class="form-horizontal">
-                <h5 class="m-0">Kinh nghiệm</h5>
+                <h5 class="m-0">Experience</h5>
                 <hr class="my-3" />
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                 <div class="form-group mb-4">
-                    <p class="label-title">Công ty</p>
+                    <p class="label-title">Company</p>
                     <div class="col-md-10" style="width: 100%;">
-                        @Html.TextBoxFor(model => model.CongTy, new { @class = "form-control", @placeholder = "Tên công ty" })
+                        @Html.TextBoxFor(model => model.CongTy, new { @class = "form-control", @placeholder = "Company name" })
                         @Html.ValidationMessageFor(model => model.CongTy, "", new { @class = "text-danger" })
                     </div>
                 </div>
 
                 <div class="form-group mb-4">
-                    <p class="label-title">Chức vụ</p>
+                    <p class="label-title">Position</p>
                     <div class="col-md-10" style="width: 100%;">
-                        @Html.TextBoxFor(model => model.ChucVu, new { @class = "form-control", @placeholder = "Nhân viên văn phòng" })
+                        @Html.TextBoxFor(model => model.ChucVu, new { @class = "form-control", @placeholder = "Enter your position" })
                         @Html.ValidationMessageFor(model => model.ChucVu, "", new { @class = "text-danger" })
                     </div>
                 </div>
 
                 <label class="mb-4">
                     <input type="checkbox" id="kinhNghiemCheckbox" class="checkbox" />
-                    Tôi đang làm việc ở đây
+                    I am working here.
                 </label>
 
                 <div class="d-flex flex-row justify-content-between">
                     <div id="kinhNghiemnBatDau" class="d-flex justify-content-between" style="width: 48%">
                         <div class="form-group mb-4">
-                            <p class="label-title">Tháng bắt đầu</p>
+                            <p class="label-title">Start month</p>
                             <div class="col-md-10" style="width: 100%;">
-                                @Html.DropDownListFor(model => model.ThangBatDau, Enumerable.Range(1, 12).Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString() }), "Chọn tháng", new { @class = "form-control" })
+                                @Html.DropDownListFor(model => model.ThangBatDau, Enumerable.Range(1, 12).Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString() }), "Select month", new { @class = "form-control" })
                                 @Html.ValidationMessageFor(model => model.ThangBatDau, "", new { @class = "text-danger" })
                             </div>
                         </div>
 
                         <div class="form-group mb-4">
-                            <p class="label-title">Năm bắt đầu</p>
+                            <p class="label-title">Start year</p>
                             <div class="col-md-10" style="width: 100%;">
                                 <div class="col-md-10" style="width: 100%;">
                                     @{
@@ -70,15 +71,15 @@
 
                     <div id="kinhNghiemKetThuc" class="d-flex justify-content-between boxKetThuc" style="width: 48%">
                         <div class="form-group mb-4">
-                            <p class="label-title">Tháng kết thúc</p>
+                            <p class="label-title">Finish month</p>
                             <div class="col-md-10" style="width: 100%;">
-                                @Html.DropDownListFor(model => model.ThangKetThuc, Enumerable.Range(1, 12).Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString() }), "Chọn tháng", new { @class = "form-control thangKetThuc" })
+                                @Html.DropDownListFor(model => model.ThangKetThuc, Enumerable.Range(1, 12).Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString() }), "Select month", new { @class = "form-control thangKetThuc" })
                                 @Html.ValidationMessageFor(model => model.ThangKetThuc, "", new { @class = "text-danger" })
                             </div>
                         </div>
 
                         <div class="form-group mb-4">
-                            <p class="label-title">Năm kết thúc</p>
+                            <p class="label-title">Finish year</p>
                             <div class="col-md-10" style="width: 100%;">
                                 <div class="col-md-10" style="width: 100%;">
                                     @{
@@ -98,31 +99,16 @@
                 </div>
 
                 <div class="form-group">
-                    <p class="label-title">Mô tả</p>
+                    <p class="label-title">Description</p>
                     <div class="col-md-10" style="width: 100%;">
-                        @Html.TextAreaFor(model => model.MoTaChiTiet, new { @class = "form-control pt-2", @placeholder = "Mô tả chi tiết" })
+                        @Html.TextAreaFor(model => model.MoTaChiTiet, new { @class = "form-control pt-2", @placeholder = "Detailed description" })
                         @Html.ValidationMessageFor(model => model.MoTaChiTiet, "", new { @class = "text-danger" })
                     </div>
                 </div>
 
-                @*<div class="form-group">
-                    <p>Thêm hình ảnh hay liên kết về kinh nghiệm của bạn</p>
-                    <div class="d-flex flex-row justify-content-between">
-                        <div class="col-md-10" style="width:48%;">
-                            @Html.TextBoxFor(model => model.HinhAnh, new { @class = "form-control" })
-                            <a class="btn btn-outline-primary" id="btnChooseImage_1" style="white-space: nowrap; border-radius: 4px; margin-left: 24px; font-size: 14px; font-weight: 400; text-transform: capitalize" href="#">Tải lên</a>
-                            @Html.ValidationMessageFor(model => model.HinhAnh, "", new { @class = "text-danger" })
-                        </div>
-                        <div class="col-md-10" style="width: 48%;">
-                            @Html.TextBoxFor(model => model.LienKet, new { @class = "form-control"})
-                            @Html.ValidationMessageFor(model => model.LienKet, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                </div>*@
-
                 <div class="form-group mb-2">
                     <div class="col-md-offset-2 col-md-10 d-flex justify-content-center" style="width: 100%">
-                        <input type="submit" value="Hoàn tất" class="btn btn-primary" style="border-radius: 4px;" />
+                        <input type="submit" value="Complete" class="btn btn-primary" style="border-radius: 4px;" />
                     </div>
                 </div>
             </div>

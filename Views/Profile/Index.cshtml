@@ -65,14 +65,14 @@
     var hocVanDao = new Model.DAO.HocVanDao();
     var listAllHocVan = hocVanDao.ListAll(session.UserID);
 
-    foreach(var item in listAllHocVan)
+    foreach (var item in listAllHocVan)
     {
         { Html.RenderAction("Update", "HocVan", new { id = item.ID }); }
         { Html.RenderAction("DeleteConfirm", "HocVan", new { id = item.ID }); }
     }
 
     var kinhNghiemDao = new Model.DAO.KinhNghiemDao();
-    var listAllKinhNghiem= kinhNghiemDao.ListAll(session.UserID);
+    var listAllKinhNghiem = kinhNghiemDao.ListAll(session.UserID);
 
     foreach (var item in listAllKinhNghiem)
     {

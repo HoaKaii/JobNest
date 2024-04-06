@@ -29,7 +29,7 @@ namespace JobsFinder_Main.Controllers
         public ActionResult Create(SanPhamModel model)
         {
             var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if(session != null)
+            if (session != null)
             {
                 var dao = new SanPhamDao();
 
@@ -37,7 +37,7 @@ namespace JobsFinder_Main.Controllers
                 {
                     TenSanPham = model.TenSanPham,
                     TheLoai = model.TheLoai,
-                    ThangHoanThanh =  model.ThangHoanThanh,
+                    ThangHoanThanh = model.ThangHoanThanh,
                     NamHoanThanh = model.NamHoanThanh,
                     MoTaChiTiet = model.MoTaChiTiet,
                     Img = model.Img,
@@ -47,7 +47,7 @@ namespace JobsFinder_Main.Controllers
                 };
 
                 var result = dao.Insert(sanPham);
-                if(result == true)
+                if (result == true)
                 {
                     model = new SanPhamModel();
                     TempData["Message"] = "Cập nhật thành công!";
@@ -62,7 +62,8 @@ namespace JobsFinder_Main.Controllers
                     TempData["Type"] = "Thất bại";
                     return RedirectToAction("Manager", "User");
                 }
-            } else
+            }
+            else
             {
                 return RedirectToAction("Login", "User");
             }

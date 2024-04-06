@@ -1,4 +1,4 @@
-﻿@model JobsFinder_Main.Models.CompanyModel
+﻿﻿@model JobsFinder_Main.Models.CompanyModel
 
 @{
     ViewBag.Title = "CreateCompany";
@@ -7,10 +7,10 @@
 
 <h2>CreateCompany</h2>
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>CompanyModel</h4>
         <hr />

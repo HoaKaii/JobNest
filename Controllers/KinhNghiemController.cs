@@ -29,47 +29,47 @@ namespace JobsFinder_Main.Controllers
         public ActionResult Create(KinhNghiemModel model)
         {
             var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if(session != null)
+            if (session != null)
             {
+                var kinhNghiem = new KinhNghiem();
                 var dao = new KinhNghiemDao();
 
-                var kinhNghiem = new KinhNghiem
-                {
-                    CongTy = model.CongTy,
-                    ChucVu = model.ChucVu,
-                    ThangBatDau = model.ThangBatDau,
-                    NamBatDau = model.NamBatDau,
-                    ThangKetThuc = model.ThangKetThuc,
-                    NamKetThuc = model.NamKetThuc,
-                    MoTaChiTiet = model.MoTaChiTiet,
-                    HinhAnh = model.HinhAnh,
-                    LienKet = model.LienKet,
-                    UserID = session.UserID,
-                    CreatedBy = session.UserName
-                };
+                kinhNghiem.CongTy = model.CongTy;
+                kinhNghiem.ChucVu = model.ChucVu;
+                kinhNghiem.ThangBatDau = model.ThangBatDau;
+                kinhNghiem.NamBatDau = model.NamBatDau;
+                kinhNghiem.ThangKetThuc = model.ThangKetThuc;
+                kinhNghiem.NamKetThuc = model.NamKetThuc;
+                kinhNghiem.MoTaChiTiet = model.MoTaChiTiet;
+                kinhNghiem.HinhAnh = model.HinhAnh;
+                kinhNghiem.LienKet = model.LienKet;
+                kinhNghiem.UserID = session.UserID;
+                kinhNghiem.CreatedBy = session.UserName;
 
                 var result = dao.Insert(kinhNghiem);
-                if(result == true)
+                if (result == true)
                 {
                     model = new KinhNghiemModel();
-                    TempData["Message"] = "Cập nhật thành công!";
+                    TempData["Message"] = "Create sucessfull!";
                     TempData["MessageType"] = "success";
-                    TempData["Type"] = "Thành công";
-                    return RedirectToAction("Index", "Profile", model);
+                    TempData["Type"] = "Success";
+                    return RedirectToAction("Index", "Profile");
                 }
                 else
                 {
-                    TempData["Message"] = "Cập nhật không thành công!";
+                    TempData["Message"] = "Create unsucessfull!!";
                     TempData["MessageType"] = "error";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Error";
                     return RedirectToAction("Index", "Profile");
                 }
-            } else
+            }
+            else
             {
                 return RedirectToAction("Login", "User");
             }
         }
 
+        //GET: KinhNghiem/Update/{id}
         [HttpGet]
         public ActionResult Update(long id)
         {
@@ -77,6 +77,7 @@ namespace JobsFinder_Main.Controllers
             return PartialView(kinhNghiem);
         }
 
+        //POST: KinhNghiem/Update/{id}
         [HttpPost]
         public ActionResult Update(KinhNghiem model)
         {

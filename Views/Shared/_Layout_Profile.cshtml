@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>JobsFinder - Job Portal Website Template</title>
+    <title>JobNest</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -72,9 +72,9 @@
                             <div class="card mb-4 box-card">
                                 <div class="card mb-4 mb-lg-0 p-4 d-flex flex-row" style="background-color: #FFF">
                                     <div>
-                                        <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Cập nhật thông tin cá nhân</p>
-                                        <p class="mb-2">Tăng khả năng tìm kiếm và khớp việc làm phù hợp với bạn.</p>
-                                        <button id="btnShowFormProfile" class="btn btn-primary btn-show-form" data-form="formProfile" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Cập nhật ngay</button>
+                                        <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Update personal information</p>
+                                        <p class="mb-2">Increase your job search and matching capabilities.</p>
+                                        <button id="btnShowFormProfile" class="btn btn-primary btn-show-form" data-form="formProfile" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Update now</button>
                                     </div>
                                     <div>
                                         <img class="image-content" src="~/Assets/Client/JobsFinder/img/HoSo.png" />
@@ -91,9 +91,9 @@
                                 {
                                     <div class="card mb-4 mb-lg-0 p-4 d-flex flex-row" style="background-color: #FFF">
                                         <div>
-                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Học vấn</p>
-                                            <p class="mb-2">Giúp nhà tuyển dụng có cái nhìn toàn diện về khả năng học tập và kiến thức chuyên môn của bạn.</p>
-                                            <button class="btn btn-outline-primary btn-show-form" data-form="formHocVan" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Thêm mục</button>
+                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Education</p>
+                                            <p class="mb-2">Help employers gain a comprehensive understanding of your learning abilities and professional knowledge.</p>
+                                            <button class="btn btn-outline-primary btn-show-form" data-form="formHocVan" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Add section</button>
                                         </div>
                                         <div>
                                             <img class="image-content" src="~/Assets/Client/JobsFinder/img/HocVan.png" />
@@ -116,7 +116,14 @@
                                                 <div class="d-flex flex-row">
                                                     <p class="m-0">@hocVan.NamBatDau</p>
                                                     <span> - </span>
-                                                    <p class="m-0">@hocVan.NamKetThuc</p>
+                                                    @if (hocVan.NamKetThuc == null)
+                                                    {
+                                                        <p class="m-0">?</p>
+                                                    }
+                                                    else
+                                                    {
+                                                        <p class="m-0">@hocVan.NamKetThuc</p>
+                                                    }
                                                 </div>
                                             </div>
                                             <div class="profile-butons d-flex flex-column justify-content-between align-items-center">
@@ -125,7 +132,7 @@
                                             </div>
                                         </div>
                                     }
-                                    <button class="btn btn-primary btn-show-form" data-form="formHocVan" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Thêm mục học vấn</button>
+                                    <button class="btn btn-primary btn-show-form" data-form="formHocVan" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Add education section</button>
                                 }
                             </div>
 
@@ -138,9 +145,9 @@
                                 {
                                     <div class="card mb-4 mb-lg-0 p-4 d-flex flex-row" style="background-color: #FFF">
                                         <div>
-                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Kinh nghiệm</p>
-                                            <p class="mb-2">Giúp nhà tuyển dụng có cái nhìn tổng quan, đánh giá về quá trình làm việc của bạn.</p>
-                                            <button class="btn btn-outline-primary btn-show-form" data-form="formKinhNghiem" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Thêm mục</button>
+                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Experience</p>
+                                            <p class="mb-2">Help employers gain an overview, evaluate your work history.</p>
+                                            <button class="btn btn-outline-primary btn-show-form" data-form="formKinhNghiem" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Add section</button>
                                         </div>
                                         <div>
                                             <img class="image-content" src="~/Assets/Client/JobsFinder/img/KinhNghiem.png" />
@@ -172,7 +179,7 @@
                                             </div>
                                         </div>
                                     }
-                                    <button class="btn btn-primary btn-show-form" data-form="formKinhNghiem" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Thêm mục kinh nghiệm</button>
+                                    <button class="btn btn-primary btn-show-form" data-form="formKinhNghiem" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Add experience section</button>
                                 }
                             </div>
 
@@ -185,9 +192,9 @@
                                 {
                                     <div class="card mb-4 mb-lg-0 p-4 d-flex flex-row" style="background-color: #FFF">
                                         <div>
-                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Kỹ năng</p>
-                                            <p class="mb-2">Mô tả kỹ các kỹ năng bạn có giúp người khác hiểu được điểm mạnh của bạn và giúp gia tăng cơ hội kết nối với người khác.</p>
-                                            <button class="btn btn-outline-primary btn-show-form" data-form="formKyNang" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Thêm mục</button>
+                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Skills</p>
+                                            <p class="mb-2">Elaborate on the skills you possess to help others understand your strengths and increase opportunities for networking.</p>
+                                            <button class="btn btn-outline-primary btn-show-form" data-form="formKyNang" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Add section</button>
                                         </div>
                                         <div>
                                             <img class="image-content" src="~/Assets/Client/JobsFinder/img/KyNang.png" />
@@ -203,14 +210,9 @@
                                                 <i class="bi bi-book-half" style="font-size: 18px;"></i>
                                             </div>
                                             <div style="width: 100%; margin-right: 12px;">
-                                                @*<div class="d-flex justify-content-between">
-                                                        <p class="m-0">@kyNang.ChucVu</p>
-                                                    </div>*@
                                                 <p class="m-0" style="font-weight: 600; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 280px;">@kyNang.TenKyNang</p>
                                                 <div class="d-flex flex-row">
                                                     <p class="m-0">@kyNang.DanhGia</p>
-                                                    @*<span> - </span>
-                                                        <p class="m-0">@kyNang.NamKetThuc</p>*@
                                                 </div>
                                             </div>
                                             <div class="profile-butons d-flex flex-column justify-content-between align-items-center">
@@ -219,7 +221,7 @@
                                             </div>
                                         </div>
                                     }
-                                    <button class="btn btn-primary btn-show-form" data-form="formKyNang" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Thêm mục kỹ năng</button>
+                                    <button class="btn btn-primary btn-show-form" data-form="formKyNang" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Add skill section</button>
                                 }
                             </div>
 
@@ -232,9 +234,9 @@
                                 {
                                     <div class="card mb-4 mb-lg-0 p-4 d-flex flex-row" style="background-color: #FFF">
                                         <div>
-                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Chứng chỉ</p>
-                                            <p class="mb-2">Tổng hợp kiến thức, kỹ năng và năng lực chuyên môn của bạn trong lĩnh vực tương ứng.</p>
-                                            <button class="btn btn-outline-primary btn-show-form" data-form="formChungChi" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Thêm mục</button>
+                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Certifications</p>
+                                            <p class="mb-2">Summarize your knowledge, skills, and expertise in the respective field.</p>
+                                            <button class="btn btn-outline-primary btn-show-form" data-form="formChungChi" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Add section</button>
                                         </div>
                                         <div>
                                             <img class="image-content" src="~/Assets/Client/JobsFinder/img/ChungChi.png" />
@@ -266,7 +268,7 @@
                                             </div>
                                         </div>
                                     }
-                                    <button class="btn btn-primary btn-show-form" data-form="formChungChi" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Thêm mục chứng chỉ</button>
+                                    <button class="btn btn-primary btn-show-form" data-form="formChungChi" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Add certification section</button>
                                 }
                             </div>
 
@@ -279,9 +281,9 @@
                                 {
                                     <div class="card mb-4 mb-lg-0 p-4 d-flex flex-row" style="background-color: #FFF">
                                         <div>
-                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Giải thưởng</p>
-                                            <p class="mb-2">Bạn có thể thêm những thành tựu đáng chú ý mà bạn đã đạt được trong quá trình làm việc, học tập, v.v...</p>
-                                            <button class="btn btn-outline-primary btn-show-form" data-form="formGiaiThuong" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Thêm mục</button>
+                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Awards</p>
+                                            <p class="mb-2">You can also add notable achievements you have attained during your work, study, etc...</p>
+                                            <button class="btn btn-outline-primary btn-show-form" data-form="formGiaiThuong" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Add section</button>
                                         </div>
                                         <div>
                                             <img class="image-content" src="~/Assets/Client/JobsFinder/img/GiaiThuong.png" />
@@ -313,7 +315,7 @@
                                             </div>
                                         </div>
                                     }
-                                    <button class="btn btn-primary btn-show-form" data-form="formGiaiThuong" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Thêm mục giải thưởng</button>
+                                    <button class="btn btn-primary btn-show-form" data-form="formGiaiThuong" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Add award section</button>
                                 }
                             </div>
 
@@ -326,9 +328,9 @@
                                 {
                                     <div class="card mb-4 mb-lg-0 p-4 d-flex flex-row" style="background-color: #FFF">
                                         <div>
-                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Khóa học</p>
-                                            <p class="mb-2">Bạn có thể thêm những khóa học đã và đang học, chúng sẽ giúp hồ sơ của bạn đầy đủ hơn.</p>
-                                            <button class="btn btn-outline-primary btn-show-form" data-form="formKhoaHoc" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Thêm mục</button>
+                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Courses</p>
+                                            <p class="mb-2">ou can also add the courses you have completed or are currently taking, which will make your profile more comprehensive.</p>
+                                            <button class="btn btn-outline-primary btn-show-form" data-form="formKhoaHoc" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Add section</button>
                                         </div>
                                         <div>
                                             <img class="image-content" src="~/Assets/Client/JobsFinder/img/KhaoHoc.png" />
@@ -360,7 +362,7 @@
                                             </div>
                                         </div>
                                     }
-                                    <button class="btn btn-primary btn-show-form" data-form="formKhoaHoc" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Thêm mục khóa học</button>
+                                    <button class="btn btn-primary btn-show-form" data-form="formKhoaHoc" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Add course section</button>
                                 }
                             </div>
 
@@ -373,9 +375,9 @@
                                 {
                                     <div class="card mb-4 mb-lg-0 p-4 d-flex flex-row" style="background-color: #FFF">
                                         <div>
-                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Dự án</p>
-                                            <p class="mb-2">Liệt kê các dự án cá nhân, nhóm bạn đã làm, đã tham gia giúp nhà tuyển dụng tin tưởng vào trình độ, khả năng chuyên môn của bạn hơn.</p>
-                                            <button class="btn btn-outline-primary btn-show-form" data-form="formDuAn" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Thêm mục</button>
+                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Projects</p>
+                                            <p class="mb-2">List personal or group projects you have worked on to help employers trust your level of expertise and competence more.</p>
+                                            <button class="btn btn-outline-primary btn-show-form" data-form="formDuAn" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Add section</button>
                                         </div>
                                         <div>
                                             <img class="image-content" src="~/Assets/Client/JobsFinder/img/DuAn.png" />
@@ -407,7 +409,7 @@
                                             </div>
                                         </div>
                                     }
-                                    <button class="btn btn-primary btn-show-form" data-form="formDuAn" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Thêm mục dự án</button>
+                                    <button class="btn btn-primary btn-show-form" data-form="formDuAn" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Add project section</button>
                                 }
                             </div>
 
@@ -420,9 +422,9 @@
                                 {
                                     <div class="card mb-4 mb-lg-0 p-4 d-flex flex-row" style="background-color: #FFF">
                                         <div>
-                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Sản phẩm</p>
-                                            <p class="mb-2">Tăng độ thuyết phục về khả năng, kỹ năng với các sản phẩm mà bạn đã làm.</p>
-                                            <button class="btn btn-outline-primary btn-show-form" data-form="formSanPham" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Thêm mục</button>
+                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Products</p>
+                                            <p class="mb-2">Increase persuasiveness about your abilities and skills with the products you have produced.</p>
+                                            <button class="btn btn-outline-primary btn-show-form" data-form="formSanPham" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Add section</button>
                                         </div>
                                         <div>
                                             <img class="image-content" src="~/Assets/Client/JobsFinder/img/SanPham.png" />
@@ -454,7 +456,7 @@
                                             </div>
                                         </div>
                                     }
-                                    <button class="btn btn-primary btn-show-form" data-form="formSanPham" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Thêm mục sản phẩm</button>
+                                    <button class="btn btn-primary btn-show-form" data-form="formSanPham" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Add product section</button>
                                 }
                             </div>
 
@@ -467,9 +469,9 @@
                                 {
                                     <div class="card mb-4 mb-lg-0 p-4 d-flex flex-row" style="background-color: #FFF">
                                         <div>
-                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Hoạt động xã hội & tình nguyện</p>
-                                            <p class="mb-2">Hoạt động xã hội & tình nguyện cũng là một nội dung khá quan trọng trong hồ sơ của bạn.</p>
-                                            <button class="btn btn-outline-primary btn-show-form" data-form="formHoatDong" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Thêm mục</button>
+                                            <p style="font-size: 17px; font-weight: 700; color: rgba(6, 24, 44)" class="mb-2">Social activities & volunteering</p>
+                                            <p class="mb-2">Social activities & volunteering are also important content in your profile.</p>
+                                            <button class="btn btn-outline-primary btn-show-form" data-form="formHoatDong" style="border-radius: 4px; font-size: 13px; text-transform: capitalize;">Add section</button>
                                         </div>
                                         <div>
                                             <img class="image-content" src="~/Assets/Client/JobsFinder/img/HoatDong.png" />
@@ -503,7 +505,7 @@
                                             </style>
                                         </div>
                                     }
-                                    <button class="btn btn-primary btn-show-form" data-form="formHoatDong" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Thêm mục hoạt động</button>
+                                    <button class="btn btn-primary btn-show-form" data-form="formHoatDong" style="border-radius: 0px; font-size: 13px; text-transform: capitalize;">Add activity section</button>
                                 }
                             </div>
 

@@ -32,7 +32,7 @@
     var listSanPham = sanPhamDao.ListAll(profile.UserID);
     var listHoatDong = hoatDongDao.ListAll(profile.UserID);
 
-    <h5 class="mb-4">Hồ sơ ứng viên</h5>
+    <h5 class="mb-4">Candidate profile</h5>
 
     <div class="d-flex position-relative" style="background-color: #f4f0e4; width: 100%; height: auto;">
         <div class="profile-left" style="background-color: #acaca2 ;">
@@ -55,15 +55,15 @@
                 }
                 @if (profile.GioiTinh != null)
                 {
-                    <p>Giới tính: @profile.GioiTinh</p>
+                    <p>Gender: @profile.GioiTinh</p>
                 }
                 else
                 {
-                    <p>Giới tính: </p>
+                    <p>Gender: Unknow</p>
                 }
             </div>
             <div class="profile-content px-3 my-3">
-                <h4>Liên hệ</h4>
+                <h4>Contact</h4>
                 <div class="my-2">
                     <div class="profile-boxInfo d-flex flex-row align-items-center">
                         <i class="bi bi-envelope"></i>
@@ -73,7 +73,7 @@
                         }
                         else
                         {
-                            <p>Example@gmail.com</p>
+                            <p>example@gmail.com</p>
                         }
                     </div>
                     <div class="profile-boxInfo d-flex flex-row align-items-center">
@@ -95,7 +95,7 @@
                         }
                         else
                         {
-                            <p style="width: 145px;">448 Lê Văn Việt, Tăng Nhơn Phú A, TP. Thủ Đức, TP. Hồ Chí Minh</p>
+                            <p style="width: 145px;">Unknow</p>
                         }
                     </div>
                 </div>
@@ -118,7 +118,7 @@
         </div>
         <div class="profile-right py-3">
             <div class="profile-content px-3 my-3">
-                <h4>Học vấn</h4>
+                <h4>Education</h4>
                 <div class="my-2">
                     @if (listHocVan.Count == 0)
                     {
@@ -188,7 +188,7 @@
                 </div>
             </div>
             <div class="profile-content px-3 my-3">
-                <h4>Kinh nghiệm</h4>
+                <h4>Experience</h4>
                 <div class="my-2">
                     @if (listKinhNghiem.Count == 0)
                     {
@@ -259,7 +259,7 @@
             </div>
 
             <div class="profile-content px-3 my-3">
-                <h4>Chứng chỉ</h4>
+                <h4>Certifications</h4>
                 <div class="my-2">
                     @if (listChungChi.Count == 0)
                     {
@@ -328,7 +328,7 @@
                 </div>
             </div>
             <div class="profile-content px-3 my-3">
-                <h4>Giải thưởng</h4>
+                <h4>Awards</h4>
                 <div class="my-2">
                     @if (listGiaiThuong.Count == 0)
                     {
@@ -397,7 +397,7 @@
                 </div>
             </div>
             <div class="profile-content px-3 my-3">
-                <h4>Khóa học</h4>
+                <h4>Courses</h4>
                 <div class="my-2">
                     @if (listKhoaHoc.Count == 0)
                     {
@@ -467,7 +467,7 @@
                 </div>
             </div>
             <div class="profile-content px-3 my-3">
-                <h4>Dự án</h4>
+                <h4>Projects</h4>
                 <div class="my-2">
                     @if (listDuAn.Count == 0)
                     {
@@ -537,7 +537,7 @@
                 </div>
             </div>
             <div class="profile-content px-3 my-3">
-                <h4>Sản phẩm</h4>
+                <h4>Products</h4>
                 <div class="my-2">
                     @if (listSanPham.Count == 0)
                     {
@@ -607,7 +607,7 @@
                 </div>
             </div>
             <div class="profile-content px-3 my-3">
-                <h4>Hoạt động xã hội & tình nguyện</h4>
+                <h4>Social activities & volunteering</h4>
                 <div class="my-2">
                     @if (listHoatDong.Count == 0)
                     {
