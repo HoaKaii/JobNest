@@ -19,5 +19,9 @@ namespace Model.DAO
         {
             return db.Menus.Where(x => x.TypeID == groupId && x.Status  == true).OrderBy(x => x.DisplayOrder).ToList();
         }
+        public int CountMenus()
+        {
+            return db.Menus.Count();
+        }
     }
 }

@@ -14,7 +14,6 @@ namespace Model.DAO
         {
             db = new JobsFinderDBContext();
         }
-
         public bool Insert(KyNang entity)
         {
             if (entity.Status == null)
@@ -37,7 +36,6 @@ namespace Model.DAO
                 return false;
             }
         }
-
         public bool Update(KyNang entity)
         {
             try
@@ -45,6 +43,7 @@ namespace Model.DAO
                 var kyNang = db.KyNangs.Find(entity.ID);
                 kyNang.TenKyNang = entity.TenKyNang;
                 kyNang.DanhGia = entity.DanhGia;
+                kyNang.Caption = entity.Caption;
                 kyNang.MoTaChiTiet = entity.MoTaChiTiet;
                 kyNang.ModifiedDate = DateTime.Now;
 
@@ -56,7 +55,6 @@ namespace Model.DAO
                 return false;
             }
         }
-
         public bool Delete(KyNang entity)
         {
             try
@@ -78,8 +76,7 @@ namespace Model.DAO
                 return false;
             }
         }
-
-        public List<KyNang> ListAll(long? id)
+        public List<KyNang> ListAll(string id)
         {
             return db.KyNangs.Where(x => x.Status == true && x.UserID == id).ToList();
         }

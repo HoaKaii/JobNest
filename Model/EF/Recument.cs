@@ -13,7 +13,7 @@ namespace Model.EF
 
         public int JobID { get; set; }
 
-        public long? UserID { get; set; }
+        public string UserID { get; set; }
 
         [Column(TypeName = "ntext")]
         public string LetterInfo { get; set; }

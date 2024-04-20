@@ -88,7 +88,7 @@ namespace Model.DAO
             }
         }
 
-        public List<DuAn> ListAll(long? id)
+        public List<DuAn> ListAll(string id)
         {
             return db.DuAns.Where(x => x.Status == true && x.UserID == id).ToList();
         }

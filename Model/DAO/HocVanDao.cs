@@ -84,7 +84,7 @@ namespace Model.DAO
         }
 
 
-        public List<HocVan> ListAll(long? id)
+        public List<HocVan> ListAll(string id)
         {
             return db.HocVans.Where(x => x.Status == true && x.UserID == id).ToList();
         }

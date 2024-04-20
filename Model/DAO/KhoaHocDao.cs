@@ -83,7 +83,7 @@ namespace Model.DAO
             }
         }
 
-        public List<KhoaHoc> ListAll(long? id)
+        public List<KhoaHoc> ListAll(string id)
         {
             return db.KhoaHocs.Where(x => x.Status == true && x.UserID == id).ToList();
         }

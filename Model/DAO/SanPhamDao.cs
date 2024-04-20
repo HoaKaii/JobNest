@@ -81,7 +81,7 @@ namespace Model.DAO
             }
         }
 
-        public List<SanPham> ListAll(long? id)
+        public List<SanPham> ListAll(string id)
         {
             return db.SanPhams.Where(x => x.Status == true && x.UserID == id).ToList();
         }

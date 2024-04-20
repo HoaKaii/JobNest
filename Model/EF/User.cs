@@ -9,7 +9,8 @@ namespace Model.EF
     [Table("User")]
     public partial class User
     {
-        public long ID { get; set; }
+        [Key]
+        public string ID { get; set; }
 
         [StringLength(50)]
         public string UserName { get; set; }
@@ -42,19 +43,5 @@ namespace Model.EF
 
         [StringLength(250)]
         public string Avatar { get; set; }
-
-        public int? NgaySinh { get; set; }
-
-        public int? ThangSinh { get; set; }
-
-        public int? NamSinh { get; set; }
-
-        [StringLength(250)]
-        public string LienKet { get; set; }
-
-        [Column(TypeName = "ntext")]
-        public string GioiThieu { get; set; }
-
-        public long? ViewCount { get; set; }
     }
 }

@@ -81,7 +81,7 @@ namespace Model.DAO
             }
         }
 
-        public List<KinhNghiem> ListAll(long? id)
+        public List<KinhNghiem> ListAll(string id)
         {
             return db.KinhNghiems.Where(x => x.Status == true && x.UserID == id).ToList();
         }

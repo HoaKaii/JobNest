@@ -86,5 +86,9 @@ namespace Model.DAO
                 return false;
             }
         }
+        public int CountCareers()
+        {
+            return db.Careers.Count();
+        }
     }
 }

@@ -80,7 +80,7 @@ namespace Model.DAO
             }
         }
 
-        public List<GiaiThuong> ListAll(long? id)
+        public List<GiaiThuong> ListAll(string id)
         {
             return db.GiaiThuongs.Where(x => x.Status == true && x.UserID == id).ToList();
         }

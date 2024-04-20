@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Model.EF;
 using PagedList;
 
@@ -17,7 +14,7 @@ namespace Model.DAO
         {
             db = new JobsFinderDBContext();
         }
-        public long Insert(User entity)
+        public string Insert(User entity)
         {
             if (entity.Status == null)
             {
@@ -29,7 +26,7 @@ namespace Model.DAO
                 {
                     db.Users.Add(entity);
                     db.SaveChanges();
-                    // Sau khi thêm người dùng vào bảng User, thêm một bản ghi tương ứng vào bảng Profile
+
                     Profile profile = new Profile
                     {
                         UserID = entity.ID,
@@ -53,7 +50,7 @@ namespace Model.DAO
                 }
             }
         }
-        public long InsertForFacebook(User entity)
+        public string InsertForFacebook(User entity)
         {
             var user = db.Users.SingleOrDefault(x => x.UserName == entity.UserName);
             if (user == null)
@@ -70,29 +67,52 @@ namespace Model.DAO
 
         public bool Update(User entity)
         {
-            try
+            using (var transaction = db.Database.BeginTransaction())
             {
-                var user = db.Users.Find(entity.ID);
-                user.Name = entity.Name;
-                if (!string.IsNullOrEmpty(entity.Password))
+                try
                 {
-                    user.Password = entity.Password;
+                    var user = db.Users.Find(entity.ID);
+                    if (user != null)
+                    {
+                        user.Name = entity.Name;
+                        if (!string.IsNullOrEmpty(entity.Password))
+                        {
+                            user.Password = entity.Password;
+                        }
+                        user.Address = entity.Address;
+                        user.Email = entity.Email;
+                        user.Phone = entity.Phone;
+                        user.Avatar = entity.Avatar;
+                        user.ModifiedBy = entity.ModifiedBy;
+                        user.ModifiedDate = DateTime.Now;
+
+                        // Cập nhật thông tin trong bảng Profile
+                        var profile = db.Profiles.FirstOrDefault(p => p.UserID == entity.ID);
+                        if (profile != null)
+                        {
+                            profile.HoVaTen = entity.Name;
+                            profile.AnhCaNhan = entity.Avatar;
+                            profile.DiaChiHienTai = entity.Address;
+                            profile.Email = entity.Email;
+                            profile.SoDienThoai = entity.Phone;
+                        }
+
+                        db.SaveChanges();
+                        transaction.Commit();
+                        return true;
+                    }
+                    else
+                    {
+                        transaction.Rollback();
+                        return false;
+                    }
                 }
-                user.Address = entity.Address;
-                user.Email = entity.Email;
-                user.Phone = entity.Phone;
-                user.Avatar = entity.Avatar;
-                user.ModifiedBy = entity.ModifiedBy;
-                user.ModifiedDate = DateTime.Now;
-
-                db.SaveChanges();
-                return true;
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return false;
+                }
             }
-            catch (Exception)
-            {
-                return false;
-            }
-
         }
 
         public IPagedList<User> ListAllPaging(string searchString, int page, int pageSize)
@@ -114,7 +134,7 @@ namespace Model.DAO
             return db.Users.SingleOrDefault(x => x.UserName == userName);
         }
 
-        public string GetName(long? UserID)
+        public string GetName(string UserID)
         {
             var user = db.Users.FirstOrDefault(x => x.ID == UserID);
             if (user != null)
@@ -126,7 +146,7 @@ namespace Model.DAO
                 return "JobsFinder";
             }
         }
-        public string GetMetaTitle(long? UserID)
+        public string GetMetaTitle(string UserID)
         {
             var user = db.Users.FirstOrDefault(x => x.ID == UserID);
             if (user != null)
@@ -142,7 +162,7 @@ namespace Model.DAO
                 return "jobsfinder";
             }
         }
-        public string GetAvatar(long? UserID)
+        public string GetAvatar(string UserID)
         {
             var user = db.Users.FirstOrDefault(x => x.ID == UserID);
             if (user != null)

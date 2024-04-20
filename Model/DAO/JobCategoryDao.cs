@@ -118,5 +118,9 @@ namespace Model.DAO
                 return "Không chứa danh mục";
             }
         }
+        public int CountJobCategories()
+        {
+            return db.JobCategories.Count();
+        }
     }
 }

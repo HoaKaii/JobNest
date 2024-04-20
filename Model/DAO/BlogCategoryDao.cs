@@ -101,5 +101,9 @@ namespace Model.DAO
                 return false;
             }
         }
+        public int CountBlogCategories()
+        {
+            return db.BlogCategories.Count();
+        }
     }
 }

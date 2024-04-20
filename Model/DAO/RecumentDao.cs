@@ -34,20 +34,20 @@ namespace Model.DAO
             }
         }
 
-        public long? getProfileID(long? ID)
+        public string getProfileID(long? ID)
         {
             var item = db.Recuments.Where(x => x.ID == ID).FirstOrDefault();
-            return item.ProfileID;
+            return item.UserID;
         }
 
         public bool Delete(Recument entity)
         {
             try
             {
-                var Recument = db.HocVans.Find(entity.ID);
+                var Recument = db.Recuments.Find(entity.ID);
                 if (Recument != null)
                 {
-                    db.HocVans.Remove(Recument);
+                    db.Recuments.Remove(Recument);
                     db.SaveChanges();
                     return true;
                 }
@@ -82,7 +82,7 @@ namespace Model.DAO
             return db.Recuments.Where(x => x.JobID == jobID && x.Status == 1).ToList();
         }
 
-        public bool CheckApply(long userID, int jobID)
+        public bool CheckApply(string userID, int jobID)
         {
             var check = db.Recuments.Where(x => x.UserID == userID && x.JobID == jobID).FirstOrDefault();
             if (check != null)
@@ -94,7 +94,7 @@ namespace Model.DAO
             }
         }
 
-        public List<Recument> ListRecumented(long userID)
+        public List<Recument> ListRecumented(string userID)
         {
             return db.Recuments.Where(x => x.UserID == userID).ToList();
         }

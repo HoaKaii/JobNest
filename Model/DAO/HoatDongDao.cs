@@ -83,7 +83,7 @@ namespace Model.DAO
             }
         }
 
-        public List<HoatDong> ListAll(long? id)
+        public List<HoatDong> ListAll(string id)
         {
             return db.HoatDongs.Where(x => x.Status == true && x.UserID == id).ToList();
         }

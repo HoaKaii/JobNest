@@ -79,7 +79,7 @@ namespace Model.DAO
             catch (Exception) { return false; }
         }
 
-        public List<ChungChi> ListAll(long? id)
+        public List<ChungChi> ListAll(string id)
         {
             return db.ChungChis.Where(x => x.Status == true && x.UserID == id).ToList();
         }

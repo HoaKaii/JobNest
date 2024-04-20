@@ -16,12 +16,12 @@ namespace Model.DAO
             db = new JobsFinderDBContext();
         }
 
-        public Profile GetByID(long? userID)
+        public Profile GetByID(string userID)
         {
             return db.Profiles.SingleOrDefault(x => x.UserID == userID);
         }
 
-        public long Insert(Profile entity)
+        public string Insert(Profile entity)
         {
             db.Profiles.Add(entity);
             db.SaveChanges();
@@ -50,12 +50,12 @@ namespace Model.DAO
             return false;
         }
 
-        public List<Profile> ListAll(long id)
+        public List<Profile> ListAll(string id)
         {
             return db.Profiles.Where(x => x.UserID == id ).ToList();
         }
 
-        public string GetAvatar(long? UserID)
+        public string GetAvatar(string UserID)
         {
             var user = db.Profiles.FirstOrDefault(x => x.UserID == UserID);
             if (user != null)

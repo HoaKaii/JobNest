@@ -190,7 +190,7 @@ namespace Model.DAO
             return db.Jobs.Where(x  => x.Status == true &&  x.CompanyID == companyId).ToList();
         }
 
-        public long? GetUserID(long? id)
+        public string GetUserID(string id)
         {
             var job = db.Jobs.FirstOrDefault(x => x.UserID == id);
             if (job != null)
@@ -315,13 +315,12 @@ namespace Model.DAO
             return $"Còn {remainingDays} ngày để ứng tuyển";
         }
 
-
-        public string SubTitle(int? comID, long? uID)
+        public string SubTitle(int? comID, string uID)
         {
             var companyDao = new CompanyDao();
             var userDao = new UserDao();
             int? companyID =  GetCompanyID(comID);
-            long? userID =  GetUserID(uID);
+            string userID =  GetUserID(uID);
             string name;
             if (companyID != null)
             {
@@ -366,12 +365,12 @@ namespace Model.DAO
             }
             return name;
         }
-        public string GetAvatarFromCompany(int? comID, long? uID)
+        public string GetAvatarFromCompany(int? comID, string uID)
         {
             var companyDao = new CompanyDao();
             var userDao = new UserDao();
             int? companyID =  GetCompanyID(comID);
-            long? userID =  GetUserID(uID);
+            string userID =  GetUserID(uID);
             string name;
             if (companyID != null)
             {

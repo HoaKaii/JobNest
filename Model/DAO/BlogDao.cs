@@ -35,6 +35,11 @@ namespace Model.DAO
                 slug = slug.Replace(" ", "-");
                 entity.MetaTitle = slug;
             }
+            if (entity.Image == null)
+            {
+                entity.Image = "/Data/images/Test/blog.jpg";
+            }
+
             db.Blogs.Add(entity);
             db.SaveChanges();
             return entity.ID;
@@ -95,6 +100,10 @@ namespace Model.DAO
             db.SaveChanges();
 
             return (bool)blog.Status;
+        }
+        public int CountBlogs()
+        {
+            return db.Blogs.Count();
         }
     }
 }

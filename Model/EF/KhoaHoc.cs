@@ -9,7 +9,7 @@ namespace Model.EF
     [Table("KhoaHoc")]
     public partial class KhoaHoc
     {
-        public long UserID { get; set; }
+        public string UserID { get; set; }
 
         [Key]
         public long ID { get; set; }

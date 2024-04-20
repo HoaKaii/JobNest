@@ -9,7 +9,7 @@ namespace Model.EF
     [Table("KyNang")]
     public partial class KyNang
     {
-        public long UserID { get; set; }
+        public string UserID { get; set; }
 
         [Key]
         public long ID { get; set; }
@@ -18,6 +18,7 @@ namespace Model.EF
         public string TenKyNang { get; set; }
 
         public int? DanhGia { get; set; }
+        public   string Caption { get; set; }
 
         [Column(TypeName = "ntext")]
         public string MoTaChiTiet { get; set; }

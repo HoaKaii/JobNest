@@ -85,7 +85,7 @@ namespace Model.EF
 
         public int? CarrerID { get; set; }
 
-        public long? UserID { get; set; }
+        public string UserID { get; set; }
 
         public Recument recument { get; set; }
 
