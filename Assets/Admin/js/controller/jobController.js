@@ -17,9 +17,9 @@
                 type: "POST",
                 success: function (respone) {
                     if (respone.status == true) {
-                        btn.text("Kích hoạt");
+                        btn.text("Active");
                     } else {
-                        btn.text("Khóa");
+                        btn.text("Unactive");
                     }
                 }
             });

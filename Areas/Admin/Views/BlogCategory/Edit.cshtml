@@ -1,11 +1,11 @@
 ﻿@model Model.EF.BlogCategory
 
 @{
-    ViewBag.Title = "Chỉnh sửa danh mục Blog";
+    ViewBag.Title = "Edit blog category";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 @section header{
-    Chỉnh sửa danh mục Blog
+    Edit blog category
 }
 
 @using (Html.BeginForm("Edit", "BlogCategory", FormMethod.Post))
@@ -27,7 +27,7 @@
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Hoàn tất" class="btn btn-primary" />
+            <input type="submit" value="Complete" class="btn btn-primary" />
         </div>
     </div>
 </div>

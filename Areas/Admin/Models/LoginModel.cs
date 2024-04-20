@@ -9,10 +9,10 @@ namespace JobsFinder_Main.Areas.Admin.Models
 {
     public class LoginModel
     {
-        [Required(ErrorMessage = "Vui lòng nhập tên đăng nhập")]
+        [Required(ErrorMessage = "Plese enter username")]
         public string UserName { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng nhập mật khẩu")]
+        [Required(ErrorMessage = "Plese enter password")]
         public string Password { get; set; }
 
         public bool RememberMe { get; set; }

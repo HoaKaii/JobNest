@@ -1,4 +1,4 @@
-﻿@model Model.EF.User
+﻿@model JobsFinder_Main.Identity.AppUser
 
 @section jsFooter{
     <script>
@@ -21,7 +21,7 @@
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
         <div class="form-group">
-            <p>Fullname</p>
+            <p>Name</p>
             <div class="col-md-10">
                 @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
@@ -31,16 +31,16 @@
         <div class="form-group">
             <p>Password</p>
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.Password, new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                @Html.PasswordFor(model => model.PasswordHash, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PasswordHash, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            <p>Phone number</p>
+            <p>Phone</p>
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.Phone, new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.PhoneNumber, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
             </div>
         </div>
 

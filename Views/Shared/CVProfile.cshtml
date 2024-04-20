@@ -1,5 +1,5 @@
-﻿@{
-    var session = (JobsFinder_Main.Common.UserLogin)Session[JobsFinder_Main.Common.CommonConstants.USER_SESSION];
+﻿@using Microsoft.AspNet.Identity
+@{
     var hocVanDao = new Model.DAO.HocVanDao();
     var kinhNghiemDao = new Model.DAO.KinhNghiemDao();
     var kyNangDao = new Model.DAO.KyNangDao();
@@ -10,21 +10,22 @@
     var sanPhamDao = new Model.DAO.SanPhamDao();
     var hoatDongDao = new Model.DAO.HoatDongDao();
     var recumentDao = new Model.DAO.RecumentDao();
+    string userID = User.Identity.GetUserId();
 }
-@if (session != null)
+@if (User.Identity.IsAuthenticated)
 {
 
     var profileDao = new Model.DAO.ProfileDao();
-    var profile = profileDao.GetByID(session.UserID);
-    var listHocVan = hocVanDao.ListAll(session.UserID);
-    var listKinhNghiem = kinhNghiemDao.ListAll(session.UserID);
-    var listKyNang = kyNangDao.ListAll(session.UserID);
-    var listChungChi = chungChiDao.ListAll(session.UserID);
-    var listGiaiThuong = giaiThuongdao.ListAll(session.UserID);
-    var listKhoaHoc = khoaHocDao.ListAll(session.UserID);
-    var listDuAn = duAnDao.ListAll(session.UserID);
-    var listSanPham = sanPhamDao.ListAll(session.UserID);
-    var listHoatDong = hoatDongDao.ListAll(session.UserID);
+    var profile = profileDao.GetByID(userID);
+    var listHocVan = hocVanDao.ListAll(userID);
+    var listKinhNghiem = kinhNghiemDao.ListAll(userID);
+    var listKyNang = kyNangDao.ListAll(userID);
+    var listChungChi = chungChiDao.ListAll(userID);
+    var listGiaiThuong = giaiThuongdao.ListAll(userID);
+    var listKhoaHoc = khoaHocDao.ListAll(userID);
+    var listDuAn = duAnDao.ListAll(userID);
+    var listSanPham = sanPhamDao.ListAll(userID);
+    var listHoatDong = hoatDongDao.ListAll(userID);
 
     <div class="d-flex position-relative" style="background-color: #f4f0e4; width: 100%; height: auto;">
         <div class="profile-left" style="background-color: #acaca2 ;">
@@ -93,7 +94,7 @@
                 </div>
             </div>
             <div class="profile-content px-3 my-3">
-                <h4>About Us</h4>
+                <h4>About Me</h4>
                 <div class="my-2">
                     <div class="profile-boxInfo d-flex flex-row align-items-center">
                         @if (profile.GioiThieu != null)
@@ -179,6 +180,78 @@
                     }
                 </div>
             </div>
+
+            <div class="profile-content px-3 my-3">
+                <h4>Skill</h4>
+                <div class="my-2">
+                    @if (listKyNang.Count == 0)
+                    {
+                        <div class="d-flex">
+                            <div class="d-flex flex-column">
+                                <p style="width: 150px; color: #4CA6A8; ">Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
+                                <p style="font-family: 'Crimson Text', serif; font-size: 14px;">2021 - 2022</p>
+                            </div>
+                            <div class="d-flex flex-column align-items-center">
+                                <p class="dot"></p>
+                                <p class="line"></p>
+                            </div>
+                            <div class="mx-2">
+                                <p style="font-family: 'Crimson Text', serif; font-size: 16px;">Company Name Or Business</p>
+                                <p class="py-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="d-flex flex-column">
+                                <p style="width: 150px; color: #4CA6A8; ">Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
+                                <p style="font-family: 'Crimson Text', serif; font-size: 14px;">2021 - 2022</p>
+                            </div>
+                            <div class="d-flex flex-column align-items-center">
+                                <p class="dot"></p>
+                                <p class="line"></p>
+                            </div>
+                            <div class="mx-2">
+                                <p style="font-family: 'Crimson Text', serif; font-size: 16px;">Company Name Or Business</p>
+                                <p class="py-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="d-flex flex-column">
+                                <p style="width: 150px; color: #4CA6A8; ">Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
+                                <p style="font-family: 'Crimson Text', serif; font-size: 14px;">2021 - 2022</p>
+                            </div>
+                            <div class="d-flex flex-column align-items-center">
+                                <p class="dot"></p>
+                                <p class="line"></p>
+                            </div>
+                            <div class="mx-2">
+                                <p style="font-family: 'Crimson Text', serif; font-size: 16px;">Company Name Or Business</p>
+                                <p class="py-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        foreach (var item in listKyNang)
+                        {
+                            <div class="d-flex">
+                                <div class="d-flex flex-column">
+                                    <p style="width: 150px; color: #4CA6A8; ">@item.TenKyNang</p>
+                                    <p style="font-family: 'Crimson Text', serif; font-size: 14px;">@item.DanhGia</p>
+                                </div>
+                                <div class="d-flex flex-column align-items-center">
+                                    <p class="dot"></p>
+                                    <p class="line"></p>
+                                </div>
+                                <div class="mx-2">
+                                    <p style="font-family: 'Crimson Text', serif; font-size: 16px;">@item.Caption</p>
+                                    <p class="py-2">@item.MoTaChiTiet</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
             <div class="profile-content px-3 my-3">
                 <h4>Experience</h4>
                 <div class="my-2">

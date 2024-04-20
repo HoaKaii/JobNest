@@ -1,4 +1,5 @@
 ﻿using JobsFinder_Main.Common;
+using Microsoft.AspNet.Identity;
 using Model.DAO;
 using Model.EF;
 using System;
@@ -73,12 +74,27 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult Apply(Job entity)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
+            if (User.Identity.IsAuthenticated)
             {
                 var dao = new JobDao();
                 var recumentDao = new RecumentDao();
-                var confirm = recumentDao.CheckApply(session.UserID, entity.recument.JobID);
+                var userID = User.Identity.GetUserId();
+                string Name = "";
+                string Phone = "";
+                string Address = "";
+                string Email = "";
+                using (var dbContext = new Identity.AppDbContext())
+                {
+                    var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+                    if (user != null)
+                    {
+                        Name = user.Name;
+                        Phone = user.PhoneNumber;
+                        Address = user.Address;
+                        Email = user.Email;
+                    }
+                }
+                var confirm = recumentDao.CheckApply(userID, entity.recument.JobID);
 
                 if (confirm == false)
                 {
@@ -94,14 +110,14 @@ namespace JobsFinder_Main.Controllers
                         recument = new Recument
                         {
                             JobID = entity.recument.JobID,
-                            UserID = session.UserID,
+                            UserID = userID,
                             LetterInfo = entity.recument.LetterInfo,
                             CreateDate = DateTime.Now,
                             Status = 0,
-                            Name = session.Name,
-                            Phone = session.Phone,
-                            Email = session.Email,
-                            Address = session.Address,
+                            Name = Name,
+                            Phone = Phone,
+                            Email = Email,
+                            Address = Address,
                             ProfileID = entity.recument.ProfileID,
                         }
                     };

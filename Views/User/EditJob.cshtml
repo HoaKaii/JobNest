@@ -5,10 +5,6 @@
     Layout = "~/Views/Shared/_Layout_Manager.cshtml";
 }
 
-@{
-    var session = (JobsFinder_Main.Common.UserLogin)Session[JobsFinder_Main.Common.CommonConstants.USER_SESSION];
-}
-
 @section jsFooter{
     <script src="~/Assets/Admin/js/controller/jobController.js"></script>
     <script>
@@ -54,14 +50,14 @@
     </script>
 }
 
-@if (session == null)
+@if (!User.Identity.IsAuthenticated)
 {
     { Html.RenderAction("Login", "User"); }
 }
 else
 {
     var companyDao = new Model.DAO.CompanyDao();
-    ViewBag.CompanyId = new SelectList(companyDao.ListInUser(session?.UserName), "ID", "Name", Model.CompanyID);
+    ViewBag.CompanyId = new SelectList(companyDao.ListInUser(User.Identity.Name), "ID", "Name", Model.CompanyID);
 
     var jobCategoryDao = new Model.DAO.JobCategoryDao();
     ViewBag.JobCategoryId = new SelectList(jobCategoryDao.ListAll(), "ID", "Name", Model.CategoryID);
@@ -75,11 +71,11 @@ else
 
 
     <div class="mb-5">
-        <h5 class="mb-3">Danh sách ứng viên</h5>
+        <h5 class="mb-3">List of candidates</h5>
         <div>
             @if (listRecument.Count == 0)
             {
-                <p>Chưa có ứng viên nào</p>
+                <p>No candidates yet</p>
             }
             else
             {
@@ -90,7 +86,7 @@ else
                             <a href="/Recument/Detail/@item.ID" style="font-weight: 700; font-size: 15px">@item.Name</a>
                             <p class="m-0" style="font-size: 14px;">@item.Email</p>
                         </div>
-                        <a class="btn btn-primary" style="border-radius: 4px; height: fit-content; font-size: 13px; font-weight: 600;">Xem hồ sơ</a>
+                        <a class="btn btn-primary" style="border-radius: 4px; height: fit-content; font-size: 13px; font-weight: 600;">View profile</a>
                     </div>
                 }
             }
@@ -99,11 +95,11 @@ else
     </div>
 
     <div class="mb-5">
-        <h5 class="mb-3">Danh sách ứng viên đã duyệt</h5>
+        <h5 class="mb-3">Approved candidates list</h5>
         <div>
             @if (listApply.Count == 0)
             {
-                <p>Chưa có ứng viên được duyệt</p>
+                <p>No approved candidates yet</p>
             }
             else
             {
@@ -114,20 +110,20 @@ else
                             <a href="/Recument/Detail/@item.ID" style="font-weight: 700; font-size: 15px">@item.Name</a>
                             <p class="m-0" style="font-size: 14px;">@item.Email</p>
                         </div>
-                        <a class="btn btn-primary" style="border-radius: 4px; height: fit-content; font-size: 13px; font-weight: 600;">Xem hồ sơ</a>
+                        <a class="btn btn-primary" style="border-radius: 4px; height: fit-content; font-size: 13px; font-weight: 600;">View profile</a>
                     </div>
                 }
             }
         </div>
     </div>
 
-    <button class="btn btn-primary btn-show-form" data-form="formEditJob" style="font-size: 14px; text-transform:capitalize; border-radius: 4px; width: 100%;">Chỉnh sửa bài tuyển dụng</button>
+    <button class="btn btn-primary btn-show-form" data-form="formEditJob" style="font-size: 14px; text-transform:capitalize; border-radius: 4px; width: 100%;">Edit job posting</button>
 
     <div id="overlay"></div>
 
     <div id="form-input" class="mb-3">
         <div id="formEditJob" class="form-profile">
-            <h5 style="background-color: #fff; position: fixed; width: 900px; z-index: 100; padding: 24px; box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;">Chỉnh sửa bài tuyển dụng</h5>
+            <h5 style="background-color: #fff; position: fixed; width: 900px; z-index: 100; padding: 24px; box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;">Edit job posting</h5>
 
             @using (Html.BeginForm("EditJob", "User", FormMethod.Post))
             {
@@ -137,7 +133,7 @@ else
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                     <div class="form-group company-section">
-                        <p>Chọn công ty tuyển dụng</p>
+                        <p>Select recruiting company</p>
                         <div class="col-md-10">
                             @if (ViewBag.CompanyId != null)
                             {
@@ -145,14 +141,14 @@ else
                             }
                             else
                             {
-                                <a href="/User/CreateCompany">Tạo mới công ty</a>
+                                <a href="/User/CreateCompany">Create new company</a>
                             }
                             @Html.ValidationMessageFor(model => model.CompanyID, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <p>Tên công việc</p>
+                        <p>Job name</p>
                         <div class="col-md-10">
                             @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
@@ -160,7 +156,7 @@ else
                     </div>
 
                     <div class="form-group">
-                        <p>Mô tả công việc</p>
+                        <p>Job description</p>
                         <div class="col-md-10">
                             @Html.TextAreaFor(model => model.Description, new { @class = "form-control", @id = "txtDescription" })
                             @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
@@ -168,7 +164,7 @@ else
                     </div>
 
                     <div class="form-group">
-                        <p>Yêu cầu ứng viên</p>
+                        <p>Candidate requirements</p>
                         <div class="col-md-10">
                             @Html.TextAreaFor(model => model.RequestCandidate, new { @class = "form-control", @id = "txtRequestCandidate" })
                             @Html.ValidationMessageFor(model => model.RequestCandidate, "", new { @class = "text-danger" })
@@ -176,7 +172,7 @@ else
                     </div>
 
                     <div class="form-group">
-                        <p>Quyền lợi</p>
+                        <p>Benefits</p>
                         <div class="col-md-10">
                             @Html.TextAreaFor(model => model.Interest, new { @class = "form-control", @id = "txtInterest" })
                             @Html.ValidationMessageFor(model => model.Interest, "", new { @class = "text-danger" })
@@ -184,7 +180,7 @@ else
                     </div>
 
                     <div class="form-group">
-                        <p>Cách thức ứng tuyển</p>
+                        <p>Application process</p>
                         <div class="col-md-10">
                             @Html.TextAreaFor(model => model.Details, new { @class = "form-control", @id = "txtDetail" })
                             @Html.ValidationMessageFor(model => model.Details, "", new { @class = "text-danger" })
@@ -192,24 +188,24 @@ else
                     </div>
 
                     <div class="form-group">
-                        <p>Mức lương</p>
+                        <p>Salary</p>
                         <div class="col-md-10">
                             @Html.DropDownListFor(model => model.Salary, new SelectList(new List<SelectListItem>
                             {
-                                new SelectListItem { Text = "Thương lượng", Value = "False" },
-                                new SelectListItem { Text = "Nhập giá trị cụ thể", Value = "True" }
+                                new SelectListItem { Text = "Negotiable", Value = "False" },
+                                new SelectListItem { Text = "Enter specific value", Value = "True" }
                             }, "Value", "Text"), new { @class = "form-control", onchange = "salaryChange(this)" })
                             @Html.ValidationMessageFor(model => model.Salary, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
                     <div class="form-group" id="salary-min-max" style="display:none">
-                        <p>Mức lương tối thiểu</p>
+                        <p>Minimum salary</p>
                         <div class="col-md-10">
                             @Html.TextBoxFor(model => model.SalaryMin, new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.SalaryMin, "", new { @class = "text-danger" })
                         </div>
-                        <p>Mức lương tối đa</p>
+                        <p>Maximim salary</p>
                         <div class="col-md-10">
                             @Html.TextBoxFor(model => model.SalaryMax, new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.SalaryMax, "", new { @class = "text-danger" })
@@ -217,7 +213,7 @@ else
                     </div>
 
                     <div class="form-group">
-                        <p>Số lượng tuyển</p>
+                        <p>Number of vacancies</p>
                         <div class="col-md-10">
                             @Html.TextBoxFor(model => model.Quantity, new { @class = "form-control", type = "number", min = "0", max = "100" })
                             @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
@@ -225,7 +221,7 @@ else
                     </div>
 
                     <div class="form-group">
-                        <p>Chọn danh mục công việc</p>
+                        <p>Select job category</p>
                         <div class="col-md-10">
                             @if (ViewBag.JobCategoryId != null)
                             {
@@ -240,7 +236,7 @@ else
                     </div>
 
                     <div class="form-group">
-                        <p>Chọn danh mục ngành nghề</p>
+                        <p>Select industry category</p>
                         <div class="col-md-10">
                             @if (ViewBag.CareerId != null)
                             {
@@ -255,7 +251,7 @@ else
                     </div>
 
                     <div class="form-group">
-                        <p>Hạn nộp hồ sơ</p>
+                        <p>Application deadline</p>
                         <div class="col-md-10">
                             <div class="input-group date">
                                 @Html.TextBoxFor(model => model.Deadline, new { @class = "form-control" })
@@ -268,7 +264,7 @@ else
                     </div>
 
                     <div class="form-group">
-                        <p>Năm kinh nghiệm</p>
+                        <p>Years of experience</p>
                         <div class="col-md-10">
                             @Html.TextBoxFor(model => model.Experience, new { @class = "form-control", type = "number", min = "0", max = "5" })
                             @Html.ValidationMessageFor(model => model.Experience, "", new { @class = "text-danger" })
@@ -276,20 +272,20 @@ else
                     </div>
 
                     <div class="form-group">
-                        <p>Giới tính</p>
+                        <p>Gender</p>
                         <div class="col-md-10">
                             @Html.DropDownListFor(model => model.Gender, new List<SelectListItem>
                             {
-                                new SelectListItem { Text = "Nam", Value = "Nam" },
-                                new SelectListItem { Text = "Nữ", Value = "Nữ" },
-                                new SelectListItem { Text = "Tất cả", Value = "Tất cả" }
-                            }, "Chọn giới tính", new { @class = "form-control" })
+                                new SelectListItem { Text = "Male", Value = "Male" },
+                                new SelectListItem { Text = "Female", Value = "Female" },
+                                new SelectListItem { Text = "All", Value = "All" }
+                            }, "Select gender", new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <p>Địa điểm làm việc</p>
+                        <p>Work location</p>
                         <div class="col-md-10">
                             @Html.TextBoxFor(model => model.WorkLocation, new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.WorkLocation, "", new { @class = "text-danger" })
@@ -299,14 +295,14 @@ else
                     <div class="d-flex flex-row">
                         <div class="form-group" style="margin-right: 12px; width: 100%;">
                             <div class="col-md-offset-2 col-md-10">
-                                <input type="submit" value="Hoàn tất" class="btn btn-primary" style="border-radius: 4px; font-size: 14px; font-weight: 500; text-transform: inherit; width: 100%;" />
+                                <input type="submit" value="Complete" class="btn btn-primary" style="border-radius: 4px; font-size: 14px; font-weight: 500; text-transform: inherit; width: 100%;" />
                             </div>
                         </div>
 
                         <div class="form-group m-0 btn-delete" style="margin-left: 12px; width: 100%;">
-                            @Ajax.ActionLink("Xóa", "DeleteJob", new { id = Model.ID }, new AjaxOptions
+                            @Ajax.ActionLink("Delete", "DeleteJob", new { id = Model.ID }, new AjaxOptions
                             {
-                                Confirm = "Bạn có chắc chắn muốn xóa công việc này?",
+                                Confirm = "Are you sure you want to delete this job?",
                                 HttpMethod = "DELETE",
                                 OnSuccess = "handleDeleteSuccess",
                                 OnFailure = "handleDeleteFailure",

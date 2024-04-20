@@ -68,7 +68,7 @@ namespace JobsFinder_Main
 
             routes.MapRoute(
                 name: "Login",
-                url: "dang-nhap",
+                url: "login",
                 defaults: new { controller = "User", action = "Login", id = UrlParameter.Optional },
                 namespaces: new[] { "JobsFinder_Main.Controllers" }
             );

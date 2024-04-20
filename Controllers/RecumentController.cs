@@ -1,4 +1,5 @@
 ﻿using JobsFinder_Main.Common;
+using Microsoft.AspNet.Identity;
 using Model.DAO;
 using Model.EF;
 using System;
@@ -27,12 +28,27 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult Create(Recument model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
+            if (User.Identity.IsAuthenticated)
             {
+                var userID = User.Identity.GetUserId();
+                string Name = "";
+                string Phone = "";
+                string Address = "";
+                string Email = "";
+                using (var dbContext = new Identity.AppDbContext())
+                {
+                    var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+                    if (user != null)
+                    {
+                        Name = user.Name;
+                        Phone = user.PhoneNumber;
+                        Address = user.Address;
+                        Email = user.Email;
+                    }
+                }
                 var dao = new RecumentDao();
 
-                var confirm = dao.CheckApply(session.UserID, model.JobID);
+                var confirm = dao.CheckApply(userID, model.JobID);
 
                 if (confirm == false)
                 {
@@ -46,14 +62,14 @@ namespace JobsFinder_Main.Controllers
                     var recument = new Recument
                     {
                         JobID = model.JobID,
-                        UserID = session.UserID,
+                        UserID = userID,
                         LetterInfo = model.LetterInfo,
                         CreateDate = DateTime.Now,
                         Status = 0,
-                        Name = session.Name,
-                        Phone = session.Phone,
-                        Email = session.Email,
-                        Address = session.Address,
+                        Name = Name,
+                        Phone = Phone,
+                        Email = Email,
+                        Address = Address,
                         ProfileID = model.ProfileID,
                     };
 
@@ -91,9 +107,8 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult DeleteConfirm(Recument model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
-            {
+           if (User.Identity.IsAuthenticated)
+            { 
                 var dao = new RecumentDao();
                 var entity = dao.ViewDetail(model.ID);
                 if (entity != null)
@@ -118,7 +133,7 @@ namespace JobsFinder_Main.Controllers
                 {
                     TempData["Message"] = "An error occurred! Please try again!";
                     TempData["MessageType"] = "warning";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Warning";
                     return RedirectToAction("Detail", "Job", model.JobID);
                 }
             }
@@ -144,8 +159,7 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult Confirm(Recument model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
+            if (User.Identity.IsAuthenticated)
             {
                 var dao = new RecumentDao();
                 var entity = dao.ViewDetail(model.ID);
@@ -191,8 +205,7 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult Cance(Recument model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
+            if (User.Identity.IsAuthenticated)
             {
                 var dao = new RecumentDao();
                 var entity = dao.ViewDetail(model.ID);
@@ -201,14 +214,14 @@ namespace JobsFinder_Main.Controllers
                     var result = dao.Delete(entity);
                     if (result == true)
                     {
-                        TempData["Message"] = "Update sucessfull!";
+                        TempData["Message"] = "Cancle sucessfull!";
                         TempData["MessageType"] = "success";
                         TempData["Type"] = "Success";
                         return RedirectToAction("ListJobs", "User");
                     }
                     else
                     {
-                        TempData["Message"] = "Update unsucessfull!";
+                        TempData["Message"] = "Cancle unsucessfull!";
                         TempData["MessageType"] = "error";
                         TempData["Type"] = "Error";
                         return RedirectToAction("ListJobs", "User");
@@ -216,7 +229,7 @@ namespace JobsFinder_Main.Controllers
                 }
                 else
                 {
-                    TempData["Message"] = "Update unsucessfull!";
+                    TempData["Message"] = "Cancle unsucessfull!";
                     TempData["MessageType"] = "error";
                     TempData["Type"] = "Error";
                     return RedirectToAction("ListJobs", "User");

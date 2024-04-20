@@ -30,7 +30,7 @@ namespace JobsFinder_Main.Models
         public string WorkLocation { get; set; }
         public int? CompanyID { get; set; }
         public int? CarrerID { get; set; }
-        public long? UserID { get; set; }
+        public string UserID { get; set; }
         public string code { get; set; }
     }
 }

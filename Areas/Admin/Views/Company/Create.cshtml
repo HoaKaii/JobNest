@@ -1,12 +1,12 @@
 ﻿@model Model.EF.Company
 
 @{
-    ViewBag.Title = "Thêm mới công ty";
+    ViewBag.Title = "Add new company";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
 @section header{
-    Thêm mới công ty
+    Add new company
 }
 
 @section jsFooter{
@@ -46,7 +46,7 @@
         @Html.LabelFor(model => model.Avatar, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.TextBoxFor(model => model.Avatar, new { @class = "form-control", @id = "txtImage" })
-            <a id="btnSelectImage" class="btn btn-outline-primary mt-2" href="#">Tải lên hình ảnh</a>
+            <a id="btnSelectImage" class="btn btn-outline-primary mt-2" href="#">Upload image</a>
             @Html.ValidationMessageFor(model => model.Avatar, "", new { @class = "text-danger" })
         </div>
     </div>
@@ -86,7 +86,7 @@
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Hoàn tất" class="btn btn-primary" />
+            <input type="submit" value="Complete" class="btn btn-primary" />
         </div>
     </div>
 </div>

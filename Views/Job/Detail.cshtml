@@ -1,10 +1,10 @@
 ﻿@model Model.EF.Job
 
+@using Microsoft.AspNet.Identity
+
 @{
     ViewBag.Title = "Detail";
     Layout = "~/Views/Shared/_Layout.cshtml";
-
-    var session = (JobsFinder_Main.Common.UserLogin)Session[JobsFinder_Main.Common.CommonConstants.USER_SESSION];
 
     var companyDao = new Model.DAO.CompanyDao();
     ViewBag.Avatar = companyDao.GetAvatar(Model.CompanyID);
@@ -30,8 +30,6 @@
     var compannyURL = "/cong-ty/" + metaTitleCompany + "-" + Model.CompanyID;
 
 }
-
-
 
 <div class="container-xxl pt-5">
     <div class="container">
@@ -76,7 +74,7 @@
                     </div>
                     <span class="text-truncate">
                         <i class="bi bi-clock-history"></i>
-                        Hạn nộp: @ViewBag.DeadLine
+                        Deadline: @ViewBag.DeadLine
                     </span>
                 </div>
             </div>
@@ -108,12 +106,12 @@
                     <div class="box-content p-4" style="border-radius: 4px; border: 1px solid #E7F0FA; margin-top: 24px;">
                         <h4>Apply</h4>
 
-                        @if (session == null)
+                        @if (!User.Identity.IsAuthenticated)
                         {
                             <div class="card" style="background-color: #fafafa; margin-top: 24px;">
                                 <p>Candidates can submit their applications online by clicking Apply Now below.</p>
 
-                                <a href="/dang-nhap">Apply now</a>
+                                <a href="/login">Apply now</a>
                             </div>
                         }
                         else
@@ -136,7 +134,8 @@
                                             <div class="col-md-10" style="width: 100%;">
                                                 @{
                                                     var profileDao = new Model.DAO.ProfileDao();
-                                                    ViewBag.ListProfile = new SelectList(profileDao.ListAll(session.UserID), "UserID", "HoVaTen", Model.recument.ProfileID);
+                                                    var profiles = profileDao.ListAll(User.Identity.GetUserId());
+                                                    ViewBag.ListProfile = new SelectList(profiles, "UserID", "HoVaTen", Model.recument.ProfileID);
                                                 }
                                                 @if (ViewBag.ListProfile != null)
                                                 {

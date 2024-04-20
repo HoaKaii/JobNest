@@ -1,0 +1,140 @@
+﻿@model  JobsFinder_Main.Models.RegisterModel
+@using BotDetect.Web.Mvc;
+
+<link href="@BotDetect.Web.CaptchaUrls.Absolute.LayoutStyleSheetUrl" rel="stylesheet" type="text/css" />
+
+@{
+    MvcCaptcha registerCaptcha = new MvcCaptcha("registerCaptcha");
+    registerCaptcha.UserInputID = "CaptchaCode";
+}
+
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section jsFooter{
+    <script>
+        $('#btnSelectImage').on('click', function (e) {
+            var finder = new CKFinder();
+            e.preventDefault();
+            finder.selectActionFunction = function (url) {
+                $('#txtImage').val(url);
+            };
+            finder.popup();
+        })
+    </script>
+}
+
+<div class="container d-flex" style="width: 100%; padding: 24px 0; border-radius: 5px; background-color: #FFF;">
+    <div class="box-left" style="padding-left: 32px; padding-right: 100px;">
+        @using (Html.BeginForm("Register_Recruiter", "User", FormMethod.Post))
+        {
+            <div class="title">
+                <h3>Register (for Recruiter)</h3>
+                <p>Join our community and search for the job that suits you</p>
+            </div>
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <p>Username</p>
+                <div class="d-flex flex-row align-items-center box-input">
+                    <i class="bi bi-person-fill"></i>
+                    @Html.TextBoxFor(model => model.UserName, new { @placeholder = "Enter username", @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <p>Password</p>
+                <div class="d-flex flex-row align-items-center box-input">
+                    <i class="bi bi-lock-fill"></i>
+                    @Html.PasswordFor(model => model.Password, new { @placeholder = "Enter password", @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <p>Confirm password</p>
+                <div class="d-flex flex-row align-items-center box-input">
+                    <i class="bi bi-lock-fill"></i>
+                    @Html.PasswordFor(model => model.ConfirmPassword, new { @placeholder = "Enter confirm password", @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <p>Company name</p>
+                <div class="d-flex flex-row align-items-center box-input">
+                    <i class="bi bi-person-fill"></i>
+                    @Html.TextBoxFor(model => model.Name, new { @placeholder = "Enter company name", @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <p>Phone number</p>
+                <div class="d-flex flex-row align-items-center box-input">
+                    <i class="bi bi-telephone-fill"></i>
+                    @Html.TextBoxFor(model => model.Phone, new { @placeholder = "Enter phone number", @class = "form-control", @type = "number" })
+                </div>
+                @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <p>Email</p>
+                <div class="d-flex flex-row align-items-center box-input">
+                    <i class="bi bi-envelope-fill"></i>
+                    @Html.TextBoxFor(model => model.Email, new { @placeholder = "Enter email", @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <p>Address</p>
+                <div class="d-flex flex-row align-items-center box-input">
+                    <i class="bi bi-person-fill"></i>
+                    @Html.TextBoxFor(model => model.Address, new { @placeholder = "Enter your address", @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <div class="d-flex flex-row align-items-center box-input">
+                    @Html.Captcha(registerCaptcha)
+                    @Html.TextBox("CaptchaCode")
+                </div>
+            </div>
+
+            <div class="form-group text-center box-btn">
+                <div class="col-12">
+                    <button class="btn btn-primary btn-lg text-uppercase" type="submit" style="font-size: 14px; font-weight: 500; width: 100%;">Register</button>
+                </div>
+            </div>
+            <p style="width: 100%; text-align: center;">Or</p>
+            <a class="btn btn-secondary" style="width: 100%;  font-size: 14px;  font-weight: 500; text-transform: capitalize;">Register with facebook</a>
+            <div class="box-options">
+                <div class="box-signup">
+                    <p>You already have an account, right?</p>
+                    <a href="/User/Login_Recruiter" class="nav-link">Login</a>
+                </div>
+            </div>
+            <div class="box-support">
+                <p>You're having difficulty creating an account?</p>
+                <span>Please call (+84)-366748962 during office hours</span>
+            </div>
+        }
+    </div>
+
+    <div class="box-right">
+        ﻿<div class="box-banner-login">
+            <div class="bannerLogin-box-slick">
+                <div class="mini-box d-flex justify-content-center align-items-center" style="flex-direction: column;">
+                    <img src="~/Assets/Client/JobsFinder/img/Illustration.png" style="border-radius: 5px; margin: 32px 0; height: 360px; object-fit: cover;" />
+                    <h3 style="font-size: 18px; font-weight: 600; color: #212f3f;">Free tool to create beautiful CVs</h3>
+                    <p style="font-size: 14px; font-weight: 400; color: #212f3f; padding: 0 32px; text-align: center">Many beautiful CV templates, suitable for applying to various positions. Easily edit information, create CVs online quickly within 5 minutes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

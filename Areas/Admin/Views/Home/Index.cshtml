@@ -1,9 +1,59 @@
 ﻿
 @{
-    ViewBag.Title = "Trang chủ";
+    ViewBag.Title = "Home";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
 @section header  {
-    Trang chủ    
+    Home
 }
+
+<div>
+    <h3>Dashboard</h3>
+    <canvas id="multiChart" width="400" height="200"></canvas>
+</div>
+
+<script>
+    var multiChartCanvas = document.getElementById('multiChart').getContext('2d');
+    var multiChart = new Chart(multiChartCanvas, {
+        type: 'bar',
+        data: {
+            labels: ['Users', 'Companies', 'Job', 'Job Categories', 'Careers', 'Blog', 'Blog Categories', 'Menus'],
+            datasets: [{
+                label: 'Number of items',
+                data: [@ViewBag.UserCount, @ViewBag.CompanyCount, @ViewBag.JobCount, @ViewBag.JobCategoryCount, @ViewBag.CareerCount, @ViewBag.BlogCount, @ViewBag.BlogCategoryCount, @ViewBag.MenuCount],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 206, 86, 0.8)',
+                    'rgba(25, 25, 112, 0.8)',
+                    'rgba(128, 0, 128, 0.8)',
+                    'rgba(139, 69, 19, 0.8)',
+                    'rgba(50, 205, 50, 0.8)',
+                    'rgba(112, 128, 144, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 206, 86, 0.8)',
+                    'rgba(25, 25, 112, 0.8)',
+                    'rgba(128, 0, 128, 0.8)',
+                    'rgba(139, 69, 19, 0.8)',
+                    'rgba(50, 205, 50, 0.8)',
+                    'rgba(112, 128, 144, 0.8)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+
+</script>

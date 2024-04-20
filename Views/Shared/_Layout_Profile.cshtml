@@ -57,13 +57,13 @@
         @Html.Partial("_NavBarPartial")
         @Html.Partial("_PoupNofication")
 
-        @{
-            var session = (JobsFinder_Main.Common.UserLogin)Session[JobsFinder_Main.Common.CommonConstants.USER_SESSION];
-        }
-        @if (session != null)
+        @using Microsoft.AspNet.Identity
+
+        @if (User.Identity.IsAuthenticated)
         {
             var dao = new Model.DAO.CompanyDao();
-            var model = dao.ListInUser(session.UserName).ToList();
+            var model = dao.ListInUser(User.Identity.Name).ToList();
+            string userID = User.Identity.GetUserId();
 
             <section style="background-color: #eee;">
                 <div class="container py-5">
@@ -85,7 +85,7 @@
                             <div class="card mb-4 box-card">
                                 @{
                                     var hocVanDao = new Model.DAO.HocVanDao();
-                                    var listHocVan = hocVanDao.ListAll(session.UserID).ToList();
+                                    var listHocVan = hocVanDao.ListAll(userID).ToList();
                                 }
                                 @if (listHocVan.Count == 0)
                                 {
@@ -139,7 +139,7 @@
                             <div class="card mb-4 box-card">
                                 @{
                                     var kinhNghiemDao = new Model.DAO.KinhNghiemDao();
-                                    var listKinhNghiem = kinhNghiemDao.ListAll(session.UserID).ToList();
+                                    var listKinhNghiem = kinhNghiemDao.ListAll(userID).ToList();
                                 }
                                 @if (listKinhNghiem.Count == 0)
                                 {
@@ -186,7 +186,7 @@
                             <div class="card mb-4 box-card">
                                 @{
                                     var kyNangDao = new Model.DAO.KyNangDao();
-                                    var listKyNang = kyNangDao.ListAll(session.UserID).ToList();
+                                    var listKyNang = kyNangDao.ListAll(userID).ToList();
                                 }
                                 @if (listKyNang.Count == 0)
                                 {
@@ -228,7 +228,7 @@
                             <div class="card mb-4 box-card">
                                 @{
                                     var chungChiDao = new Model.DAO.ChungChiDao();
-                                    var listChungChi = chungChiDao.ListAll(session.UserID).ToList();
+                                    var listChungChi = chungChiDao.ListAll(userID).ToList();
                                 }
                                 @if (listChungChi.Count == 0)
                                 {
@@ -275,7 +275,7 @@
                             <div class="card mb-4 box-card">
                                 @{
                                     var giaiThuongDao = new Model.DAO.GiaiThuongDao();
-                                    var listGiaiThuong = giaiThuongDao.ListAll(session.UserID).ToList();
+                                    var listGiaiThuong = giaiThuongDao.ListAll(userID).ToList();
                                 }
                                 @if (listGiaiThuong.Count == 0)
                                 {
@@ -322,7 +322,7 @@
                             <div class="card mb-4 box-card">
                                 @{
                                     var khoaHocDao = new Model.DAO.KhoaHocDao();
-                                    var listKhoaHoc = khoaHocDao.ListAll(session.UserID).ToList();
+                                    var listKhoaHoc = khoaHocDao.ListAll(userID).ToList();
                                 }
                                 @if (listKhoaHoc.Count == 0)
                                 {
@@ -369,7 +369,7 @@
                             <div class="card mb-4 box-card">
                                 @{
                                     var duAnDao = new Model.DAO.DuAnDao();
-                                    var listDuAn = duAnDao.ListAll(session.UserID).ToList();
+                                    var listDuAn = duAnDao.ListAll(userID).ToList();
                                 }
                                 @if (listDuAn.Count == 0)
                                 {
@@ -416,7 +416,7 @@
                             <div class="card mb-4 box-card">
                                 @{
                                     var sanPhamDao = new Model.DAO.SanPhamDao();
-                                    var listSanPham = sanPhamDao.ListAll(session.UserID).ToList();
+                                    var listSanPham = sanPhamDao.ListAll(userID).ToList();
                                 }
                                 @if (listSanPham.Count == 0)
                                 {
@@ -463,7 +463,7 @@
                             <div class="card mb-4 box-card">
                                 @{
                                     var hoatDongDao = new Model.DAO.HoatDongDao();
-                                    var listHoatDong = hoatDongDao.ListAll(session.UserID).ToList();
+                                    var listHoatDong = hoatDongDao.ListAll(userID).ToList();
                                 }
                                 @if (listHoatDong.Count == 0)
                                 {

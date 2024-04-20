@@ -53,13 +53,29 @@
         @Html.Partial("_NavBarPartial")
         @Html.Partial("_PoupNofication")
 
-        @{
-            var session = (JobsFinder_Main.Common.UserLogin)Session[JobsFinder_Main.Common.CommonConstants.USER_SESSION];
-        }
-        @if (session != null)
+        @if (User.Identity.IsAuthenticated)
         {
             var dao = new Model.DAO.CompanyDao();
-            var model = dao.ListInUser(session.UserName).ToList();
+            var model = dao.ListInUser(User.Identity.Name).ToList();
+
+            string Avatar = "";
+            string Name = "";
+            string Phone = "";
+            string Address = "";
+            string Email = "";
+
+            using (var dbContext = new JobsFinder_Main.Identity.AppDbContext())
+            {
+                var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+                if (user != null)
+                {
+                    Avatar = user.Avatar;
+                    Name = user.Name;
+                    Phone = user.PhoneNumber;
+                    Address = user.Address;
+                    Email = user.Email;
+                }
+            }
 
             <section style="background-color: #eee;">
                 <div class="container py-5">
@@ -67,16 +83,16 @@
                         <div class="col-lg-4">
                             <div class="card mb-4">
                                 <div class="card-body text-center">
-                                    <img src="@session.Avatar" alt="@session.Name"
+                                    <img src="@Avatar" alt="@Name"
                                          class="rounded-circle img-fluid" style="width: 150px; height: 150px; border: 1px solid #CCC; border-radius: 75px">
-                                    <h5 class="my-3">@session.Name</h5>
-                                    <p class="text-muted mb-1">@session.Phone</p>
-                                    <p class="text-muted mb-1">@session.Address</p>
-                                    <p class="text-muted mb-4">@session.Email</p>
-                                    <div class="box-button d-flex justify-content-between align-items-center  mb-3" style="width: 100%;">
-                                        <a style="width: 32%; font-size: 13px;" class="btn px-0 py-2" href="/User/Manager">Account</a>
-                                        <a style="width: 32%; font-size: 13px;" class="btn px-0 py-2" href="/User/ListCompany">Business</a>
-                                        <a style="width: 32%; font-size: 13px;" class="btn px-0 py-2" href="/User/ListJobs">Job</a>
+                                    <h5 class="my-3">@Name</h5>
+                                    <p class="text-muted mb-1">@Phone</p>
+                                    <p class="text-muted mb-1">@Address</p>
+                                    <p class="text-muted mb-4">@Email</p>
+                                    <div class="box-button d-flex flex-wrap justify-content-between align-items-center mb-3" style="width: 100%;">
+                                        <a style="width: 100%; font-size: 13px;" class="btn px-0 py-2" href="/User/Manager">Account</a>
+                                        <a style="width: 100%; font-size: 13px;" class="btn px-0 py-2" href="/User/ListCompany">Business</a>
+                                        <a style="width: 100%; font-size: 13px;" class="btn px-0 py-2" href="/User/ListJobs">Job</a>
                                         <style>
                                             .box-button > a {
                                                 border-radius: 4px;
@@ -84,6 +100,7 @@
                                                 font-size: 14px;
                                                 font-weight: 500;
                                                 color: #4CA6A8;
+                                                margin-bottom: 10px;
                                             }
 
                                                 .box-button > a:hover {
@@ -93,73 +110,11 @@
                                         </style>
                                     </div>
                                     <a style="width: 100%; border-radius: 4px; border-color: #4CA6A8;  font-size: 14px; font-weight: 500; color: #FFF; background-color: #4CA6A8;" class="btn btn-insert-job mb-2" href="/User/JobManager">Post a job vacancy</a>
-                                    <a style="width: 100%; border-radius: 4px; border-color: #4CA6A8;  font-size: 14px; font-weight: 500; color: #FFF; background-color: #4CA6A8;" class="btn btn-insert-job" href="/profile/personal-profile">Update personal profile</a>
                                     <style>
                                         .btn-insert-job:hover {
                                             background-color: #367879 !important;
                                         }
                                     </style>
-                                </div>
-                                <div class="card-body">
-                                    <h5>The job has been applied for:</h5>
-                                    @{
-                                        var recumentDao = new Model.DAO.RecumentDao();
-                                        var listrecumented = recumentDao.ListRecumented(session.UserID);
-
-                                        if (listrecumented.Count == 0)
-                                        {
-                                            <p>You haven't applied for any job.</p>
-                                        }
-                                        else
-                                        {
-                                            foreach (var item in listrecumented)
-                                            {
-                                                var job = recumentDao.GetJob(item.JobID);
-                                                var companyDao = new Model.DAO.CompanyDao();
-                                                ViewBag.Avatar = companyDao.GetAvatar(job.CompanyID);
-
-                                                ViewBag.CompanyName = companyDao.GetName(job.CompanyID);
-                                                <div class="d-flex flex-row p-2 mb-3" style="border: 1px solid #CCC; border-radius: 4px;">
-                                                    <img src="@ViewBag.Avatar" style="width: 44px; height: 44px; margin-right: 12px; object-fit: cover; border-radius: 4px;" />
-                                                    <div class="d-flex flex-column">
-                                                        <h5 class="multiline-text m-0">@job.Name</h5>
-                                                        <p class="single-line-text m-0">@ViewBag.CompanyName</p>
-                                                        <style>
-                                                            .multiline-text {
-                                                                display: -webkit-box;
-                                                                -webkit-line-clamp: 2;
-                                                                -webkit-box-orient: vertical;
-                                                                overflow: hidden;
-                                                                text-overflow: ellipsis;
-                                                                width: 280px;
-                                                                margin-bottom: 4px !important;
-                                                            }
-
-                                                            .single-line-text {
-                                                                white-space: nowrap;
-                                                                overflow: hidden;
-                                                                text-overflow: ellipsis;
-                                                                width: 280px;
-                                                                margin-bottom: 4px !important;
-                                                            }
-                                                        </style>
-                                                        @if (item.Status == 0)
-                                                        {
-                                                            <p class="m-0" style="padding: 8px; border-radius: 4px; background-color: #FFCC00; color: #FFF; font-weight: 700; text-align: center;">Waiting for results.</p>
-                                                        }
-                                                        else if (item.Status == 1)
-                                                        {
-                                                            <p class="m-0" style="padding: 8px; border-radius: 4px; background-color: #339900; color: #FFF; font-weight: 700; text-align: center;">The profile has been approved.</p>
-                                                        }
-                                                        else if (item.Status == 2)
-                                                        {
-                                                            <p class="m-0" style="padding: 8px; border-radius: 4px; background-color: #CC3300; color: #FFF; font-weight: 700; text-align: center;">The profile does not meet the requirements.</p>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            }
-                                        }
-                                    }
                                 </div>
                             </div>
                         </div>
@@ -170,10 +125,6 @@
                 </div>
             </section>
         }
-
-
-
-
 
         <!-- Footer Start -->
         <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">

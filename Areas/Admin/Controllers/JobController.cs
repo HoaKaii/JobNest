@@ -1,4 +1,5 @@
-﻿using Model.DAO;
+﻿using JobsFinder_Main.Identity;
+using Model.DAO;
 using Model.EF;
 using NLog;
 using System;
@@ -37,10 +38,15 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
         public ActionResult Edit(int id)
         {
             var job = new JobDao().ViewDetail(id);
+            long? userId = null;
+            if (!string.IsNullOrEmpty(job.UserID) && long.TryParse(job.UserID, out long parsedUserId))
+            {
+                userId = parsedUserId;
+            }
             SetViewBag(job.CategoryID);
             SetViewBag(job.CarrerID);
             SetViewBag(job.CompanyID);
-            SetViewBag(job.UserID);
+            SetViewBag(userId);
             return View(job);
         }
 
@@ -140,8 +146,11 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
             var companyDao = new CompanyDao();
             ViewBag.CompanyId = new SelectList(companyDao.ListAll(), "ID", "Name", selectedId);
 
-            var userDao = new UserDao();
-            ViewBag.UserId = new SelectList(userDao.ListAll(), "ID", "Name", selectedId);
+            using (var dbContext = new AppDbContext())
+            {
+                var users = dbContext.Users.Where(u => u.Status == true && u.Name != null).Select(u => new { ID = u.Id, Name = u.Name }).ToList();
+                ViewBag.UserId = new SelectList(users, "ID", "Name", selectedId);
+            }
         }
     }
 }

@@ -2,12 +2,12 @@
 @using PagedList.Mvc;
 
 @{
-    ViewBag.Title = "Danh sách công việc";
+    ViewBag.Title = "List of jobs";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
 @section header{
-    Danh sách công việc
+    List of jobs
 }
 
 @section jsFooter{
@@ -18,7 +18,7 @@
 @using (Html.BeginForm("Index", "Job", FormMethod.Get, new { @class = "navbar-search" }))
 {
     <div class="input-group">
-        <input type="text" class="form-control bg-white search-input" placeholder="Tìm kiếm..."
+        <input type="text" class="form-control bg-white search-input" placeholder="Search..."
                aria-label="Search" aria-describedby="basic-addon2" name="searchString" value="@ViewBag.SearchString">
         <div class="input-group-append">
             <button class="btn btn-primary" type="submit">
@@ -26,7 +26,7 @@
             </button>
         </div>
         <a class="btn btn-primary ml-3" href="/Admin/Job/Create">
-            Thêm mới công việc
+            Add new job
         </a>
     </div>
     <style>
@@ -44,7 +44,7 @@
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+        <h6 class="m-0 font-weight-bold text-primary">DataTables</h6>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -52,21 +52,21 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Tên công việc</th>
-                        <th>Hạn nộp</th>
-                        <th>Ngày đăng</th>
-                        <th>Ngày cập nhật</th>
-                        <th>Trạng thái</th>
+                        <th>Job Title</th>
+                        <th>Deadline</th>
+                        <th>Posted Date</th>
+                        <th>Updated Date</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
                         <th></th>
-                        <th>Tên công việc</th>
-                        <th>Hạn nộp</th>
-                        <th>Ngày đăng</th>
-                        <th>Ngày cập nhật</th>
-                        <th>Trạng thái</th>
+                        <th>Job Title</th>
+                        <th>Deadline</th>
+                        <th>Posted Date</th>
+                        <th>Updated Date</th>
+                        <th>Status</th>
                     </tr>
                 </tfoot>
                 <tbody>
@@ -78,12 +78,12 @@
                             <td>@item.Deadline</td>
                             <td>@item.CreatedDate</td>
                             <td>@item.ModifiedDate</td>
-                            <td><a href="#" class="btn-active" data-id="@item.ID">@(item.Status == true ? "Kích hoạt" : "Khóa")</a></td>
+                            <td><a href="#" class="btn-active" data-id="@item.ID">@(item.Status == true ? "Active" : "Unactive")</a></td>
                             <td>
-                                <a href="/Admin/Job/Edit/@item.ID">Sửa</a>
-                                @Ajax.ActionLink("Xóa", "Delete", new { @id = item.ID }, new AjaxOptions
+                                <a href="/Admin/Job/Edit/@item.ID">Edit</a>
+                                @Ajax.ActionLink("Delete", "Delete", new { @id = item.ID }, new AjaxOptions
                            {
-                               Confirm = "Bạn có muốn xóa bản ghi này",
+                               Confirm = "Do you want to delete this record?",
                                OnComplete = "$(row_" + @item.ID + ").remove()",
                                HttpMethod = "Delete"
                            })

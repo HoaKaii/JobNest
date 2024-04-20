@@ -2,12 +2,12 @@
 @using PagedList.Mvc;
 
 @{
-    ViewBag.Title = "Danh sách danh mục BLog";
+    ViewBag.Title = " List of blog categories";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
 @section header{
-    Danh sách danh mục BLog
+    List of blog categories
 }
 
 @section jsFooter{
@@ -19,7 +19,7 @@
 @using (Html.BeginForm("Index", "BlogCategory", FormMethod.Get, new { @class = "navbar-search" }))
 {
     <div class="input-group">
-        <input type="text" class="form-control bg-white search-input" placeholder="Tìm kiếm..."
+        <input type="text" class="form-control bg-white search-input" placeholder="Search..."
                aria-label="Search" aria-describedby="basic-addon2" name="searchString" value="@ViewBag.SearchString">
         <div class="input-group-append">
             <button class="btn btn-primary" type="submit">
@@ -27,7 +27,7 @@
             </button>
         </div>
         <a class="btn btn-primary ml-3" href="/Admin/BlogCategory/Create">
-            Thêm mới blogCategory
+            Add new blog category
         </a>
     </div>
     <style>
@@ -53,19 +53,19 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Tiêu đề</th>
-                        <th>Ngày tạo</th>
-                        <th>Ngày cập nhật</th>
-                        <th>Trạng thái</th>
+                        <th>Title</th>
+                        <th>Created Date</th>
+                        <th>Updated Date</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
                         <th></th>
-                        <th>Tiêu đề</th>
-                        <th>Ngày tạo</th>
-                        <th>Ngày cập nhật</th>
-                        <th>Trạng thái</th>
+                        <th>Title</th>
+                        <th>Created Date</th>
+                        <th>Updated Date</th>
+                        <th>Status</th>
                     </tr>
                 </tfoot>
                 <tbody>
@@ -76,12 +76,12 @@
                             <td>@item.Name</td>
                             <td>@item.CreatedDate</td>
                             <td>@item.ModifiedDate</td>
-                            <td><a href="#" class="btn-active" data-id="@item.ID">@(item.Status == true ? "Kích hoạt" : "Khóa")</a></td>
+                            <td><a href="#" class="btn-active" data-id="@item.ID">@(item.Status == true ? "Active" : "Unactive")</a></td>
                             <td>
-                                <a href="/Admin/BlogCategory/Edit/@item.ID">Sửa</a>
-                                @Ajax.ActionLink("Xóa", "Delete", new { @id = item.ID }, new AjaxOptions
+                                <a href="/Admin/BlogCategory/Edit/@item.ID">Edit</a>
+                                @Ajax.ActionLink("Delete", "Delete", new { @id = item.ID }, new AjaxOptions
                            {
-                               Confirm = "Bạn có muốn xóa bản ghi này",
+                               Confirm = "Do you want to delete this record?",
                                OnComplete = "$(row_" + @item.ID + ").remove()",
                                HttpMethod = "Delete"
                            })

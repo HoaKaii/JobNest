@@ -1,4 +1,8 @@
 ﻿using JobsFinder_Main.Common;
+using JobsFinder_Main.Identity;
+using JobsFinder_Main.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity;
 using Model.DAO;
 using Model.EF;
 using System;
@@ -13,6 +17,12 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
 {
     public class CompanyController : BaseController
     {
+        private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public CompanyController() 
+        {
+            _userManager = new UserManager<AppUser>(new UserStore<AppUser>(new AppDbContext()));
+        }
         // GET: Admin/Company
         public ActionResult Index(string searchString, string searchName, string searchLocation ,int page = 1, int pageSize = 10)
         {
@@ -51,12 +61,12 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
                     long id = dao.Insert(company);
                     if (id > 0)
                     {
-                        SetAlert("Thêm bản ghi mới thành công", "success");
+                        SetAlert("New record added successfully", "success");
                         return RedirectToAction("Index", "Company");
                     }
                     else
                     {
-                        SetAlert("Thêm bản ghi mới KHÔNG thành công", "warning");
+                        SetAlert("New record added unsuccessfully", "warning");
                         return RedirectToAction("Index", "Company");
                     }
                 }
@@ -64,7 +74,7 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
-                SetAlert("Lỗi khi thêm mới company: " + ex.Message, "error");
+                SetAlert("Error when adding new company: " + ex.Message, "error");
                 return RedirectToAction("Index", "Company");
             }
         }

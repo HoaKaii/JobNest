@@ -18,6 +18,7 @@ namespace JobsFinder_Main.Models
         public string TenKyNang { get; set; }
 
         public int? DanhGia { get; set; }
+        public string Caption { get; set;}
 
         [Column(TypeName = "ntext")]
         public string MoTaChiTiet { get; set; }

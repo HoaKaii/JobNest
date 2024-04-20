@@ -1,12 +1,12 @@
 ﻿@model Model.EF.Job
 
 @{
-    ViewBag.Title = "Thêm mới công việc";
+    ViewBag.Title = "Add new job";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
 @section header{
-    Thêm mới công việc
+    Add new job
 }
 @section jsFooter{
     <script src="~/Assets/Admin/js/controller/jobController.js"></script>
@@ -47,13 +47,13 @@
     <div class="form-horizontal">
         <hr />
         <div class="form-group">
-            <label class="control-label col-md-2">Lựa chọn</label>
+            <label class="control-label col-md-2">Option</label>
             <div class="col-md-10">
                 <label class="radio-inline">
-                    @Html.RadioButton("UserOrCompany", "User", true, new { @class = "radio-option" }) Người dùng
+                    @Html.RadioButton("UserOrCompany", "User", true, new { @class = "radio-option" }) User
                 </label>
                 <label class="radio-inline">
-                    @Html.RadioButton("UserOrCompany", "Company", false, new { @class = "radio-option" }) Công ty
+                    @Html.RadioButton("UserOrCompany", "Company", false, new { @class = "radio-option" }) Company
                 </label>
             </div>
         </div>
@@ -127,8 +127,8 @@
             <div class="col-md-10">
                 @Html.DropDownListFor(model => model.Salary, new SelectList(new List<SelectListItem>
                 {
-                    new SelectListItem { Text = "Thương lượng", Value = "False" },
-                    new SelectListItem { Text = "Nhập giá trị cụ thể", Value = "True" }
+                    new SelectListItem { Text = "Negotiable", Value = "False" },
+                    new SelectListItem { Text = "Enter specific value", Value = "True" }
                 }, "Value", "Text"), new { @class = "form-control", onchange = "salaryChange(this)" })
                 @Html.ValidationMessageFor(model => model.Salary, "", new { @class = "text-danger" })
             </div>
@@ -213,9 +213,9 @@
             <div class="col-md-10">
                 @Html.DropDownListFor(model => model.Gender, new List<SelectListItem>
                 {
-                    new SelectListItem { Text = "Nam", Value = "Nam" },
-                    new SelectListItem { Text = "Nữ", Value = "Nữ" },
-                    new SelectListItem { Text = "Tất cả", Value = "Tất cả" }
+                    new SelectListItem { Text = "Male", Value = "Male" },
+                    new SelectListItem { Text = "Female", Value = "Female" },
+                    new SelectListItem { Text = "All", Value = "All" }
                 }, "Chọn giới tính", new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
             </div>

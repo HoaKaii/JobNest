@@ -4,16 +4,19 @@ using JobsFinder_Main.Models;
 using Model.DAO;
 using Model.EF;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Facebook;
 using System.Configuration;
-using BotDetect;
 using ServiceStack;
 using System.Text.RegularExpressions;
-using System.Runtime.CompilerServices;
+using JobsFinder_Main.Identity;
+using System.Web.Helpers;
+using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security;
+using System.Web;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace JobsFinder_Main.Controllers
 {
@@ -45,49 +48,116 @@ namespace JobsFinder_Main.Controllers
         {
             if (ModelState.IsValid)
             {
-                var dao = new UserDao();
-                if (dao.CheckUserName(model.UserName))
+                var appDbContext = new AppDbContext();
+                var userStore = new AppUserStore(appDbContext);
+                var userManager = new AppUserManager(userStore);
+                var passwdHash = Crypto.HashPassword(model.Password);
+                var user = new AppUser()
                 {
-                    ModelState.AddModelError("", "The username already exists.");
-                }
-                else if (dao.CheckEmail(model.Email))
+                    Email = model.Email,
+                    UserName = model.UserName,
+                    PasswordHash = passwdHash,
+                    Address = model.Address,
+                    PhoneNumber = model.Phone,
+                    Name = model.Name,
+                    Avatar = "./Assets/Client/JobsFinder/img/Logo.png"
+                };
+                IdentityResult identityResult = userManager.Create(user);
+                if (identityResult.Succeeded)
                 {
-                    ModelState.AddModelError("", "The email already exists.");
+                    userManager.AddToRole(user.Id, "JobSeeker");
+
+                    var profile = new Profile()
+                    {
+                        UserID = user.Id,
+                        HoVaTen = model.Name,
+                        DiaChiHienTai = model.Address,
+                        SoDienThoai = model.Phone,
+                        AnhCaNhan = model.Avatar,
+                    };
+
+                    var profileDao = new ProfileDao();
+                    profileDao.Insert(profile);
+
+                    var authenManager = HttpContext.GetOwinContext().Authentication;
+                    var userIdentity = userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+                    authenManager.SignIn(new AuthenticationProperties(), userIdentity);
+
+                    model = new RegisterModel();
+                    TempData["Message"] = "Registration successful!";
+                    TempData["MessageType"] = "success";
+                    TempData["Type"] = "Success";
+                    return RedirectToAction("Login", "User", model);
                 }
                 else
                 {
-                    var user = new User
-                    {
-                        UserName = model.UserName,
-                        Password = Encryptor.MD5Hash(model.Password),
-                        Name = model.Name,
-                        Phone = model.Phone,
-                        Email = model.Email,
-                        Avatar = "./Assets/Client/JobsFinder/img/Logo.png",
-                        CreatedDate = DateTime.Now,
-                        Status = true
-                    };
-                    var result = dao.Insert(user);
-                    if (result > 0)
-                    {
-                        model = new RegisterModel();
-                        TempData["Message"] = "Registration successful!";
-                        TempData["MessageType"] = "success";
-                        TempData["Type"] = "Success";
-                        return RedirectToAction("Login", "User", model);
-                    }
-                    else
-                    {
-                        TempData["Message"] = "Registration unsuccessful!";
-                        TempData["MessageType"] = "error";
-                        TempData["Type"] = "Error";
-                        return RedirectToAction("Register", "User");
-                    }
+                    TempData["Message"] = "Registration unsuccessful!";
+                    TempData["MessageType"] = "error";
+                    TempData["Type"] = "Error";
+                    return RedirectToAction("Register", "User");
                 }
             }
-            return View(model);
+            else
+            {
+                ModelState.AddModelError("", "Invalid data");
+                return View(model);
+            }
         }
 
+        // GET: Recruiter
+        public ActionResult Register_Recruiter()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [CaptchaValidationActionFilter("CaptchaCode", "registerCaptcha", "The verification code is incorrect!")]
+        public ActionResult Register_Recruiter(RegisterModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var appDbContext = new AppDbContext();
+                var userStore = new AppUserStore(appDbContext);
+                var userManager = new AppUserManager(userStore);
+                var passwdHash = Crypto.HashPassword(model.Password);
+                var user = new AppUser()
+                {  
+                    Email = model.Email,
+                    UserName = model.UserName,
+                    PasswordHash = passwdHash,
+                    Address = model.Address,
+                    PhoneNumber = model.Phone,
+                    Name = model.Name,
+                    Avatar = "./Assets/Client/JobsFinder/img/Logo.png"
+                };
+                IdentityResult identityResult = userManager.Create(user);
+                if (identityResult.Succeeded)
+                {
+                    userManager.AddToRole(user.Id, "Recruiter");
+                    var authenManager = HttpContext.GetOwinContext().Authentication;
+                    var userIdentity = userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+                    authenManager.SignIn(new AuthenticationProperties(), userIdentity);
+
+                    model = new RegisterModel();
+                    TempData["Message"] = "Registration successful!";
+                    TempData["MessageType"] = "success";
+                    TempData["Type"] = "Success";
+                    return RedirectToAction("Login_Recruiter", "User", model);
+                }
+                else
+                {
+                    TempData["Message"] = "Registration unsuccessful!";
+                    TempData["MessageType"] = "error";
+                    TempData["Type"] = "Error";
+                    return RedirectToAction("Register_Recruiter", "User");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("New Error", "Invalid data");
+                return View(model);
+            }
+        }
         public ActionResult Login()
         {
             return View();
@@ -96,53 +166,59 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult Login(LoginModel model)
         {
-            if (ModelState.IsValid)
+            var appDbContext = new AppDbContext();
+            var userStore = new AppUserStore(appDbContext);
+            var userManager = new AppUserManager(userStore);
+            var user = userManager.Find(model.UserName, model.Password);
+
+            if (user != null && userManager.IsInRole(user.Id, "JobSeeker"))
             {
-                var dao = new UserDao();
-                var result = dao.Login(model.UserName, Encryptor.MD5Hash(model.Password));
-                if (result == 1)
-                {
-                    var user = dao.GetByID(model.UserName);
-                    var userSession = new UserLogin
-                    {
-                        UserName = user.UserName,
-                        UserID = user.ID,
-                        Name = user.Name,
-                        Phone = user.Phone,
-                        Address = user.Address,
-                        Avatar = user.Avatar,
-                        Email = user.Email
-                    };
-                    Session.Add(CommonConstants.USER_SESSION, userSession);
-                    return RedirectToAction("Index", "Home");
-                }
-                else if (result == 0)
-                {
-                    ModelState.AddModelError("", "The account does not exist.");
-                }
-                else if (result == -1)
-                {
-                    ModelState.AddModelError("", "The account is currently locked.");
-                }
-                else if (result == -2)
-                {
-                    ModelState.AddModelError("", "The password is incorrect.");
-                }
-                else
-                {
-                    ModelState.AddModelError("", "The username or password is incorrect.");
-                }
+                var authenManager = HttpContext.GetOwinContext().Authentication;
+                var userIdentity = userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+                authenManager.SignIn(new AuthenticationProperties(), userIdentity);
+                return RedirectToAction("Index", "Home");
             }
-            return View(model);
+            else
+            {
+                ModelState.AddModelError("", "Invalid username or password for a jobseeker account");
+                return View();
+            }
+        }
+        public ActionResult Login_Recruiter()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Login_Recruiter(LoginModel model)
+        {
+            var appDbContext = new AppDbContext();
+            var userStore = new AppUserStore(appDbContext);
+            var userManager = new AppUserManager(userStore);
+            var user = userManager.Find(model.UserName, model.Password);
+
+            if (user != null && userManager.IsInRole(user.Id, "Recruiter"))
+            {
+                var authenManager = HttpContext.GetOwinContext().Authentication;
+                var userIdentity = userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+                authenManager.SignIn(new AuthenticationProperties(), userIdentity);
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Invalid username or password for a recruiter account");
+                return View();
+            }
         }
 
         public ActionResult Logout()
         {
-            Session.Remove(CommonConstants.USER_SESSION);
-            return Redirect("/");
+            var authenManager = HttpContext.GetOwinContext().Authentication;
+            authenManager.SignOut();
+            return RedirectToAction("Index", "Home");
         }
 
-        public ActionResult FacebookCallBack(string code)
+        /*public ActionResult FacebookCallBack(string code)
         {
             var fb = new FacebookClient();
             dynamic result = fb.Post("oauth/access_token", new
@@ -156,10 +232,8 @@ namespace JobsFinder_Main.Controllers
             var accessToken = result.access_token;
             if (!string.IsNullOrEmpty(accessToken))
             {
-                // Sử dụng mã truy cập mới để lấy thông tin người dùng từ Facebook
                 fb.AccessToken = accessToken;
 
-                // Lấy thông tin người dùng
                 dynamic me = fb.Get("me?fields=first_name,middle_name,last_name,id,email,picture");
                 string email = me.email;
                 string firstName = me.first_name;
@@ -191,7 +265,7 @@ namespace JobsFinder_Main.Controllers
                 }
             }
             return Redirect("/");
-        }
+        }*/
 
         public ActionResult LoginFaceBook()
         {
@@ -206,124 +280,151 @@ namespace JobsFinder_Main.Controllers
             });
             return Redirect(loginUrl.AbsoluteUri);
         }
-
         public ActionResult Update()
         {
             return View();
         }
 
         [HttpPost]
-        public ActionResult Update(User user)
+        public ActionResult Update(AppUser model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session == null)
+            if (ModelState.IsValid)
             {
-                return RedirectToAction("Login", "User");
-            }
-            else
-            {
-                var dao = new UserDao();
-                var userToUpdate = dao.GetByID(session.UserName);
-                if (userToUpdate != null)
-                {
-                    if (!string.IsNullOrEmpty(user.Name))
-                    {
-                        userToUpdate.Name = user.Name;
-                    }
-                    if (!string.IsNullOrEmpty(user.Password))
-                    {
-                        userToUpdate.Password = Encryptor.MD5Hash(user.Password);
-                    }
-                    if (!string.IsNullOrEmpty(user.Phone.ToString()))
-                    {
-                        userToUpdate.Phone = user.Phone;
-                    }
-                    if (!string.IsNullOrEmpty(user.Address))
-                    {
-                        userToUpdate.Address = user.Address;
-                    }
-                    if (!string.IsNullOrEmpty(user.Avatar))
-                    {
-                        userToUpdate.Avatar = user.Avatar;
-                    }
-                    userToUpdate.ModifiedDate = DateTime.Now;
+                var appDbContext = new AppDbContext();
+                var userStore = new AppUserStore(appDbContext);
+                var userManager = new AppUserManager(userStore);
+                var currentUser = userManager.FindByName(User.Identity.Name);
 
-                    var result = dao.Update(userToUpdate);
-                    if (result)
+                if (currentUser != null)
+                {
+                    if (!string.IsNullOrEmpty(model.Name))
                     {
-                        session.Name = userToUpdate.Name;
-                        session.Phone = userToUpdate.Phone;
-                        session.Address = userToUpdate.Address;
-                        session.Avatar = userToUpdate.Avatar;
-                        TempData["Message"] = "Update sucessful!";
+                        currentUser.Name = model.Name;
+                    }
+                    if (!string.IsNullOrEmpty(model.PasswordHash))
+                    {
+                        var newPasswordHash = userManager.PasswordHasher.HashPassword(model.PasswordHash);
+                        currentUser.PasswordHash = newPasswordHash;
+                    }
+                    if (!string.IsNullOrEmpty(model.PhoneNumber))
+                    {
+                        currentUser.PhoneNumber = model.PhoneNumber;
+                    }
+                    if (!string.IsNullOrEmpty(model.Address))
+                    {
+                        currentUser.Address = model.Address;
+                    }
+                    if (!string.IsNullOrEmpty(model.Avatar))
+                    {
+                        currentUser.Avatar = model.Avatar;
+                    }
+
+                    var result = userManager.Update(currentUser);
+                    if (result.Succeeded)
+                    {
+                        TempData["Message"] = "Update successful!";
                         TempData["MessageType"] = "success";
-                        TempData["Type"] = "Success";
                         return RedirectToAction("Manager", "User");
                     }
                     else
                     {
-                        TempData["Message"] = "Update unsuccessfull!";
-                        TempData["MessageType"] = "error";
-                        TempData["Type"] = "Error";
-                        return RedirectToAction("Manager", "User", user);
+                        AddErrors(result);
                     }
                 }
                 else
                 {
                     TempData["Message"] = "An error occurred! Please try again!";
                     TempData["MessageType"] = "warning";
-                    TempData["Type"] = "Warning";
-                    return RedirectToAction("Manager", "User", user);
                 }
+            }
+            return View(model);
+        }
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error);
             }
         }
 
         [HttpGet]
-        public ActionResult Manager(User user)
+        public ActionResult Manager()
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session == null)
+            if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Login", "User");
-            }
-            else
-            {
-                var dao = new UserDao();
-                var userDetail = dao.GetByID(session.UserName);
-                if (userDetail != null)
+                var userId = User.Identity.GetUserId();
+                var appDbContext = new AppDbContext();
+                var userStore = new AppUserStore(appDbContext);
+                var userManager = new AppUserManager(userStore);
+                var user = userManager.FindById(userId);
+
+                if (user != null)
                 {
-                    user.Name = session.Name;
-                    user.Phone = session.Phone;
-                    user.Email = session.Email;
-                    user.Address = session.Address;
-                    user.Avatar = session.Avatar;
-                    return View(user);
+                    if (User.IsInRole("JobSeeker"))
+                    {
+                        return RedirectToAction("Manager_JobSeeker", "User");
+                    }
+                    else
+                    {
+                        return View(user);
+                    }
                 }
                 else
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Login_Recruiter", "User");
                 }
+            }
+            else
+            {
+                return RedirectToAction("Login_Recruiter", "User");
             }
         }
 
         [HttpGet]
-        public ActionResult CompanyManager(User user)
+        public ActionResult Manager_JobSeeker()
         {
-            var session = (UserLogin)Session[(CommonConstants.USER_SESSION)];
-            if (session == null)
+            if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Login", "User");
+                var userId = User.Identity.GetUserId();
+                var appDbContext = new AppDbContext();
+                var userStore = new AppUserStore(appDbContext);
+                var userManager = new AppUserManager(userStore);
+                var user = userManager.FindById(userId);
+
+                if (user != null)
+                {
+                    return View(user);   
+                }
+                else
+                {
+                    return RedirectToAction("Login", "User");
+                }
             }
             else
             {
-                var dao = new UserDao();
-                var userDetail = dao.GetByID(session.UserName);
-                if (userDetail != null)
+                return RedirectToAction("Login", "User");
+            }
+        }
+
+        [HttpGet]
+        public ActionResult CompanyManager()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login_Recruiter", "User");
+            }
+            else
+            {
+                var appDbContext = new AppDbContext();
+                var userStore = new AppUserStore(appDbContext);
+                var userManager = new AppUserManager(userStore);
+                var currentUser = userManager.FindByName(User.Identity.Name);
+
+                if (currentUser != null)
                 {
-                    user.UserName = session.UserName;
                     var companyDao = new CompanyDao();
                     var company = new CompanyModel();
-                    var model = companyDao.ListInUser(user.UserName);
+                    var model = companyDao.ListInUser(currentUser.UserName);
 
                     foreach (var item in model)
                     {
@@ -346,55 +447,44 @@ namespace JobsFinder_Main.Controllers
         }
 
         [HttpGet]
-        public ActionResult JobManager(User user)
+        public ActionResult JobManager(AppUser user)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session == null)
+            if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Login", "User");
+                return RedirectToAction("Login_Recruiter", "User");
             }
             else
             {
-                var dao = new UserDao();
-                var userDetail = dao.GetByID(session.UserName);
-                if (userDetail != null)
-                {
-                    user.UserName = session.UserName;
-                    var jobDao = new JobDao();
-                    var job = new JobModel();
-                    var model = jobDao.ListInUser(user.UserName);
+                var jobDao = new JobDao();
+                var job = new JobModel();
+                var model = jobDao.ListInUser(user.UserName);
 
-                    foreach (var item in model)
-                    {
-                        job.ID = item.ID;
-                        job.Name = item.Name;
-                        job.MetaTitle = item.MetaTitle;
-                        job.Description = item.Description;
-                        job.RequestCandidate = item.RequestCandidate;
-                        job.Interest = item.Interest;
-                        job.Image = jobDao.GetAvatarFromCompany(item.CompanyID, item.UserID);
-                        job.Salary = item.Salary;
-                        job.SalaryMin = item.SalaryMin;
-                        job.SalaryMax = item.SalaryMax;
-                        job.Quantity = item.Quantity;
-                        job.CategoryID = item.CategoryID;
-                        job.Details = item.Details;
-                        job.Deadline = item.Deadline;
-                        job.Rank = item.Rank; ;
-                        job.Gender = item.Gender;
-                        job.Experience = item.Experience;
-                        job.WorkLocation = item.WorkLocation;
-                        job.CompanyID = item.CompanyID;
-                        job.CarrerID = item.CarrerID;
-                        job.UserID = item.UserID;
-                        job.code = item.Code;
-                    }
-                    return View(job);
-                }
-                else
+                foreach (var item in model)
                 {
-                    return RedirectToAction("Index", "Home");
+                    job.ID = item.ID;
+                    job.Name = item.Name;
+                    job.MetaTitle = item.MetaTitle;
+                    job.Description = item.Description;
+                    job.RequestCandidate = item.RequestCandidate;
+                    job.Interest = item.Interest;
+                    job.Image = jobDao.GetAvatarFromCompany(item.CompanyID, item.UserID);
+                    job.Salary = item.Salary;
+                    job.SalaryMin = item.SalaryMin;
+                    job.SalaryMax = item.SalaryMax;
+                    job.Quantity = item.Quantity;
+                    job.CategoryID = item.CategoryID;
+                    job.Details = item.Details;
+                    job.Deadline = item.Deadline;
+                    job.Rank = item.Rank; ;
+                    job.Gender = item.Gender;
+                    job.Experience = item.Experience;
+                    job.WorkLocation = item.WorkLocation;
+                    job.CompanyID = item.CompanyID;
+                    job.CarrerID = item.CarrerID;
+                    job.UserID = item.UserID;
+                    job.code = item.Code;
                 }
+                return View(job);
             }
         }
 
@@ -409,57 +499,76 @@ namespace JobsFinder_Main.Controllers
         [ValidateInput(false)]
         public ActionResult CreateCompany(CompanyModel model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session == null)
+            if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Login", "User");
+                return RedirectToAction("Login_Recruiter", "User");
             }
             else
             {
-                var company = new Company();
-                var dao = new CompanyDao();
-                company.Name = model.Name;
-                company.LinkPage = model.LinkPage;
-                company.Description = model.Description;
-                company.Avatar = model.Avatar;
-                company.Background = model.Background;
-                company.Employees = model.Employees;
-                company.Location = model.Location;
-                string name = model.Name;
-                string slug = Regex.Replace(name, @"[^a-zA-Z0-9]", "-").ToLower();
-                company.MetaTitle = slug;
-                company.CreatedDate = DateTime.Now;
-                company.Status = true;
-                company.CreatedBy = session.UserName;
-
-                var result = dao.Insert(company);
-                if (result > 0)
+                if (ModelState.IsValid)
                 {
-                    model = new CompanyModel();
-                    TempData["Message"] = "Cập nhật thành công!";
-                    TempData["MessageType"] = "success";
-                    TempData["Type"] = "Thành công";
-                    return RedirectToAction("Manager", "User", model);
+                    var appDbContext = new AppDbContext();
+                    var userStore = new AppUserStore(appDbContext);
+                    var userManager = new AppUserManager(userStore);
+                    var currentUser = userManager.FindByName(User.Identity.Name);
+
+                    if (currentUser != null)
+                    {
+                        var company = new Company();
+                        company.Name = model.Name;
+                        company.LinkPage = model.LinkPage;
+                        company.Description = model.Description;
+                        company.Avatar = model.Avatar;
+                        company.Background = model.Background;
+                        company.Employees = model.Employees;
+                        company.Location = model.Location;
+                        string name = model.Name;
+                        string slug = Regex.Replace(name, @"[^a-zA-Z0-9]", "-").ToLower();
+                        company.MetaTitle = slug;
+                        company.CreatedDate = DateTime.Now;
+                        company.Status = true;
+                        company.CreatedBy = currentUser.UserName;
+
+                        var companyDao = new CompanyDao();
+                        var result = companyDao.Insert(company);
+
+                        if (result > 0)
+                        {
+                            TempData["Message"] = "Create successful!";
+                            TempData["MessageType"] = "success";
+                            TempData["Type"] = "Success";
+                            return RedirectToAction("Manager", "User");
+                        }
+                        else
+                        {
+                            TempData["Message"] = "Create unsuccessful!";
+                            TempData["MessageType"] = "error";
+                            TempData["Type"] = "Error";
+                            return RedirectToAction("Manager", "User");
+                        }
+                    }
+                    else
+                    {
+                        TempData["Message"] = "An error occurred! Please try again!";
+                        TempData["MessageType"] = "warning";
+                        TempData["Type"] = "Warning";
+                        return RedirectToAction("Manager", "User");
+                    }
                 }
                 else
                 {
-                    TempData["Message"] = "Cập nhật không thành công!";
-                    TempData["MessageType"] = "error";
-                    TempData["Type"] = "Thất bại";
-                    return RedirectToAction("Manager", "User");
+                    // Model is not valid, return to the view with errors
+                    return View(model);
                 }
             }
         }
 
-
         [HttpDelete]
         public ActionResult DeleteCompany(int ID)
         {
-
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session == null)
+            if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Login", "User");
+                return RedirectToAction("Login_Recruiter", "User");
             }
             else
             {
@@ -468,16 +577,16 @@ namespace JobsFinder_Main.Controllers
 
                 if (result)
                 {
-                    TempData["Message"] = "Cập nhật thành công!";
+                    TempData["Message"] = "Delete successfull!";
                     TempData["MessageType"] = "success";
-                    TempData["Type"] = "Thành công";
+                    TempData["Type"] = "Success";
                     return RedirectToAction("Manager", "User");
                 }
                 else
                 {
-                    TempData["Message"] = "Cập nhật không thành công!";
+                    TempData["Message"] = "Delete unsuccessfull!";
                     TempData["MessageType"] = "error";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Error";
                     return RedirectToAction("Manager", "User");
                 }
             }
@@ -486,10 +595,9 @@ namespace JobsFinder_Main.Controllers
         [HttpDelete]
         public ActionResult DeleteJob(int id)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session == null)
+            if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Login", "User");
+                return RedirectToAction("Login_Recruiter", "User");
             }
 
             var dao = new JobDao();
@@ -515,64 +623,73 @@ namespace JobsFinder_Main.Controllers
         [ValidateInput(false)]
         public ActionResult EditCompany(Company model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session == null)
+            if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Login", "User");
+                return RedirectToAction("Login_Recruiter", "User");
             }
             else
             {
-                var dao = new CompanyDao();
-                var company = dao.ViewDetail(model.ID);
-                if (company != null)
+                if (ModelState.IsValid)
                 {
-                    if (!string.IsNullOrEmpty(model.Name))
-                    {
-                        company.Name = model.Name;
-                    }
-                    if (model.Employees != null)
-                    {
-                        company.Employees = model.Employees;
-                    }
-                    if (!string.IsNullOrEmpty(model.Location))
-                    {
-                        company.Location = model.Location;
-                    }
-                    if (!string.IsNullOrEmpty(model.Avatar))
-                    {
-                        company.Avatar = model.Avatar;
-                    }
-                    if (!string.IsNullOrEmpty(model.Background))
-                    {
-                        company.Background = model.Background;
-                    }
-                    if (!string.IsNullOrEmpty(model.Description))
-                    {
-                        company.Description = model.Description;
-                    }
-                    company.ModifiedDate = DateTime.Now;
-                    company.ModifiedBy = session.UserName;
-                    var result = dao.Update(company);
+                    var appDbContext = new AppDbContext();
+                    var userStore = new AppUserStore(appDbContext);
+                    var userManager = new AppUserManager(userStore);
+                    var currentUser = userManager.FindByName(User.Identity.Name);
 
-                    if (result)
+                    if (currentUser != null)
                     {
-                        TempData["Message"] = "Cập nhật thành công!";
-                        TempData["MessageType"] = "success";
-                        TempData["Type"] = "Thành công";
-                        return RedirectToAction("CompanyManager", "User", new { company.ID });
-                    }
-                    else
-                    {
-                        TempData["Message"] = "Cập nhật không thành công!";
-                        TempData["MessageType"] = "error";
-                        TempData["Type"] = "Thất bại";
-                        return RedirectToAction("CompanyManager", "User", new { company.ID });
+                        var dao = new CompanyDao();
+                        var company = dao.ViewDetail(model.ID);
+                        if (company != null)
+                        {
+                            if (!string.IsNullOrEmpty(model.Name))
+                            {
+                                company.Name = model.Name;
+                            }
+                            if (model.Employees != null)
+                            {
+                                company.Employees = model.Employees;
+                            }
+                            if (!string.IsNullOrEmpty(model.Location))
+                            {
+                                company.Location = model.Location;
+                            }
+                            if (!string.IsNullOrEmpty(model.Avatar))
+                            {
+                                company.Avatar = model.Avatar;
+                            }
+                            if (!string.IsNullOrEmpty(model.Background))
+                            {
+                                company.Background = model.Background;
+                            }
+                            if (!string.IsNullOrEmpty(model.Description))
+                            {
+                                company.Description = model.Description;
+                            }
+                            company.ModifiedDate = DateTime.Now;
+                            company.ModifiedBy = currentUser.UserName;
+                            var result = dao.Update(company);
+
+                            if (result)
+                            {
+                                TempData["Message"] = "Update successfull!";
+                                TempData["MessageType"] = "success";
+                                TempData["Type"] = "Success";
+                                return RedirectToAction("CompanyManager", "User", new { company.ID });
+                            }
+                            else
+                            {
+                                TempData["Message"] = "Update unsuccessfull!";
+                                TempData["MessageType"] = "error";
+                                TempData["Type"] = "Error";
+                                return RedirectToAction("CompanyManager", "User", new { company.ID });
+                            }
+                        }
                     }
                 }
             }
             return View(model);
         }
-
 
         [HttpGet]
         public ActionResult CreateJob()
@@ -584,10 +701,9 @@ namespace JobsFinder_Main.Controllers
         [ValidateInput(false)]
         public ActionResult CreateJob(JobModel model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session == null)
+            if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Login", "User");
+                return RedirectToAction("Login_Recruiter", "User");
             }
             else
             {
@@ -625,7 +741,7 @@ namespace JobsFinder_Main.Controllers
                 job.CompanyID = model.CompanyID;
                 job.CarrerID = model.CarrerID;
                 job.UserID = model.UserID;
-                job.CreatedBy = session.UserName;
+                job.CreatedBy = User.Identity.Name;
                 job.Status = true;
 
                 var result = dao.Insert(job);
@@ -634,16 +750,16 @@ namespace JobsFinder_Main.Controllers
                 {
                     model = new JobModel();
 
-                    TempData["Message"] = "Cập nhật thành công!";
+                    TempData["Message"] = "Create successfull!";
                     TempData["MessageType"] = "success";
-                    TempData["Type"] = "Thành công";
+                    TempData["Type"] = "Success";
                     return RedirectToAction("Manager", "User", model);
                 }
                 else
                 {
-                    TempData["Message"] = "Cập nhật không thành công!";
+                    TempData["Message"] = "Create unsuccessfull!";
                     TempData["MessageType"] = "error";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Error";
                     return RedirectToAction("Manager", "User");
                 }
             }
@@ -652,65 +768,49 @@ namespace JobsFinder_Main.Controllers
         [HttpGet]
         public ActionResult ListJobs()
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            var user = new User();
-            if (session == null)
+            if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Login", "User");
+                return RedirectToAction("Login_Recruiter", "User");
             }
             else
             {
-                var dao = new UserDao();
-                var userDetail = dao.GetByID(session.UserName);
-                if (userDetail != null)
-                {
-                    user.Name = session.Name;
-                    user.Phone = session.Phone;
-                    user.Email = session.Email;
-                    user.Address = session.Address;
-                    user.Avatar = session.Avatar;
+                var appDbContext = new AppDbContext();
+                var userStore = new AppUserStore(appDbContext);
+                var userManager = new AppUserManager(userStore);
+                var currentUser = userManager.FindByName(User.Identity.Name);
 
-                    var jobDao = new JobDao();
-                    var list = jobDao.ListInUser(user.UserName);
-                    return View(list);
-                }
-                else
+                if (currentUser == null)
                 {
                     return RedirectToAction("Index", "Home");
                 }
+
+                var companyDao = new CompanyDao();
+                var list = companyDao.ListInUser(currentUser.UserName);
+                return View(list);
             }
         }
 
         [HttpGet]
         public ActionResult ListCompany()
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            var user = new User();
-            if (session == null)
+            if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Login", "User");
+                return RedirectToAction("Login_Recruiter", "User");
             }
-            else
-            {
-                var dao = new UserDao();
-                var userDetail = dao.GetByID(session.UserName);
-                if (userDetail != null)
-                {
-                    user.Name = session.Name;
-                    user.Phone = session.Phone;
-                    user.Email = session.Email;
-                    user.Address = session.Address;
-                    user.Avatar = session.Avatar;
 
-                    var companyDao = new CompanyDao();
-                    var list = companyDao.ListInUser(user.UserName);
-                    return View(list);
-                }
-                else
-                {
-                    return RedirectToAction("Index", "Home");
-                }
+            var appDbContext = new AppDbContext();
+            var userStore = new AppUserStore(appDbContext);
+            var userManager = new AppUserManager(userStore);
+            var currentUser = userManager.FindByName(User.Identity.Name);
+
+            if (currentUser == null)
+            {
+                return RedirectToAction("Index", "Home");
             }
+
+            var companyDao = new CompanyDao();
+            var list = companyDao.ListInUser(currentUser.UserName);
+            return View(list);
         }
 
         [HttpGet]
@@ -724,10 +824,9 @@ namespace JobsFinder_Main.Controllers
         [ValidateInput(false)]
         public ActionResult EditJob(Job model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session == null)
+            if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Login", "User");
+                return RedirectToAction("Login_Recruiter", "User");
             }
             else
             {
@@ -770,23 +869,22 @@ namespace JobsFinder_Main.Controllers
 
                     if (result)
                     {
-                        TempData["Message"] = "Cập nhật thành công!";
+                        TempData["Message"] = "Update successfull!";
                         TempData["MessageType"] = "success";
-                        TempData["Type"] = "Thành công";
+                        TempData["Type"] = "Success";
                         return RedirectToAction("ListJobs", "User");
                     }
                     else
                     {
-                        TempData["Message"] = "Cập nhật không thành công!";
+                        TempData["Message"] = "Update unsuccessfull!";
                         TempData["MessageType"] = "error";
-                        TempData["Type"] = "Thất bại";
+                        TempData["Type"] = "Error";
                         return RedirectToAction("ListJobs", "User");
                     }
                 }
             }
             return View(model);
         }
-
         public void SetViewBag(long? selectedId = null)
         {
             var JobCategorydao = new JobCategoryDao();

@@ -5,7 +5,6 @@
     Layout = "~/Views/Shared/_Layout_Manager.cshtml";
 }
 @{
-    var session = (JobsFinder_Main.Common.UserLogin)Session[JobsFinder_Main.Common.CommonConstants.USER_SESSION];
     var hocVanDao = new Model.DAO.HocVanDao();
     var kinhNghiemDao = new Model.DAO.KinhNghiemDao();
     var kyNangDao = new Model.DAO.KyNangDao();
@@ -18,7 +17,7 @@
     var recumentDao = new Model.DAO.RecumentDao();
     var profileDao = new Model.DAO.ProfileDao();
 }
-@if (session != null)
+@if (User.Identity.IsAuthenticated)
 {
     var profileID = recumentDao.getProfileID(Model.ID);
     var profile = profileDao.GetByID(profileID);
@@ -732,8 +731,8 @@
     </div>
 
     <div class="my-4 d-flex flex-row">
-        <a href="/Recument/Confirm/@Model.ID" class="btn btn-primary" style="margin-right: 12px; width: 100%; border-radius: 4px;">Duyệt hồ sơ</a>
-        <a href="/Recument/Cance/@Model.ID" class="btn btn-danger" style="margin-left: 12px; width: 100%; border-radius: 4px;">Hủy hồ sơ</a>
+        <a href="/Recument/Confirm/@Model.ID" class="btn btn-primary" style="margin-right: 12px; width: 100%; border-radius: 4px;">Approve</a>
+        <a href="/Recument/Cance/@Model.ID" class="btn btn-danger" style="margin-left: 12px; width: 100%; border-radius: 4px;">Cancel</a>
     </div>
 }
 else

@@ -55,6 +55,15 @@
             </div>
 
             <div class="form-group">
+                <p>Confirm password</p>
+                <div class="d-flex flex-row align-items-center box-input">
+                    <i class="bi bi-lock-fill"></i>
+                    @Html.PasswordFor(model => model.ConfirmPassword, new { @placeholder = "Enter confirm password", @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
                 <p>Fullname</p>
                 <div class="d-flex flex-row align-items-center box-input">
                     <i class="bi bi-person-fill"></i>
@@ -82,6 +91,15 @@
             </div>
 
             <div class="form-group">
+                <p>Address</p>
+                <div class="d-flex flex-row align-items-center box-input">
+                    <i class="bi bi-person-fill"></i>
+                    @Html.TextBoxFor(model => model.Address, new { @placeholder = "Enter your address", @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
                 <div class="d-flex flex-row align-items-center box-input">
                     @Html.Captcha(registerCaptcha)
                     @Html.TextBox("CaptchaCode")
@@ -98,13 +116,20 @@
             <div class="box-options">
                 <div class="box-signup">
                     <p>You already have an account, right?</p>
-                    <a href="/dang-nhap" class="nav-link">Login</a>
+                    <a href="/login" class="nav-link">Login</a>
                 </div>
             </div>
             <div class="box-support">
                 <p>You're having difficulty creating an account?</p>
                 <span>Please call (+84)-366748962 during office hours</span>
             </div>
+
+            <div class="box-options">
+                <div class="box-signup">
+                    <p>If you want to register as a recruiter, click <a href="@Url.Action("Register_Recruiter", "User")">here</a>.</p>
+                </div>
+            </div>
+
         }
     </div>
 

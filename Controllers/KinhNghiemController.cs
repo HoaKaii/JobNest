@@ -1,7 +1,9 @@
 ﻿using JobsFinder_Main.Common;
 using JobsFinder_Main.Models;
+using Microsoft.AspNet.Identity;
 using Model.DAO;
 using Model.EF;
+using ServiceStack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,8 +30,7 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult Create(KinhNghiemModel model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
+            if (User.Identity.IsAuthenticated)
             {
                 var kinhNghiem = new KinhNghiem();
                 var dao = new KinhNghiemDao();
@@ -43,8 +44,8 @@ namespace JobsFinder_Main.Controllers
                 kinhNghiem.MoTaChiTiet = model.MoTaChiTiet;
                 kinhNghiem.HinhAnh = model.HinhAnh;
                 kinhNghiem.LienKet = model.LienKet;
-                kinhNghiem.UserID = session.UserID;
-                kinhNghiem.CreatedBy = session.UserName;
+                kinhNghiem.UserID = User.Identity.GetUserId();
+                kinhNghiem.CreatedBy = User.Identity.GetUserName();
 
                 var result = dao.Insert(kinhNghiem);
                 if (result == true)
@@ -81,8 +82,7 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult Update(KinhNghiem model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
+            if (User.Identity.IsAuthenticated)
             {
                 var dao = new KinhNghiemDao();
                 var entity = dao.ViewDetail(model.ID);
@@ -118,38 +118,38 @@ namespace JobsFinder_Main.Controllers
                         {
                             entity.MoTaChiTiet = model.MoTaChiTiet;
                         }
-                        entity.ModifiedBy = session.UserName;
+                        entity.ModifiedBy = User.Identity.Name;
                         entity.ModifiedDate = DateTime.Now;
 
                         var result = dao.Update(entity);
                         if (result)
                         {
-                            TempData["Message"] = "Cập nhật thành công!";
+                            TempData["Message"] = "Update successfull!";
                             TempData["MessageType"] = "success";
-                            TempData["Type"] = "Thành công";
+                            TempData["Type"] = "Success";
                             return RedirectToAction("Index", "Profile");
                         }
                         else
                         {
-                            TempData["Message"] = "Cập nhật không thành công!";
+                            TempData["Message"] = "Update unsuccessfull!";
                             TempData["MessageType"] = "error";
-                            TempData["Type"] = "Thất bại";
+                            TempData["Type"] = "Error";
                             return RedirectToAction("Index", "Profile");
                         }
                     }
                     else
                     {
-                        TempData["Message"] = "Có lỗi xảy ra! Vui lòng thử lại!";
+                        TempData["Message"] = "An error occurred! Please try again!";
                         TempData["MessageType"] = "warning";
-                        TempData["Type"] = "Thất bại";
+                        TempData["Type"] = "Warning";
                         return RedirectToAction("Index", "Profile");
                     }
                 }
                 else
                 {
-                    TempData["Message"] = "Có lỗi xảy ra! Vui lòng thử lại!";
+                    TempData["Message"] = "An error occurred! Please try again";
                     TempData["MessageType"] = "warning";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Warning";
                     return RedirectToAction("Index", "Profile");
                 }
             }
@@ -169,8 +169,7 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult DeleteConfirm(KinhNghiem model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
+            if (User.Identity.IsAuthenticated)
             {
                 var dao = new KinhNghiemDao();
                 var entity = dao.ViewDetail(model.ID);
@@ -179,24 +178,24 @@ namespace JobsFinder_Main.Controllers
                     var result = dao.Delete(entity);
                     if (result)
                     {
-                        TempData["Message"] = "Cập nhật thành công!";
+                        TempData["Message"] = "Delete successfull!";
                         TempData["MessageType"] = "success";
-                        TempData["Type"] = "Thành công";
+                        TempData["Type"] = "Success";
                         return RedirectToAction("Index", "Profile");
                     }
                     else
                     {
-                        TempData["Message"] = "Cập nhật không thành công!";
+                        TempData["Message"] = "Delete unsuccessfull!";
                         TempData["MessageType"] = "error";
-                        TempData["Type"] = "Thất bại";
+                        TempData["Type"] = "Error";
                         return RedirectToAction("Index", "Profile");
                     }
                 }
                 else
                 {
-                    TempData["Message"] = "Có lỗi xảy ra! Vui lòng thử lại!";
+                    TempData["Message"] = "An error occurred! Please try again!";
                     TempData["MessageType"] = "warning";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Warning";
                     return RedirectToAction("Index", "Profile");
                 }
             }

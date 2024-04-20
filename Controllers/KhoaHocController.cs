@@ -1,5 +1,6 @@
 ﻿using JobsFinder_Main.Common;
 using JobsFinder_Main.Models;
+using Microsoft.AspNet.Identity;
 using Model.DAO;
 using Model.EF;
 using System;
@@ -28,8 +29,7 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult Create(KhoaHocModel model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
+            if (User.Identity.IsAuthenticated)
             {
                 var dao = new KhoaHocDao();
 
@@ -44,24 +44,24 @@ namespace JobsFinder_Main.Controllers
                     MoTaChiTiet = model.MoTaChiTiet,
                     Img = model.Img,
                     LienKet = model.LienKet,
-                    UserID = session.UserID,
-                    CreatedBy = session.UserName
+                    UserID = User.Identity.GetUserId(),
+                    CreatedBy = User.Identity.GetUserName()
                 };
 
                 var result = dao.Insert(khoaHoc);
                 if (result == true)
                 {
                     model = new KhoaHocModel();
-                    TempData["Message"] = "Cập nhật thành công!";
+                    TempData["Message"] = "Create successfull!";
                     TempData["MessageType"] = "success";
-                    TempData["Type"] = "Thành công";
+                    TempData["Type"] = "Success";
                     return RedirectToAction("Index", "Profile", model);
                 }
                 else
                 {
-                    TempData["Message"] = "Cập nhật không thành công!";
+                    TempData["Message"] = "Create unsuccessfull!";
                     TempData["MessageType"] = "error";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Error";
                     return RedirectToAction("Index", "Profile");
                 }
             }
@@ -81,8 +81,7 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult Update(KhoaHoc model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
+            if (User.Identity.IsAuthenticated)
             {
                 var dao = new KhoaHocDao();
                 var entity = dao.ViewDetail(model.ID);
@@ -118,38 +117,38 @@ namespace JobsFinder_Main.Controllers
                         {
                             entity.MoTaChiTiet = model.MoTaChiTiet;
                         }
-                        entity.ModifiedBy = session.UserName;
+                        entity.ModifiedBy = User.Identity.Name;
                         entity.ModifiedDate = DateTime.Now;
 
                         var result = dao.Update(entity);
                         if (result)
                         {
-                            TempData["Message"] = "Cập nhật thành công!";
+                            TempData["Message"] = "Update successfull!";
                             TempData["MessageType"] = "success";
-                            TempData["Type"] = "Thành công";
+                            TempData["Type"] = "Success";
                             return RedirectToAction("Index", "Profile");
                         }
                         else
                         {
-                            TempData["Message"] = "Cập nhật không thành công!";
+                            TempData["Message"] = "Update unsuccessfull!";
                             TempData["MessageType"] = "error";
-                            TempData["Type"] = "Thất bại";
+                            TempData["Type"] = "Error";
                             return RedirectToAction("Index", "Profile");
                         }
                     }
                     else
                     {
-                        TempData["Message"] = "Có lỗi xảy ra! Vui lòng thử lại!";
+                        TempData["Message"] = "An error occurred! Please try again!";
                         TempData["MessageType"] = "warning";
-                        TempData["Type"] = "Thất bại";
+                        TempData["Type"] = "Warning";
                         return RedirectToAction("Index", "Profile");
                     }
                 }
                 else
                 {
-                    TempData["Message"] = "Có lỗi xảy ra! Vui lòng thử lại!";
+                    TempData["Message"] = "An error occurred! Please try again";
                     TempData["MessageType"] = "warning";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Warning";
                     return RedirectToAction("Index", "Profile");
                 }
             }
@@ -169,8 +168,7 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult DeleteConfirm(KhoaHoc model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
+            if (User.Identity.IsAuthenticated)
             {
                 var dao = new KhoaHocDao();
                 var entity = dao.ViewDetail(model.ID);
@@ -179,24 +177,24 @@ namespace JobsFinder_Main.Controllers
                     var result = dao.Delete(entity);
                     if (result)
                     {
-                        TempData["Message"] = "Cập nhật thành công!";
+                        TempData["Message"] = "Delete successfull!";
                         TempData["MessageType"] = "success";
-                        TempData["Type"] = "Thành công";
+                        TempData["Type"] = "Success";
                         return RedirectToAction("Index", "Profile");
                     }
                     else
                     {
-                        TempData["Message"] = "Cập nhật không thành công!";
+                        TempData["Message"] = "Delete unsuccessfull!";
                         TempData["MessageType"] = "error";
-                        TempData["Type"] = "Thất bại";
+                        TempData["Type"] = "Error";
                         return RedirectToAction("Index", "Profile");
                     }
                 }
                 else
                 {
-                    TempData["Message"] = "Có lỗi xảy ra! Vui lòng thử lại!";
+                    TempData["Message"] = "An error occurred! Please try again!";
                     TempData["MessageType"] = "warning";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Warning";
                     return RedirectToAction("Index", "Profile");
                 }
             }

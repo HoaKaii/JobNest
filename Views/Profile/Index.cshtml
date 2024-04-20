@@ -4,10 +4,6 @@
     Layout = "~/Views/Shared/_Layout_Profile.cshtml";
 }
 
-@{
-    var session = (JobsFinder_Main.Common.UserLogin)Session[JobsFinder_Main.Common.CommonConstants.USER_SESSION];
-}
-
 @section jsFooter{
     <script>
         var hocVanCheckboxes = document.querySelectorAll(".checkbox");
@@ -49,8 +45,12 @@
     </script>
 }
 
-@if (session != null)
+@using Microsoft.AspNet.Identity
+
+@if (User.Identity.IsAuthenticated)
 {
+    string userID = User.Identity.GetUserId();
+
     { Html.RenderAction("Create"); }
     { Html.RenderAction("Create", "HocVan"); }
     { Html.RenderAction("Create", "KinhNghiem"); }
@@ -63,7 +63,8 @@
     { Html.RenderAction("Create", "HoatDong"); }
 
     var hocVanDao = new Model.DAO.HocVanDao();
-    var listAllHocVan = hocVanDao.ListAll(session.UserID);
+
+    var listAllHocVan = hocVanDao.ListAll(userID);
 
     foreach (var item in listAllHocVan)
     {
@@ -72,7 +73,7 @@
     }
 
     var kinhNghiemDao = new Model.DAO.KinhNghiemDao();
-    var listAllKinhNghiem = kinhNghiemDao.ListAll(session.UserID);
+    var listAllKinhNghiem = kinhNghiemDao.ListAll(userID);
 
     foreach (var item in listAllKinhNghiem)
     {
@@ -81,7 +82,7 @@
     }
 
     var kyNangDao = new Model.DAO.KyNangDao();
-    var listAllKyNang = kyNangDao.ListAll(session.UserID);
+    var listAllKyNang = kyNangDao.ListAll(userID);
 
     foreach (var item in listAllKyNang)
     {
@@ -90,7 +91,7 @@
     }
 
     var chungChiDao = new Model.DAO.ChungChiDao();
-    var listAllChungChi = chungChiDao.ListAll(session.UserID);
+    var listAllChungChi = chungChiDao.ListAll(userID);
 
     foreach (var item in listAllChungChi)
     {
@@ -99,7 +100,7 @@
     }
 
     var giaiThuongDao = new Model.DAO.GiaiThuongDao();
-    var listAllGiaiThuong = giaiThuongDao.ListAll(session.UserID);
+    var listAllGiaiThuong = giaiThuongDao.ListAll(userID);
 
     foreach (var item in listAllGiaiThuong)
     {
@@ -108,7 +109,7 @@
     }
 
     var khoaHocDao = new Model.DAO.KhoaHocDao();
-    var listAllKhoaHoc = khoaHocDao.ListAll(session.UserID);
+    var listAllKhoaHoc = khoaHocDao.ListAll(userID);
 
     foreach (var item in listAllKhoaHoc)
     {
@@ -117,7 +118,7 @@
     }
 
     var duAnDao = new Model.DAO.DuAnDao();
-    var listAllDuAn = duAnDao.ListAll(session.UserID);
+    var listAllDuAn = duAnDao.ListAll(userID);
 
     foreach (var item in listAllDuAn)
     {
@@ -126,16 +127,16 @@
     }
 
     var sanPhamDao = new Model.DAO.SanPhamDao();
-    var listAllSanPham = sanPhamDao.ListAll(session.UserID);
+    var listAllSanPham = sanPhamDao.ListAll(userID);
 
-    foreach (var item in listAllHocVan)
+    foreach (var item in listAllSanPham)
     {
         { Html.RenderAction("Update", "SanPham", new { id = item.ID }); }
         { Html.RenderAction("DeleteConfirm", "SanPham", new { id = item.ID }); }
     }
 
     var hoatDongDao = new Model.DAO.HoatDongDao();
-    var listAllHoatDong = hoatDongDao.ListAll(session.UserID);
+    var listAllHoatDong = hoatDongDao.ListAll(userID);
 
     foreach (var item in listAllHoatDong)
     {

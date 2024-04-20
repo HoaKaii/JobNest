@@ -1,4 +1,7 @@
-﻿using Model.DAO;
+﻿using JobsFinder_Main.Identity;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Model.DAO;
 using Model.EF;
 using System;
 using System.Collections.Generic;
@@ -13,7 +16,12 @@ namespace JobsFinder_Main.Controllers
 {
     public class HomeController : Controller
     {
-        // GET: Home
+        private readonly UserManager<AppUser> _userManager;
+
+        public HomeController()
+        {
+            _userManager = new UserManager<AppUser>(new UserStore<AppUser>(new AppDbContext()));
+        }
         public ActionResult Index()
 
         {
@@ -110,8 +118,7 @@ namespace JobsFinder_Main.Controllers
 
         public int UserCount()
         {
-            var dao = new UserDao();
-            int userCount = dao.CountUser();
+            var userCount = _userManager.Users.Count();
             return userCount;
         }
 

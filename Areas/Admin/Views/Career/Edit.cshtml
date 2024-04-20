@@ -1,12 +1,12 @@
 ﻿@model Model.EF.Career
 
 @{
-    ViewBag.Title = "Chỉnh sửa danh mục ngành nghề";
+    ViewBag.Title = "Edit career category";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
 @section header  {
-    Chỉnh sửa danh mục ngành nghề
+    Edit career category
 }
 
 @using (Html.BeginForm("Edit", "Career", FormMethod.Post))
@@ -28,7 +28,7 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Hoàn tất" class="btn btn-primary" />
+                <input type="submit" value="Complete" class="btn btn-primary" />
             </div>
         </div>
     </div>

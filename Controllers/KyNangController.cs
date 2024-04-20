@@ -1,5 +1,6 @@
 ﻿using JobsFinder_Main.Common;
 using JobsFinder_Main.Models;
+using Microsoft.AspNet.Identity;
 using Model.DAO;
 using Model.EF;
 using System;
@@ -28,8 +29,7 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult Create(KyNangModel model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
+            if (User.Identity.IsAuthenticated)
             {
                 var dao = new KyNangDao();
 
@@ -37,25 +37,26 @@ namespace JobsFinder_Main.Controllers
                 {
                     TenKyNang = model.TenKyNang,
                     DanhGia = model.DanhGia,
+                    Caption = model.Caption,
                     MoTaChiTiet = model.MoTaChiTiet,
-                    UserID = session.UserID,
-                    CreatedBy = session.UserName
+                    UserID = User.Identity.GetUserId(),
+                    CreatedBy = User.Identity.GetUserName()
                 };
 
                 var result = dao.Insert(kyNang);
                 if (result == true)
                 {
                     model = new KyNangModel();
-                    TempData["Message"] = "Cập nhật thành công!";
+                    TempData["Message"] = "Create successfull!";
                     TempData["MessageType"] = "success";
-                    TempData["Type"] = "Thành công";
+                    TempData["Type"] = "Success";
                     return RedirectToAction("Index", "Profile", model);
                 }
                 else
                 {
-                    TempData["Message"] = "Cập nhật không thành công!";
+                    TempData["Message"] = "Create unsuccessfull!";
                     TempData["MessageType"] = "error";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Error";
                     return RedirectToAction("Index", "Profile");
                 }
             }
@@ -75,8 +76,7 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult Update(KyNang model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
+            if (User.Identity.IsAuthenticated)
             {
                 var dao = new KyNangDao();
                 var entity = dao.ViewDetail(model.ID);
@@ -92,42 +92,46 @@ namespace JobsFinder_Main.Controllers
                         {
                             entity.DanhGia = model.DanhGia;
                         }
+                        if (!string.IsNullOrEmpty(model.Caption.ToString()))
+                        {
+                            entity.Caption = model.Caption;
+                        }
                         if (!string.IsNullOrEmpty(model.MoTaChiTiet))
                         {
                             entity.MoTaChiTiet = model.MoTaChiTiet;
                         }
-                        entity.ModifiedBy = session.UserName;
+                        entity.ModifiedBy = User.Identity.Name;
                         entity.ModifiedDate = DateTime.Now;
 
                         var result = dao.Update(entity);
                         if (result)
                         {
-                            TempData["Message"] = "Cập nhật thành công!";
+                            TempData["Message"] = "Update successfull!";
                             TempData["MessageType"] = "success";
-                            TempData["Type"] = "Thành công";
+                            TempData["Type"] = "Success";
                             return RedirectToAction("Index", "Profile");
                         }
                         else
                         {
-                            TempData["Message"] = "Cập nhật không thành công!";
+                            TempData["Message"] = "Update unsuccessfull!";
                             TempData["MessageType"] = "error";
-                            TempData["Type"] = "Thất bại";
+                            TempData["Type"] = "Error";
                             return RedirectToAction("Index", "Profile");
                         }
                     }
                     else
                     {
-                        TempData["Message"] = "Có lỗi xảy ra! Vui lòng thử lại!";
+                        TempData["Message"] = "An error occurred! Please try again!";
                         TempData["MessageType"] = "warning";
-                        TempData["Type"] = "Thất bại";
+                        TempData["Type"] = "Warning";
                         return RedirectToAction("Index", "Profile");
                     }
                 }
                 else
                 {
-                    TempData["Message"] = "Có lỗi xảy ra! Vui lòng thử lại!";
+                    TempData["Message"] = "An error occurred! Please try again";
                     TempData["MessageType"] = "warning";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Warning";
                     return RedirectToAction("Index", "Profile");
                 }
             }
@@ -147,8 +151,7 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult DeleteConfirm(KyNang model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
+            if (User.Identity.IsAuthenticated)
             {
                 var dao = new KyNangDao();
                 var entity = dao.ViewDetail(model.ID);
@@ -157,24 +160,24 @@ namespace JobsFinder_Main.Controllers
                     var result = dao.Delete(entity);
                     if (result)
                     {
-                        TempData["Message"] = "Cập nhật thành công!";
+                        TempData["Message"] = "Delete successfull!";
                         TempData["MessageType"] = "success";
-                        TempData["Type"] = "Thành công";
+                        TempData["Type"] = "Success";
                         return RedirectToAction("Index", "Profile");
                     }
                     else
                     {
-                        TempData["Message"] = "Cập nhật không thành công!";
+                        TempData["Message"] = "Delete unsuccessfull!";
                         TempData["MessageType"] = "error";
-                        TempData["Type"] = "Thất bại";
+                        TempData["Type"] = "Error";
                         return RedirectToAction("Index", "Profile");
                     }
                 }
                 else
                 {
-                    TempData["Message"] = "Có lỗi xảy ra! Vui lòng thử lại!";
+                    TempData["Message"] = "An error occurred! Please try again!";
                     TempData["MessageType"] = "warning";
-                    TempData["Type"] = "Thất bại";
+                    TempData["Type"] = "Warning";
                     return RedirectToAction("Index", "Profile");
                 }
             }

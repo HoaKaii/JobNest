@@ -1,10 +1,6 @@
-﻿﻿@model Model.EF.GiaiThuong
+﻿@model Model.EF.GiaiThuong
 
-@{
-    var session = (JobsFinder_Main.Common.UserLogin)Session[JobsFinder_Main.Common.CommonConstants.USER_SESSION];
-}
-
-@if (session == null)
+@if (!User.Identity.IsAuthenticated)
 {
     { Html.RenderAction("Login", "User"); }
 }
@@ -17,11 +13,11 @@ else
             {
                 @Html.AntiForgeryToken()
 
-                <p style="font-size:  16px; font-weight: 600;">Bạn có muốn xóa mục này?</p>
+                <p style="font-size:  16px; font-weight: 600;">Do you want to delete this item?</p>
 
                 <div class="form-actions no-color d-flex justify-content-between" style="width: 100%">
-                    <button type="reset" class="btn btn-outline-primary btn-cance" style="border-radius: 4px; width: 45%;">Hủy</button>
-                    <button type="submit" class="btn btn-danger" style="border-radius: 4px; width: 45%;">Xóa</button>
+                    <button type="reset" class="btn btn-outline-primary btn-cance" style="border-radius: 4px; width: 45%;">Cancle</button>
+                    <button type="submit" class="btn btn-danger" style="border-radius: 4px; width: 45%;">Delete</button>
                 </div>
             }
         </div>

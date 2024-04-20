@@ -1,23 +1,26 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "CompanyManager";
     Layout = "~/Views/Shared/_Layout_Manager.cshtml";
 }
 
-@{
-    var session = (JobsFinder_Main.Common.UserLogin)Session[JobsFinder_Main.Common.CommonConstants.USER_SESSION];
-}
+@using JobsFinder_Main.Identity
+@using Microsoft.AspNet.Identity
 
-@if (session == null)
+@if (!User.Identity.IsAuthenticated)
 {
-    { Html.RenderAction("Login", "User"); }
+    Html.RenderAction("Login", "User");
 }
 else
 {
-    var dao = new Model.DAO.CompanyDao();
-    var model = dao.ListInUser(session.UserName).ToList();
+    var appDbContext = new AppDbContext();
+    var userStore = new AppUserStore(appDbContext);
+    var userManager = new AppUserManager(userStore);
+    var currentUser = userManager.FindByName(User.Identity.Name);
 
-    <h5 class="mb-3">Doanh nghiệp hiện có</h5>
+    var companyDao = new Model.DAO.CompanyDao();
+    var model = companyDao.ListInUser(currentUser.UserName).ToList();
+
+    <h5 class="mb-3">Current enterprises</h5>
 
     if (model.Count != 0)
     {
@@ -32,10 +35,11 @@ else
     }
     else
     {
-        <p>Bạn chưa có doanh nghiệp nào</p>
-
+        <p>You don't have any current enterprises.</p>
     }
-    <a href="/User/CompanyManager">Tạo đoanh nghiệp</a>
+
+    <a href="/User/CompanyManager">Create enterprise</a>
+
     <style>
         .avatar {
             width: 40px;

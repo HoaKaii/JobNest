@@ -14,6 +14,7 @@ using BotDetect;
 using ServiceStack;
 using System.Text.RegularExpressions;
 using System.Runtime.CompilerServices;
+using Microsoft.AspNet.Identity;
 
 
 namespace JobsFinder_Main.Controllers
@@ -36,14 +37,14 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult Create(Profile profile)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
+            if (User.Identity.IsAuthenticated)
             {
+                string userID = User.Identity.GetUserId();
+
                 var dao = new ProfileDao();
-                var updateProfile = dao.GetByID(session.UserID);
+                var updateProfile = dao.GetByID(userID);
                 if (updateProfile != null)
                 {
-                    // Thực hiện cập nhật
                     if (!string.IsNullOrEmpty(profile.HoVaTen))
                     {
                         updateProfile.HoVaTen = profile.HoVaTen;
@@ -84,7 +85,6 @@ namespace JobsFinder_Main.Controllers
                     {
                         updateProfile.GioiThieu = profile.GioiThieu;
                     }
-
                     var result = dao.Update(updateProfile);
                     if (result)
                     {
@@ -103,15 +103,9 @@ namespace JobsFinder_Main.Controllers
                 }
                 else
                 {
-                    // Thêm mới
-                    profile.UserID = session.UserID;
-                    profile.HoVaTen = session.Name;
-                    profile.Email = session.Email;
-                    profile.SoDienThoai = session.Phone;
-                    profile.AnhCaNhan = session.Avatar;
-
+                    profile.UserID = userID;
                     var result = dao.Insert(profile);
-                    if (result > 0)
+                    if (result != null)
                     {
                         TempData["Message"] = "Update successfull!";
                         TempData["MessageType"] = "success";

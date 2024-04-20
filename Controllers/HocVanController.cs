@@ -1,7 +1,10 @@
 ﻿using JobsFinder_Main.Common;
+using JobsFinder_Main.Identity;
 using JobsFinder_Main.Models;
+using Microsoft.AspNet.Identity;
 using Model.DAO;
 using Model.EF;
+using ServiceStack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,8 +31,7 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult Create(HocVanModel model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
+            if (User.Identity.IsAuthenticated)
             {
                 var hocvan = new HocVan();
                 var dao = new HocVanDao();
@@ -41,8 +43,8 @@ namespace JobsFinder_Main.Controllers
                 hocvan.ThangKetThuc = model.ThangKetThuc;
                 hocvan.NamKetThuc = model.NamKetThuc;
                 hocvan.MoTaChiTiet = model.MoTaChiTiet;
-                hocvan.UserID = session.UserID;
-                hocvan.CreatedBy = session.UserName;
+                hocvan.UserID = User.Identity.GetUserId();
+                hocvan.CreatedBy = User.Identity.GetUserName();
 
                 var result = dao.Insert(hocvan);
                 if (result == true)
@@ -78,8 +80,7 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult Update(HocVan model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
+            if (User.Identity.IsAuthenticated)
             {
                 var dao = new HocVanDao();
                 var entity = dao.ViewDetail(model.ID);
@@ -115,7 +116,7 @@ namespace JobsFinder_Main.Controllers
                         {
                             entity.MoTaChiTiet = model.MoTaChiTiet;
                         }
-                        entity.ModifiedBy = session.UserName;
+                        entity.ModifiedBy = User.Identity.Name;
                         entity.ModifiedDate = DateTime.Now;
 
                         var result = dao.Update(entity);
@@ -167,8 +168,7 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult DeleteConfirm(HocVan model)
         {
-            var session = (UserLogin)Session[CommonConstants.USER_SESSION];
-            if (session != null)
+            if (User.Identity.IsAuthenticated)
             {
                 var dao = new HocVanDao();
                 var entity = dao.ViewDetail(model.ID);

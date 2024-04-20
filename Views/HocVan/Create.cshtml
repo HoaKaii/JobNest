@@ -1,9 +1,6 @@
 ﻿@model JobsFinder_Main.Models.HocVanModel
-@{
-    var session = (JobsFinder_Main.Common.UserLogin)Session[JobsFinder_Main.Common.CommonConstants.USER_SESSION];
-}
 
-@if (session != null)
+@if (User.Identity.IsAuthenticated)
 {
     <div id="formHocVan" class="p-4 form-profile">
         @using (Html.BeginForm("Create", "HocVan", FormMethod.Post))

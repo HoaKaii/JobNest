@@ -11,7 +11,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Login</title>
+    <title>Admin - Login</title>
 
     <!-- Custom fonts for this template-->
     <link href="~/Assets/Admin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -46,21 +46,21 @@
                                     {
                                         @Html.ValidationSummary(false, "", "error")
                                         <div class="form-group">
-                                            @Html.TextBoxFor(model => model.UserName, new { @class = "form-control form-control-user", @autofocus = "autofocus", @placeholder = "Nhập tên đăng nhập..." })
+                                            @Html.TextBoxFor(model => model.UserName, new { @class = "form-control form-control-user", @autofocus = "autofocus", @placeholder = "Enter username..." })
                                         </div>
                                         <div class="form-group">
-                                            @Html.PasswordFor(model => model.Password, new { @class = "form-control form-control-user", @autofocus = "autofocus", @placeholder = "Nhập mật khẩu..." })
+                                            @Html.PasswordFor(model => model.Password, new { @class = "form-control form-control-user", @autofocus = "autofocus", @placeholder = "Enter password..." })
                                         </div>
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
                                                 @Html.CheckBoxFor(model => model.RememberMe, new { @class = "custom-control-input" })
                                                 <label class="custom-control-label" for="customCheck">
-                                                    Ghi nhớ tài khoản
+                                                    Remember account
                                                 </label>
                                             </div>
                                         </div>
                                         <button type="submit" class="btn btn-primary btn-user btn-block">
-                                            Đăng nhập
+                                            Login
                                         </button>
                                         <hr>
                                         <a href="index.html" class="btn btn-google btn-user btn-block">

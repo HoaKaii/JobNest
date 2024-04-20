@@ -10,15 +10,25 @@
 
     <div class="collapse navbar-collapse" id="navbarCollapse">
         @{ Html.RenderAction("MainMenu", "Home"); }
-        @{
-            var session = (JobsFinder_Main.Common.UserLogin)Session[JobsFinder_Main.Common.CommonConstants.USER_SESSION];
-        }
-        @if (session != null)
+        @if (User.Identity.IsAuthenticated)
         {
+            string userName = User.Identity.Name;
+            string Avatar = "";
+            string Name = "";
+
+            using (var dbContext = new JobsFinder_Main.Identity.AppDbContext())
+            {
+                var user = dbContext.Users.FirstOrDefault(u => u.UserName == userName);
+                if (user != null)
+                {
+                    Avatar = user.Avatar; 
+                    Name = user.Name;
+                }
+            }
             <div class="navbar-nav d-flex nav-button align-items-center">
-                <img class=" mx-2" src="@session.Avatar" style="width: 32px; height: 32px; border-radius: 16px; border: 1px solid #EEE;" />
+                <img class=" mx-2" src="@Avatar" style="width: 32px; height: 32px; border-radius: 16px; border: 1px solid #EEE;" />
                 <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" style="text-transform: capitalize;">@session.Name</a>
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" style="text-transform: capitalize;">@Name</a>
                     <div class="dropdown-menu rounded-0 m-0">
                         <div class="item-drop d-flex align-items-center">
                             <i class="bi bi-person-check"></i>
@@ -28,11 +38,6 @@
                         <div class="item-drop d-flex align-items-center">
                             <i class="bi bi-heart"></i>
                             @Html.ActionLink("Favorite", "Favorite", "User")
-                        </div>
-                        <hr class="m-2">
-                        <div class="item-drop d-flex align-items-center">
-                            <i class="bi bi-building"></i>
-                            @Html.ActionLink("Manage business", "Manager", "User")
                         </div>
                         <hr class="m-2">
                         <div class="item-drop d-flex align-items-center">
@@ -64,7 +69,7 @@
         else
         {
             <div class="navbar-nav d-flex nav-button">
-                <a href="/dang-nhap" class="btn btn-primary mx-2" style="height: 40px; width: 150px; border-radius: 4px;">Log in</a>
+                <a href="/login" class="btn btn-primary mx-2" style="height: 40px; width: 150px; border-radius: 4px;">Log in</a>
                 <a href="/register" class="btn btn-secondary" style="height: 40px; width: 150px; border-radius: 4px;">Register</a>
             </div>
         }

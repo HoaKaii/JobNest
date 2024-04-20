@@ -1,13 +1,12 @@
 ﻿@model JobsFinder_Main.Models.ProfileModel
 
-@{
-    var session = (JobsFinder_Main.Common.UserLogin)Session[JobsFinder_Main.Common.CommonConstants.USER_SESSION];
-    var dao = new Model.DAO.ProfileDao();
-}
+@using Microsoft.AspNet.Identity
 
-@if (session != null)
+@if (User.Identity.IsAuthenticated)
 {
-    var myProfile = dao.GetByID(session.UserID);
+    string userID = User.Identity.GetUserId();
+    var dao = new Model.DAO.ProfileDao();
+    var myProfile = dao.GetByID(userID);
     <div id="formProfile" class="p-4 form-profile">
         @using (Html.BeginForm("Create", "Profile", FormMethod.Post))
         {

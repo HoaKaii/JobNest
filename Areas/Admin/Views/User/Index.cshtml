@@ -1,14 +1,14 @@
-﻿@model PagedList.IPagedList<Model.EF.User>
+﻿@model PagedList.IPagedList<JobsFinder_Main.Identity.AppUser>
 @using PagedList.Mvc;
-
+@using JobsFinder_Main.Identity;
 
 @{
-    ViewBag.Title = "Quản lý người dùng";
+    ViewBag.Title = "Manage user";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
 @section header{
-    Danh sách người dùng
+    <h1>List of users</h1>
 }
 
 @section jsFooter{
@@ -16,10 +16,10 @@
 }
 
 <!-- Topbar Search -->
-@using (Html.BeginForm("Index", "User", FormMethod.Get, new {@class = "navbar-search" }))
+@using (Html.BeginForm("Index", "User", FormMethod.Get, new { @class = "navbar-search" }))
 {
     <div class="input-group">
-        <input type="text" class="form-control bg-white search-input" placeholder="Tìm kiếm người dùng..."
+        <input type="text" class="form-control bg-white search-input" placeholder="Search..."
                aria-label="Search" aria-describedby="basic-addon2" name="searchString" value="@ViewBag.SearchString">
         <div class="input-group-append">
             <button class="btn btn-primary" type="submit">
@@ -27,7 +27,7 @@
             </button>
         </div>
         <a class="btn btn-primary ml-3" href="/Admin/User/Create">
-            Thêm mới người dùng
+            Add new user
         </a>
     </div>
     <style>
@@ -36,10 +36,9 @@
             margin-bottom: 1rem;
         }
 
-        .navbar-search > input {
-            border: 1px solid #d1d3e2;
-        }
-            
+            .navbar-search > input {
+                border: 1px solid #d1d3e2;
+            }
     </style>
 }
 
@@ -54,50 +53,52 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Tên đăng nhập</th>
-                        <th>Tên cá nhân</th>
-                        <th>Địa chỉ</th>
+                        <th>Username</th>
+                        <th>Full Name</th>
+                        <th>Address</th>
                         <th>Email</th>
-                        <th>Số điện thoại</th>
-                        <th>Trạng thái</th>
+                        <th>Phone Number</th>
+                        <th>Status</th>
+                        <th>Role</th>
+                        <th>Action</th>
+
                     </tr>
                 </thead>
-                <tfoot>
-                    <tr>
-                        <th></th>
-                        <th>Tên đăng nhập</th>
-                        <th>Tên cá nhân</th>
-                        <th>Địa chỉ</th>
-                        <th>Email</th>
-                        <th>Số điện thoại</th>
-                        <th>Trạng thái</th>
-                    </tr>
-                </tfoot>
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr id="row_@item.ID">
-                            <td>@item.ID</td>
+                        <tr id="row_@item.Id">
+                            <td>@item.Id</td>
                             <td>@item.UserName</td>
                             <td>@item.Name</td>
                             <td>@item.Address</td>
                             <td>@item.Email</td>
-                            <td>@item.Phone</td>
-                            <td><a href="#" class="btn-active" data-id="@item.ID">@(item.Status == true ? "Kích hoạt" : "Khóa")</a></td>
+                            <td>@item.PhoneNumber</td>
+                            <td><a href="#" class="btn-active" data-id="@item.Id">@(item.Status == true ? "Active" : "Inactive")</a></td>
+                            <td>Unknow</td>
                             <td>
-                                <a href="/Admin/User/Edit/@item.ID">Sửa</a>
-                                @Ajax.ActionLink("Xóa", "Delete", new { @id = item.ID }, new AjaxOptions
-                           {
-                               Confirm = "Bạn có muốn xóa bản ghi này",
-                               OnComplete = "$(row_" + @item.ID + ").remove()",
-                               HttpMethod = "Delete"
-                           })
+                                <a class="edit-link" href="/Admin/User/Edit/@item.Id">Edit</a>
+                                @Ajax.ActionLink("Delete", "Delete", new { id = item.Id }, new AjaxOptions
+                                {
+                                    Confirm = "Do you want to delete this record?",
+                                    HttpMethod = "Delete",
+                                    OnSuccess = "deleteSuccess"
+                                }, new { @class = "delete-link" })
+                                <style>
+                                    .delete-link {
+                                        color: red;
+                                    }
+
+                                    .edit-link {
+                                        color: green;
+                                    }
+                                </style>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
-            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, @searchString = @ViewBag.SearchString }))
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewBag.SearchString }), new PagedListRenderOptions { Display = PagedListDisplayMode.IfNeeded })
         </div>
     </div>
 </div>
