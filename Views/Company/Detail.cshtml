@@ -3,7 +3,19 @@
 @{
     ViewBag.Title = "Detail";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string Name = "";
+    using (var dbContext = new JobsFinder_Main.Identity.AppDbContext())
+    {
+        var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+        if (user != null)
+        {
+            Name = user.Name;
+        }
+    }
 }
+
+@using Microsoft.AspNet.Identity;
 
 <div class="container-xxl pt-5">
     <div class="container">
@@ -26,21 +38,25 @@
                                     <i class="bi bi-people"></i>
                                     <h6 style="margin: 0; margin-left: 8px;">@Model.Employees Employees</h6>
                                 </div>
+                                <div class="content d-flex align-items-center" style="margin-left: 32px;">
+                                    <i class="bi bi-star-fill" style="color: orange;"></i>
+                                    <h6 style="margin: 0; margin-left: 8px;">@ViewBag.AverageRating (@ViewBag.TotalReviews review)</h6>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center box-action">
                     <div class="d-flex mb-3">
-                        <a class="btn btn-primary btn-apply" href="">Theo dõi công ty</a>
+                        <a class="btn btn-primary btn-apply" href="">Follow company</a>
                     </div>
                 </div>
             </div>
 
             <div class="box-bottom d-flex mt-5 mb-5 justify-content-between">
-                <div class="bottom-left" style="max-width: 65%;">
+                <div class="bottom-left" style="max-width: 63%;">
                     <div class="box-content p-4" style="margin-bottom: 24px; background: #f6faff; border-radius: 4px; ">
-                        <h4>Mô tả</h4>
+                        <h4>Description</h4>
                         <div class="content">
                             <p>@Html.Raw(Model.Description)</p>
                         </div>
@@ -48,21 +64,73 @@
 
                     <!-- Jobs Start -->
                     <div class="container-xxl py-5">
-                        <h4 class="mb-4">Công ty đang tuyển dụng</h4>
+                        <h4 class="mb-4">The company is recruiting:</h4>
                         @{ Html.RenderAction("JobInCompany", "Company");}
 
                     </div>
                     <!-- Jobs End -->
                 </div>
-                <div class="bottom-right" style="width: 33%;">
+                <!-- Bottom-right section for location -->
+                <div class="bottom-right" style="width: 35%;">
                     <div class="box-content p-4" style="background: #f6faff; border-radius: 4px; ">
-                        <h4>Vị trí</h4>
+                        <h4>Location</h4>
                         <div class="content">
                             <div class="d-flex">
                                 <i class="bi bi-geo"></i>
-                                <p style="margin-left: 12px;">448 Lê Văn Việt, Tăng Nhơn Phú A, TP Thủ Đức, TP Hồ Chí Minh</p>
+                                <p style="margin-left: 12px;">@Model.Location</p>
                             </div>
                             <div style="width: 100%; height: auto;"></div>
+                        </div>
+                    </div>
+                    <!-- Reviews section -->
+                    <div class="box-content p-4 mt-4" style="background: #f6faff; border-radius: 4px;">
+                        <h4>Reviews</h4>
+                        <div class="content">
+                            @using (Html.BeginForm("AddReview", "Company", new { id = Model.ID }, FormMethod.Post))
+                            {
+                                <input type="hidden" name="companyId" value="@Model.ID" />
+                                <input type="hidden" name="userId" value="@User.Identity.GetUserId()" />
+                                <input type="hidden" name="Name" value="@Name" />
+                                <div class="form-group">
+                                    <label for="comment">Comment:</label>
+                                    <textarea class="form-control" id="comment" name="comment" rows="3" style="padding:8px;"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="rating">Rating:</label>
+                                    <select class="form-control" id="rating" name="rating" style="padding:8px;">
+                                        <option value="1">1 star</option>
+                                        <option value="2">2 stars</option>
+                                        <option value="3">3 stars</option>
+                                        <option value="4">4 stars</option>
+                                        <option value="5">5 stars</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit Review</button>
+                            }
+                            <!-- List of reviews -->
+                            <h5 class="mt-4">Recent Reviews (@ViewBag.TotalReviews)</h5>
+                            @foreach (var review in Model.Reviews)
+                            {
+                                <div class="card mt-3">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <h6>@review.Name</h6>
+                                            <small>@review.CreatedAt</small>
+                                        </div>
+                                        <p>@review.Comment</p>
+                                        <div class="d-flex align-items-center">
+                                            @for (int i = 0; i < review.Rating; i++)
+                                            {
+                                                <i class="bi bi-star-fill" style="color: orange;"></i>
+                                            }
+                                            @for (int i = review.Rating; i < 5; i++)
+                                            {
+                                                <i class="bi bi-star" style="color: orange;"></i>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>

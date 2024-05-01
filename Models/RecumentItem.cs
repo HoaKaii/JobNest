@@ -14,7 +14,6 @@ namespace JobsFinder_Main.Models
         [Key]
         public int Id { get; set; }
         public int JobID {  get; set; }
-        public User user {  get; set; }
 
         [Column(TypeName = "ntext")]
         public string LetterInfo { get; set; }

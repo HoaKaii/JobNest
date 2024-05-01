@@ -24,11 +24,11 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
             _userManager = new UserManager<AppUser>(new UserStore<AppUser>(new AppDbContext()));
         }
         // GET: Admin/Company
-        public ActionResult Index(string searchString, string searchName, string searchLocation ,int page = 1, int pageSize = 10)
+        public ActionResult Index(string searchName, string searchLocation ,int page = 1, int pageSize = 10)
         {
             var dao = new CompanyDao();
-            var model = dao.ListAllPaging(searchString, searchName, searchLocation , page, pageSize);
-            ViewBag.SearchString = searchString;
+            var model = dao.ListAllPaging(searchName, searchLocation , page, pageSize);
+            ViewBag.SearchName = searchName;
 
             return View(model);
         }

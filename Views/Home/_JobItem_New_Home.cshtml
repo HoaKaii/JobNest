@@ -34,6 +34,9 @@
         ViewBag.GetAvatar = getAvatar;
     }
 
+    var career = jobDao.GetCareer(Model.CarrerID);
+    ViewBag.Career = career;
+
     var urlJob = "/cong-viec/" + @Model.Code + "-" + @Model.ID;
     var urlCom = "/cong-ty/" + ViewBag.MetaTitle + "-" + @Model.CompanyID;
 }
@@ -60,6 +63,10 @@
                     <span class="text-truncate me-3">
                         <i class="bi bi-geo-alt"></i>
                         @Model.WorkLocation
+                    </span>
+                    <span class="text-truncate me-3">
+                        <i class="bi bi-calendar-event"></i>
+                        @ViewBag.Career
                     </span>
                     <span class="text-truncate me-3">
                         <i class="bi bi-calendar-event"></i>

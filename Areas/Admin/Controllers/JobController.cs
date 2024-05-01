@@ -1,14 +1,9 @@
 ﻿using JobsFinder_Main.Identity;
 using Model.DAO;
 using Model.EF;
-using NLog;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.UI;
 
 namespace JobsFinder_Main.Areas.Admin.Controllers
 {
@@ -16,11 +11,11 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
     {
         // GET: Admin/Job
         [HttpGet]
-        public ActionResult Index(string searchString, string searchName, string searchLocation, string fillterCareer, string fillterCategory, string fillterGender, string fillterEXP, int page = 1, int pageSize = 10)
+        public ActionResult Index(string searchName, string searchLocation, string fillterCareer, string fillterCategory, string fillterGender, string fillterEXP, int page = 1, int pageSize = 10)
         {
             var dao = new JobDao();
-            var model = dao.ListAllPaging( searchString, searchName, searchLocation, fillterCareer, fillterCategory, fillterGender, fillterEXP, page, pageSize);
-            ViewBag.SearchString = searchString;
+            var model = dao.ListAllPaging(searchName, searchLocation, fillterCareer, fillterCategory, fillterGender, fillterEXP, page, pageSize);
+            ViewBag.SearchName = searchName;
 
             return View(model);
         }
@@ -57,23 +52,18 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                var dao = new JobDao();
+                long id = dao.Insert(job);
+                if (id > 0)
                 {
-                    var dao = new JobDao();
-                    long id = dao.Insert(job);
-                    SetViewBag();
-                    if (id > 0)
-                    {
-                        SetAlert("Thêm bản ghi mới thành công", "success");
-                        return RedirectToAction("Index", "Job");
-                    }
-                    else
-                    {
-                        SetAlert("Thêm bản ghi mới KHÔNG thành công", "warning");
-                        return RedirectToAction("Index", "Job");
-                    }
+                    SetAlert("Thêm bản ghi mới thành công", "success");
+                    return RedirectToAction("Index", "Job");
                 }
-                return View("Index");
+                else
+                {
+                    SetAlert("Thêm bản ghi mới KHÔNG thành công", "warning");
+                    return View(job);
+                }
             }
             catch (Exception ex)
             {
@@ -82,7 +72,6 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
             }
         }
 
-
         // GET: Admin/Job/Edit/{id}
         [HttpPost]
         [ValidateInput(false)]
@@ -90,20 +79,17 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    var dao = new JobDao();
+                var dao = new JobDao();
 
-                    var result = dao.Update(job);
-                    if (result)
-                    {
-                        SetAlert("Cập nhật danh mục công việc thành công", "success");
-                        return RedirectToAction("Index", "Job");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Cập nhật danh mục công việc không thành công");
-                    }
+                var result = dao.Update(job);
+                if (result)
+                {
+                    SetAlert("Cập nhật danh mục công việc thành công", "success");
+                    return RedirectToAction("Index", "Job");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Cập nhật danh mục công việc không thành công");
                 }
                 SetViewBag(job.CategoryID);
                 SetViewBag(job.CarrerID);

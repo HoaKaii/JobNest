@@ -1,17 +1,27 @@
 ﻿using JobsFinder_Main.Common;
+using JobsFinder_Main.Filters;
 using Microsoft.AspNet.Identity;
 using Model.DAO;
 using Model.EF;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace JobsFinder_Main.Controllers
 {
     public class RecumentController : Controller
     {
+        private readonly EmailService _emailService;
+        private readonly RecumentDao dao;
+        private readonly JobDao jobDao;
+        private readonly CompanyDao companyDao;
+        public RecumentController()
+        {
+            _emailService = new EmailService();
+            dao = new RecumentDao();
+            jobDao = new JobDao();
+            companyDao = new CompanyDao();
+        }
         // GET: Recument
         public ActionResult Index()
         {
@@ -46,7 +56,6 @@ namespace JobsFinder_Main.Controllers
                         Email = user.Email;
                     }
                 }
-                var dao = new RecumentDao();
 
                 var confirm = dao.CheckApply(userID, model.JobID);
 
@@ -108,8 +117,7 @@ namespace JobsFinder_Main.Controllers
         public ActionResult DeleteConfirm(Recument model)
         {
            if (User.Identity.IsAuthenticated)
-            { 
-                var dao = new RecumentDao();
+            {
                 var entity = dao.ViewDetail(model.ID);
                 if (entity != null)
                 {
@@ -145,29 +153,34 @@ namespace JobsFinder_Main.Controllers
 
         public ActionResult Detail(long id)
         {
-            var recument = new RecumentDao().ViewDetail(id);
+            var recument = dao.ViewDetail(id);
             return View(recument);
         }
 
         [HttpGet]
+        [RecruiterAuthorization]
         public ActionResult Confirm(long id)
         {
-            var recument = new RecumentDao().ViewDetail(id);
+            var recument = dao.ViewDetail(id);
             return PartialView(recument);
         }
 
         [HttpPost]
+        [RecruiterAuthorization]
         public ActionResult Confirm(Recument model)
         {
             if (User.Identity.IsAuthenticated)
             {
-                var dao = new RecumentDao();
                 var entity = dao.ViewDetail(model.ID);
                 if (entity != null)
                 {
                     var result = dao.Confirm(entity);
                     if (result == true)
                     {
+                        string emailSubject = "Your application has been accepted.";
+                        string emailBody = "Hello, " + entity.Name + "!" + "<br/><br/>Your application for the " + dao.GetJobName(entity.JobID) + " job has been accepted by " + companyDao.GetCompany(entity.JobID) + "!<br/><br/>Best regards!<br/><br/>Recruitment team: JobNest.";
+                        _emailService.SendEmail("hoa1520265@huce.edu.vn", emailSubject, emailBody);
+
                         TempData["Message"] = "Update sucessfull!";
                         TempData["MessageType"] = "success";
                         TempData["Type"] = "Success";
@@ -196,24 +209,29 @@ namespace JobsFinder_Main.Controllers
         }
 
         [HttpGet]
+        [RecruiterAuthorization]
         public ActionResult Cance(long id)
         {
-            var recument = new RecumentDao().ViewDetail(id);
+            var recument = dao.ViewDetail(id);
             return PartialView(recument);
         }
 
         [HttpPost]
+        [RecruiterAuthorization]
         public ActionResult Cance(Recument model)
         {
             if (User.Identity.IsAuthenticated)
             {
-                var dao = new RecumentDao();
                 var entity = dao.ViewDetail(model.ID);
                 if (entity != null)
                 {
                     var result = dao.Delete(entity);
                     if (result == true)
                     {
+                        string emailSubject = "Your application has been cancled.";
+                        string emailBody = "Hello, " + entity.Name + "!" + "<br/><br/>Your application for the " + dao.GetJobName(entity.JobID) + " job has been cancled by " + companyDao.GetCompany(entity.JobID) + "<br/><br/>Best regards!<br/><br/>Recruitment team: JobNest.";
+                        _emailService.SendEmail("hoa1520265@huce.edu.vn", emailSubject, emailBody);
+
                         TempData["Message"] = "Cancle sucessfull!";
                         TempData["MessageType"] = "success";
                         TempData["Type"] = "Success";

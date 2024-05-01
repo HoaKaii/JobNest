@@ -7,6 +7,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var companyDao = new Model.DAO.CompanyDao();
+    var reviewDao = new Model.DAO.ReviewDao();
     ViewBag.Avatar = companyDao.GetAvatar(Model.CompanyID);
 
     ViewBag.CompanyName = companyDao.GetName(Model.CompanyID);
@@ -22,7 +23,19 @@
     ViewBag.ForMatTime = jobDao.FormatTime(Model.ID);
     ViewBag.DeadLine = jobDao.CountTime(Model.ID);
 
+    var Company = companyDao.ViewDetail(Model.CompanyID);
+    var reviews = reviewDao.GetReviews(Model.CompanyID);
 
+    Company.Reviews = reviews;
+    ViewBag.TotalReviews = reviews.Count;
+    if (reviews.Count != 0)
+    {
+        ViewBag.AverageRating = reviews.Average(r => r.Rating);
+    }
+    else
+    {
+        ViewBag.AverageRating = 0;
+    }
 
     var jobInCompnay = jobDao.GetJobInCompany(Model.CompanyID);
 
@@ -223,6 +236,7 @@
                                     <a href="@compannyURL" style="margin: 0;font-weight: 700 ;-webkit-line-clamp: 1; max-width: 300px; overflow: hidden; text-overflow: ellipsis;">@ViewBag.CompanyName</a>
                                     <p style="margin: 0; -webkit-line-clamp: 1; max-width: 300px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">@ViewBag.LinkCompany</p>
                                 </div>
+                                <p style="margin-left: 40px; font-weight: 600; font-size:12px;">@ViewBag.AverageRating <i class="bi bi-star-fill" style="color: orange;"></i> (@ViewBag.TotalReviews review)</p>
                             </div>
                             <div class="bottom">
                                 @Html.Raw(ViewBag.DetailCompany)

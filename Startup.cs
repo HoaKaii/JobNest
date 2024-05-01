@@ -1,6 +1,5 @@
 ﻿using Microsoft.Owin;
 using Owin;
-using System;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -19,6 +18,7 @@ namespace JobsFinder_Main
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
                 LoginPath = new PathString("/User/Login")
             });
+           
             this.CreateRolesAndUsers();
         }
         public void CreateRolesAndUsers()

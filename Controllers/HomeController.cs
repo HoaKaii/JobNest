@@ -3,13 +3,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Model.DAO;
 using Model.EF;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace JobsFinder_Main.Controllers
@@ -47,6 +42,7 @@ namespace JobsFinder_Main.Controllers
             SetViewBag();
             return PartialView();
         }
+
         [ChildActionOnly]
         public ActionResult Carousel_Company()
         {
@@ -54,14 +50,12 @@ namespace JobsFinder_Main.Controllers
             return PartialView();
         }
 
-
         [ChildActionOnly]
         public ActionResult MainMenu()
         {
             var model = new MenuDao().ListByGroupId(1);
             return PartialView(model);
         }
-
         public void SetViewBag(long? selectedId = null)
         {
             var commonDao = new CommonDao.CityDao();
@@ -71,7 +65,6 @@ namespace JobsFinder_Main.Controllers
                 Text = c.Name
             });
             ViewBag.CityList = new SelectList(cities, "Value", "Text", selectedId);
-
 
             var careerDao = new CareerDao();
             List<Career> careers = careerDao.ListAll().ToList();
@@ -94,15 +87,15 @@ namespace JobsFinder_Main.Controllers
 
             var job = jobDao.ListNew().ToList();
             ViewBag.NewJob = job;
+            var jobFeatured = jobDao.ListFeatured().ToList();
+            ViewBag.FeaturedJob = jobFeatured;
         }
-
         public int CountCompany()
         {
             var dao = new CompanyDao();
             int companyCount = dao.CountCompanies();
             return companyCount;
         }
-
         public int CountJob()
         {
             var dao = new JobDao();
@@ -115,7 +108,6 @@ namespace JobsFinder_Main.Controllers
             int jobCountNew = dao.CountJobNew();
             return jobCountNew;
         }
-
         public int UserCount()
         {
             var userCount = _userManager.Users.Count();

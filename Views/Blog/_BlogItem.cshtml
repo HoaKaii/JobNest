@@ -1,0 +1,57 @@
+﻿@model Model.EF.Blog
+@using Model.DAO;
+@{
+    var blogDao = new BlogDao();
+
+    var categoryName = blogDao.GetCategory(Model.CategoryID);
+    ViewBag.Category = categoryName;
+
+    var url = "/Blog/Detail/" + @Model.ID;
+}
+
+
+@functions {
+    public int CalculateReadingTime(string description)
+    {
+        string[] words = description.Split(new char[] { ' ', '.', ',', '!', '?', ';', ':', '-' }, StringSplitOptions.RemoveEmptyEntries);
+        int wordCount = words.Length;
+
+        double secondsPerWord = 0.25;
+
+        int readingTime = (int)Math.Ceiling(wordCount * secondsPerWord / 60);
+
+        return readingTime;
+    }
+}
+
+@{
+    <article class="card mb-4">
+        <div class="post-slider">
+            <img src="@Model.Image" class="card-img-top" alt="post-thumb">
+        </div>
+        <div class="card-body">
+            <h3 class="mb-3"><a class="post-title" href="post-elements.html">@Model.Name</a></h3>
+            <ul class="card-meta list-inline">
+                <li class="list-inline-item">
+                    <a href="author-single.html" class="card-meta-author">
+                        <img src="/Data/images/admin.jpg" alt="Admin">
+                        <span>Admin</span>
+                    </a>
+                </li>
+                <li class="list-inline-item">
+                    <i class="ti-timer"></i>@CalculateReadingTime(Model.Description) min(s) to read
+                </li>
+                <li class="list-inline-item">
+                    <i class="ti-calendar"></i>@Model.CreatedDate
+                </li>
+                <li class="list-inline-item">
+                    <ul class="card-meta-tag list-inline">
+                        <li class="list-inline-item">@ViewBag.Category</li>
+                    </ul>
+                </li>
+            </ul>
+            <p>@Html.Raw(Model.Summary)</p>
+            <a href="@url" class="btn btn-outline-primary">Read More</a>
+        </div>
+    </article>
+}

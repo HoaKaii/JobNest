@@ -2,7 +2,7 @@
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Model.DAO;
-using Model.EF;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -13,9 +13,25 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
     {
         public HomeController()
         {
-            _userManager = new UserManager<AppUser>(new UserStore<AppUser>(new AppDbContext()));
+            var context = new AppDbContext();
+            _userManager = new UserManager<AppUser>(new UserStore<AppUser>(context));
+            _roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
+            jobCategoryDao = new JobCategoryDao();
+            jobDao = new JobDao();
+            careerDao = new CareerDao();
+            companyDao = new CompanyDao();
+            blogDao = new BlogDao();
+            blogCategoryDao = new BlogCategoryDao();
         }
+
         private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly JobCategoryDao jobCategoryDao;
+        private readonly JobDao jobDao;
+        private readonly CareerDao careerDao;
+        private readonly CompanyDao companyDao;
+        private readonly BlogDao blogDao;
+        private readonly BlogCategoryDao blogCategoryDao;
         // GET: Admin/Home
         public ActionResult Index()
         {
@@ -40,21 +56,69 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
             int blogcategoryCount = CountBlogCategory();
             ViewBag.BlogCategoryCount = blogcategoryCount;
 
-            int menuCount = CountMenu();
-            ViewBag.MenuCount = menuCount;
+            var jobCategories = jobCategoryDao.GetAllCategories();
+            List<string> categoryNames = new List<string>();
+            List<int> jobCounts = new List<int>();
+
+            foreach (var category in jobCategories)
+            {
+                categoryNames.Add(category.Name);
+                int count = jobDao.CountJobsByCategoryId(category.ID);
+                jobCounts.Add(count);
+            }
+
+            ViewBag.Categories = categoryNames;
+            ViewBag.JobCounts = jobCounts;
+
+            var careers = careerDao.GetAllCareers();
+            List<string> careerNames = new List<string>();
+            List<int> jobCounts_1 = new List<int>();
+
+            foreach (var career in careers)
+            {
+                careerNames.Add(career.Name);
+                int count = jobDao.CountJobsByCareerId(career.ID);
+                jobCounts_1.Add(count);
+            }
+
+            ViewBag.Careers = careerNames;
+            ViewBag.JobCounts_1 = jobCounts_1;
+
+            ViewBag.MaleJobCount = jobDao.CountJobsByGender("Male");
+            ViewBag.FemaleJobCount = jobDao.CountJobsByGender("Female");
+            ViewBag.AllJobCount = jobDao.CountJobsByGender("All");
+
+            ViewBag.CountJobToday = jobDao.CountJobsCreatedToday();
+            ViewBag.CountCompanyToday = companyDao.CountCompaniesCreatedToday();
+            ViewBag.CountBlogToday = blogDao.CountBlogsCreatedToday();
+            ViewBag.CountUserToday = CountUsersCreatedToday();
+
+            var blogCategories = blogCategoryDao.GetAllBlogCategories();
+            List<string> blogcategoryNames = new List<string>();
+            List<int> blogCounts = new List<int>();
+
+            foreach (var blogCategory in blogCategories)
+            {
+                blogcategoryNames.Add(blogCategory.Name);
+                int count = blogDao.CountBlogsByCategoryId(blogCategory.ID);
+                blogCounts.Add(count);
+            }
+
+            ViewBag.BlogCategories = blogcategoryNames;
+            ViewBag.BlogCounts = blogCounts;
+
+            ViewBag.UserCountByRole = UserCountByRole();
 
             return View();
         }
         public int CountCompany()
         {
-            var dao = new CompanyDao();
-            int companyCount = dao.CountCompanies();
+            int companyCount = companyDao.CountCompanies();
             return companyCount;
         }
         public int CountJob()
         {
-            var dao = new JobDao();
-            int jobCount = dao.CountJob();
+            int jobCount = jobDao.CountJob();
             return jobCount;
         }
         public int UserCount()
@@ -64,33 +128,48 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
         }
         public int CountBlogCategory()
         {
-            var dao = new BlogCategoryDao();
-            int blogcategoryCount = dao.CountBlogCategories();
+            int blogcategoryCount = blogCategoryDao.CountBlogCategories();
             return blogcategoryCount;
         }
         public int CountBlog()
         {
-            var dao = new BlogDao();
-            int blogCount = dao.CountBlogs();
+            int blogCount = blogDao.CountBlogs();
             return blogCount;
         }
         public int CountJobCategory()
         {
-            var dao = new BlogCategoryDao();
-            int blogcategoryCount = dao.CountBlogCategories();
-            return blogcategoryCount;
+            int jobcategoryCount = jobCategoryDao.CountJobCategories();
+            return jobcategoryCount;
         }
         public int CountCareer()
         {
-            var dao = new CareerDao();
-            int careerCount = dao.CountCareers();
+            int careerCount = careerDao.CountCareers();
             return careerCount;
         }
-        public int CountMenu()
+        public int CountUsersCreatedToday()
         {
-            var dao = new MenuDao();
-            int menuCount = dao.CountMenus();
-            return menuCount;
+            DateTime today = DateTime.Today;
+            DateTime startDate = today;
+            DateTime endDate = today.AddDays(1).AddSeconds(-1);
+            return _userManager.Users.Count(u => u.CreatedDate >= startDate && u.CreatedDate >= endDate);
+        }
+        public Dictionary<string, int> UserCountByRole()
+        {
+            var userCountByRole = new Dictionary<string, int>();
+
+            foreach (var role in _roleManager.Roles)
+            {
+                var usersInRole = _userManager.Users.Where(u => u.Roles.Any(r => r.RoleId == role.Id));
+                int count = usersInRole.Count();
+                userCountByRole.Add(role.Name, count);
+            }
+
+            return userCountByRole;
+        }
+
+        public List<string> GetAllRoles()
+        {
+            return _roleManager.Roles.Select(r => r.Name).ToList();
         }
     }
 }

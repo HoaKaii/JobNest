@@ -1,19 +1,9 @@
 ﻿@model JobsFinder_Main.Identity.AppUser
 
 @section jsFooter{
-    <script>
-        $('#btnSelectImage').on('click', function (e) {
-            var finder = new CKFinder();
-            e.preventDefault();
-            finder.selectActionFunction = function (url) {
-                $('#txtImage').val(url);
-            };
-            finder.popup();
-        })
-    </script>
 }
 
-@using (Html.BeginForm("Update", "User", FormMethod.Post))
+@using (Html.BeginForm("Update", "User", FormMethod.Post, new { @enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
 
@@ -55,10 +45,8 @@
         <div class="form-group">
             <p>Avatar</p>
             <div class="col-md-10">
-                <div class="d-flex align-items-center">
-                    @Html.TextBoxFor(model => model.Avatar, new { @class = "form-control txtImage", @id = "txtImage" })
-                    <a id="btnSelectImage" style="white-space: nowrap;" href="#">Upload image</a>
-                </div>
+                <input type="file" name="imgfile" class="form-control" /> 
+                @Html.TextBoxFor(model => model.Avatar, new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Avatar, "", new { @class = "text-danger" })
             </div>
         </div>

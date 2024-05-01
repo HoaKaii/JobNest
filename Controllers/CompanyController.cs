@@ -1,38 +1,54 @@
-﻿using JobsFinder_Main.Common;
-using JobsFinder_Main.Models;
+﻿using JobsFinder_Main.Filters;
+using JobsFinder_Main.Services;
 using Model.DAO;
 using Model.EF;
+using Model.Services;
 using ServiceStack;
-using System;
-using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Web;
+using System.Threading.Tasks;
+using System.Web.Http.Filters;
 using System.Web.Mvc;
 
 namespace JobsFinder_Main.Controllers
 {
     public class CompanyController : Controller
     {
+        private readonly CompanyDao companyDao;
+        private readonly ReviewDao reviewDao;
+        public CompanyController()
+        {
+            companyDao = new CompanyDao();
+            reviewDao = new ReviewDao();
+        }
         // GET: Company
         [HttpGet]
-        public ActionResult Index(string searchString, string searchName, string searchLocation, int page = 1, int pageSize = 12)
+        public ActionResult Index(string searchName, string searchLocation, int page = 1, int pageSize = 9)
         {
             SetViewBag();
-            var dao = new CompanyDao();
-            var model = dao.ListAllPaging(searchString, searchName, searchLocation, page, pageSize);
-            ViewBag.SearchName = searchString;
+            var model = companyDao.ListAllPaging(searchName, searchLocation, page, pageSize);
+            ViewBag.SearchName = searchName;
             ViewBag.SearchLocation = searchLocation;
-
             return View(model);
         }
 
-        public ActionResult Detail(int id)
+        public async Task<ActionResult> Detail(int id) 
         {
-            var company = new CompanyDao().ViewDetail(id);
+            var company = companyDao.ViewDetail(id);
+            var reviews = reviewDao.GetReviews(id);
+
+            company.Reviews = reviews;
+            ViewBag.TotalReviews = reviews.Count;
+            if (reviews.Count != 0) 
+            {
+                ViewBag.AverageRating = reviews.Average(r => r.Rating);
+            }
+            else
+            {
+                ViewBag.AverageRating = 0;
+            }    
             return View(company);
         }
-
 
         [ChildActionOnly]
         public ActionResult Carousel_Company()
@@ -63,7 +79,6 @@ namespace JobsFinder_Main.Controllers
             return RedirectToAction("Index");
         }
 
-
         public void SetViewBag(long? selectedId = null)
         {
             var commonDao = new CommonDao.CityDao();
@@ -73,6 +88,32 @@ namespace JobsFinder_Main.Controllers
                 Text = c.Name
             });
             ViewBag.CityList = new SelectList(cities, "Value", "Text", selectedId);
+        }
+
+        [HttpPost]
+        [JobSeekerAuthorization]
+        public ActionResult AddReview(int companyId, string comment, int rating, string userId, string Name)
+        {
+            var existingReview = reviewDao.GetReview(userId, companyId);
+            if (existingReview != null)
+            {
+                existingReview.Comment = comment;
+                existingReview.Rating = rating;
+                reviewDao.UpdateReview(existingReview);
+            }
+            else 
+            {
+                var review = new Review
+                {
+                    CompanyID = companyId,
+                    Comment = comment,
+                    Rating = rating,
+                    UserID = userId,
+                    Name = Name
+                };
+                reviewDao.AddReview(review);
+            }
+            return RedirectToAction("Detail", new { id = companyId });
         }
     }
 }

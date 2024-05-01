@@ -8,7 +8,7 @@
     var dao = new Model.DAO.ProfileDao();
     var myProfile = dao.GetByID(userID);
     <div id="formProfile" class="p-4 form-profile">
-        @using (Html.BeginForm("Create", "Profile", FormMethod.Post))
+        @using (Html.BeginForm("Create", "Profile", FormMethod.Post, new { @enctype = "multipart/form-data" }))
         {
             @Html.AntiForgeryToken()
 
@@ -28,21 +28,11 @@
                     <p class="label-title">Profile picture *</p>
                     <div class="col-md-10" style="width: 100%;">
                         <div class="d-flex align-items-center">
-                            @Html.TextBoxFor(model => model.AnhCaNhan, new { @class = "form-control", @placeholder = myProfile.AnhCaNhan, @id = "chooseImage" })
-                            <a class="btn btn-outline-primary" id="btnChooseImage" style="white-space: nowrap; border-radius: 4px; margin-left: 24px; font-size: 14px; font-weight: 400; text-transform: capitalize" href="#">Upload</a>
+                            <input type="file" name="imgfile" class="form-control"/>
                         </div>
                         @Html.ValidationMessageFor(model => model.AnhCaNhan, "", new { @class = "text-danger" })
-                        <img id="anhCaNhan" class="my-2" style="object-fit: cover;width: 120px; height: 150px; box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset !important;" src="@myProfile.AnhCaNhan" />
+                        <img class="my-2" style="object-fit: cover;width: 120px; height: 150px; box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset !important;" src="@myProfile.AnhCaNhan" />
                     </div>
-                    <script>
-                        var inputAnhCaNhan = document.getElementById("chooseImage");
-                        var imgAnhCaNhan = document.getElementById("anhCaNhan");
-
-                        inputAnhCaNhan.addEventListener("input", function () {
-                            var imageUrl = inputAnhCaNhan.value;
-                            imgAnhCaNhan.src = imageUrl;
-                        });
-                    </script>
                 </div>
 
                 <div class="form-group mb-4">

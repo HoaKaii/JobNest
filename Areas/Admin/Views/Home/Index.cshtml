@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Home";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
@@ -9,38 +8,71 @@
 }
 
 <div>
-    <h3>Dashboard</h3>
-    <canvas id="multiChart" width="400" height="200"></canvas>
+    <h2 style="font-weight: 700; color: red;">DASHBOARD</h2>
+    <h3 style="font-weight: 600;">I. JOB</h3>
+    <div style="border: 2px solid; padding: 10px; margin-bottom: 10px">
+        <h5 style="color: teal;">Total number of Jobs: @ViewBag.JobCount</h5>
+        <h5 style="color: darkmagenta">Number of Jobs posted today: @ViewBag.CountJobToday</h5>
+    </div>
+    <h4 style="color:darkblue">-- Job Category --</h4>
+    <canvas id="jobCategoryChart" width="200" height="200"></canvas>
+    <hr />
+    <h4 style="color:darkblue">-- Job Career --</h4>
+    <canvas id="jobCareerChart" width="200" height="200"></canvas>
+    <hr />
+    <h4 style="color:darkblue">-- Job Gender --</h4>
+    <canvas id="jobGenderChart" width="100" height="100"></canvas>
+    <hr />
+    <h3 style="font-weight: 600;">II. COMPANY</h3>
+    <div style="border: 2px solid; padding: 10px; margin-bottom: 10px">
+        <h5 style="color: teal;">Total number of Companies: @ViewBag.CompanyCount</h5>
+        <h5 style="color: darkmagenta">Number of Companies created today: @ViewBag.CountCompanyToday</h5>
+    </div>
+    <hr />
+    <h3 style="font-weight: 600;">III. BLOG</h3>
+    <div style="border: 2px solid; padding: 10px; margin-bottom: 10px">
+        <h5 style="color: teal;">Total number of Blogs: @ViewBag.BlogCount</h5>
+        <h5 style="color: darkmagenta">Number of Blogs written today: @ViewBag.CountBlogToday</h5>
+    </div>
+    <h4 style="color:darkblue">-- Blog Category --</h4>
+    <canvas id="blogCategoryChart" width="200" height="200"></canvas>
+    <hr />
+    <h3 style="font-weight: 600;">IV. USER</h3>
+    <div style="border: 2px solid; padding: 10px; margin-bottom: 10px">
+        <h5 style="color: teal;">Total number of User accounts: @ViewBag.UserCount</h5>
+        <h5 style="color: darkmagenta">Number of User account created today: @ViewBag.CountUserToday</h5>
+    </div>
+    <h4 style="color:darkblue">-- User Roles --</h4>
+    <canvas id="userRoleChart" width="200" height="200"></canvas>
 </div>
 
 <script>
-    var multiChartCanvas = document.getElementById('multiChart').getContext('2d');
-    var multiChart = new Chart(multiChartCanvas, {
-        type: 'bar',
+    var categoryNames = @Html.Raw(Json.Encode(ViewBag.Categories));
+    var jobCounts = @Html.Raw(Json.Encode(ViewBag.JobCounts));
+
+    var ctx = document.getElementById('jobCategoryChart');
+    var jobCategoryChart = new Chart(ctx, {
+        type: 'bar', // Thay đổi loại biểu đồ thành 'bar'
         data: {
-            labels: ['Users', 'Companies', 'Job', 'Job Categories', 'Careers', 'Blog', 'Blog Categories', 'Menus'],
+            labels: categoryNames,
             datasets: [{
-                label: 'Number of items',
-                data: [@ViewBag.UserCount, @ViewBag.CompanyCount, @ViewBag.JobCount, @ViewBag.JobCategoryCount, @ViewBag.CareerCount, @ViewBag.BlogCount, @ViewBag.BlogCategoryCount, @ViewBag.MenuCount],
+                label: 'Number of Jobs',
+                data: jobCounts,
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.8)',
-                    'rgba(54, 162, 235, 0.8)',
-                    'rgba(255, 206, 86, 0.8)',
-                    'rgba(25, 25, 112, 0.8)',
-                    'rgba(128, 0, 128, 0.8)',
-                    'rgba(139, 69, 19, 0.8)',
-                    'rgba(50, 205, 50, 0.8)',
-                    'rgba(112, 128, 144, 0.8)'
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
                 ],
                 borderColor: [
-                    'rgba(255, 99, 132, 0.8)',
-                    'rgba(54, 162, 235, 0.8)',
-                    'rgba(255, 206, 86, 0.8)',
-                    'rgba(25, 25, 112, 0.8)',
-                    'rgba(128, 0, 128, 0.8)',
-                    'rgba(139, 69, 19, 0.8)',
-                    'rgba(50, 205, 50, 0.8)',
-                    'rgba(112, 128, 144, 0.8)'
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
                 ],
                 borderWidth: 1
             }]
@@ -55,5 +87,189 @@
             }
         }
     });
+</script>
 
+<script>
+     var careerNames = @Html.Raw(Json.Encode(ViewBag.Careers));
+     var jobCounts_1 = @Html.Raw(Json.Encode(ViewBag.JobCounts_1));
+     var career = document.getElementById('jobCareerChart');
+     var jobCareerChart = new Chart(career, {
+         type: 'doughnut',
+         data: {
+             labels: careerNames,
+             datasets: [{
+                 label: 'Career',
+                 data: jobCounts_1,
+                 backgroundColor: [
+                     'rgba(255, 99, 132, 0.2)',
+                     'rgba(54, 162, 235, 0.2)',
+                     'rgba(255, 206, 86, 0.2)',
+                     'rgba(75, 192, 192, 0.2)',
+                     'rgba(153, 102, 255, 0.2)',
+                     'rgba(255, 159, 64, 0.2)'
+                 ],
+                 borderColor: [
+                     'rgba(255, 99, 132, 1)',
+                     'rgba(54, 162, 235, 1)',
+                     'rgba(255, 206, 86, 1)',
+                     'rgba(75, 192, 192, 1)',
+                     'rgba(153, 102, 255, 1)',
+                     'rgba(255, 159, 64, 1)'
+                 ],
+                 borderWidth: 1
+             }]
+         },
+         options: {
+             scales: {
+                 yAxes: [{
+                     ticks: {
+                         beginAtZero: true
+                     }
+                 }]
+             }
+         }
+     });
+</script>
+
+<script>
+    var genderLabels = ["Male", "Female", "All"];
+    var jobCounts = [@Html.Raw(Json.Encode(ViewBag.MaleJobCount)), @Html.Raw(Json.Encode(ViewBag.FemaleJobCount)), @Html.Raw(Json.Encode(ViewBag.AllJobCount))];
+
+    var gender = document.getElementById('jobGenderChart').getContext('2d');
+    var jobGenderChart = new Chart(gender, {
+        type: 'bar',
+        data: {
+            labels: genderLabels,
+            datasets: [{
+                label: 'Number of Jobs',
+                data: jobCounts,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.5)',
+                    'rgba(54, 162, 235, 0.5)',
+                    'rgba(255, 206, 86, 0.5)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+</script>
+
+<script>
+    var blogcategoryNames = @Html.Raw(Json.Encode(ViewBag.BlogCategories));
+    var blogCounts = @Html.Raw(Json.Encode(ViewBag.BlogCounts));
+
+    var blog = document.getElementById('blogCategoryChart');
+    var blogCategoryChart = new Chart(blog, {
+        type: 'bar',
+        data: {
+            labels: blogcategoryNames,
+            datasets: [{
+                label: 'Number of Blogs',
+                data: blogCounts,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+</script>
+
+<script>
+    var roleCounts = @Html.Raw(Json.Encode(ViewBag.UserCountByRole));
+    var roleNames = [];
+    var userCounts = [];
+
+    for (var role in roleCounts) {
+        if (roleCounts.hasOwnProperty(role)) {
+            roleNames.push(role);
+            userCounts.push(roleCounts[role]);
+        }
+    }
+
+    var user = document.getElementById('userRoleChart');
+    var userRoleChart = new Chart(user, {
+        type: 'bar',
+        data: {
+            labels: roleNames,
+            datasets: [{
+                label: 'Number of Users',
+                data: userCounts,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
 </script>

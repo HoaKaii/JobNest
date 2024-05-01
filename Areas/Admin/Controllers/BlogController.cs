@@ -12,12 +12,12 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
     public class BlogController : BaseController
     {
         // GET: Admin/Blog
-        public ActionResult Index(string searchString, int page = 1, int pageSize = 10)
+        public ActionResult Index(string searchString, string fillterCategory, int page = 1, int pageSize = 4)
         {
             var dao = new BlogDao();
-            var model = dao.ListAllPaging(searchString, page, pageSize);
+            var model = dao.ListAllPaging(searchString, fillterCategory, page, pageSize);
             ViewBag.SearchString = searchString;
-
+            SetViewBag();
             return View(model);
         }
 
@@ -40,15 +40,15 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
                 {
                     var dao = new BlogDao();
 
-                    long id = dao.Insert(model);
+                    long id = dao.InsertOrUpdate(model);
                     if (id > 0)
                     {
-                        SetAlert("Thêm bản ghi mới thành công", "success");
+                        SetAlert("Add new record successfull", "success");
                         return RedirectToAction("Index", "Blog");
                     }
                     else
                     {
-                        SetAlert("Thêm bản ghi mới không thành công", "warning");
+                        SetAlert("Add new record unsuccessfull", "warning");
                         return RedirectToAction("Index", "Blog");
                     }
                 }
@@ -57,7 +57,7 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
             }
             catch (Exception)
             {
-                SetAlert("Có lỗi xảy ra, vui lòng thử lại sau!", "error");
+                SetAlert("An error occurred, please try again later!", "error");
                 return RedirectToAction("Index", "Blog");
             }
 
@@ -65,12 +65,13 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
 
         // GET: Admin/Blog/Edit
         [HttpGet]
-        public ActionResult Edit(long id)
+        public ActionResult Edit(int id)
         {
             var dao = new BlogDao();
             var blog = dao.GetById(id);
+            var blogDetail = dao.ViewDetail(id);
             SetViewBag(blog.CategoryID);
-            return View();
+            return View(blogDetail);
         }
         // POST: Admin/Blog/Edit
         [HttpPost]
@@ -82,16 +83,16 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
                 if (ModelState.IsValid)
                 {
                     var dao = new BlogDao();
-                    var result = dao.Update(model);
-                    if (result)
+                    var result = dao.InsertOrUpdate(model);
+                    if (result != 0)
                     {
-                        SetAlert("Cập nhật danh mục công việc thành công", "success");
+                        SetAlert("Update blog successfull", "success");
                         return RedirectToAction("Index", "Blog");
                     }
                     else
                     {
-                        SetAlert("Thêm bản ghi mới không thành công", "warning");
-                        ModelState.AddModelError("", "Cập nhật danh mục công việc không thành công");
+                        SetAlert("Update blog unsuccessfull", "warning");
+                        ModelState.AddModelError("", "Update blog unsuccessfull");
                     }
                 }
                 SetViewBag(model.CategoryID);
@@ -99,7 +100,7 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
             }
             catch (Exception)
             {
-                SetAlert("Có lỗi xảy ra, vui lòng thử lại sau!", "error");
+                SetAlert("An error occurred, please try again later!", "error");
                 return RedirectToAction("Index", "Blog");
             }
         }

@@ -1,14 +1,8 @@
-﻿using JobsFinder_Main.Common;
-using Model.DAO;
+﻿using Model.DAO;
 using Model.EF;
-using NLog;
 using System;
-using System.Collections.Generic;
-using System.Drawing.Printing;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.UI;
+
 
 namespace JobsFinder_Main.Areas.Admin.Controllers
 {

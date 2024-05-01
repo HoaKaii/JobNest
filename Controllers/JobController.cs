@@ -1,7 +1,9 @@
 ﻿using JobsFinder_Main.Common;
+using JobsFinder_Main.Filters;
 using Microsoft.AspNet.Identity;
 using Model.DAO;
 using Model.EF;
+using ServiceStack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,14 +15,21 @@ namespace JobsFinder_Main.Controllers
 {
     public class JobController : Controller
     {
+        private readonly EmailService _emailService;
+        private readonly JobDao dao;
+        private readonly CompanyDao companyDao;
+        public JobController()
+        {
+            _emailService = new EmailService();
+            dao = new JobDao();
+            companyDao = new CompanyDao();
+        }
         // GET: Job
         [HttpGet]
-        public ActionResult Index(string searchString, string searchName, string searchLocation, string fillterCareer, string fillterCategory, string fillterGender, string fillterEXP, int page = 1, int pageSize = 10)
+        public ActionResult Index(string searchName, string searchLocation, string fillterCareer, string fillterCategory, string fillterGender, string fillterEXP, int page = 1, int pageSize = 5)
         {
             SetViewBag();
-            var dao = new JobDao();
-            var model = dao.ListAllPaging(searchString, searchName, searchLocation, fillterCareer, fillterCategory, fillterGender, fillterEXP, page, pageSize);
-            ViewBag.SearchName = searchString;
+            var model = dao.ListAllPaging(searchName, searchLocation, fillterCareer, fillterCategory, fillterGender, fillterEXP, page, pageSize);
             ViewBag.SearchName = searchName;
             ViewBag.SearchLocation = searchLocation;
             ViewBag.FillterCareer = fillterCareer;
@@ -43,7 +52,6 @@ namespace JobsFinder_Main.Controllers
         {
             return PartialView();
         }
-
         public void SetViewBag(long? selectedId = null)
         {
             var commonDao = new CommonDao.CityDao();
@@ -54,12 +62,11 @@ namespace JobsFinder_Main.Controllers
             });
             ViewBag.CityList = new SelectList(cities, "Value", "Text", selectedId);
         }
-
         public ActionResult Detail(long id)
         {
-            var job = new JobDao().ViewDetail(id);
+            var job = dao.ViewDetail(id);
+            dao.UpdateViewCount(id);
             var recument = new Recument();
-
             job.recument = recument;
             return View(job);
         }
@@ -67,16 +74,16 @@ namespace JobsFinder_Main.Controllers
         [HttpDelete]
         public ActionResult Delete(int id)
         {
-            new CompanyDao().Delete(id);
+            dao.Delete(id);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
+        [JobSeekerAuthorization]
         public ActionResult Apply(Job entity)
         {
             if (User.Identity.IsAuthenticated)
             {
-                var dao = new JobDao();
                 var recumentDao = new RecumentDao();
                 var userID = User.Identity.GetUserId();
                 string Name = "";
@@ -125,6 +132,10 @@ namespace JobsFinder_Main.Controllers
                     var result = dao.ApplyJob(job);
                     if (result == true)
                     {
+                        string emailSubject = "Your job has been applied.";
+                        string emailBody = "Hello, " + companyDao.GetCompany(entity.recument.JobID) + "!<br/><br/>Your " + recumentDao.GetJobName(entity.recument.JobID) + " job has been applied by " + Name + "<br/><br/>Best regards!<br/><br/>Recruitment team: JobNest.";
+                        _emailService.SendEmail("hoa1520265@huce.edu.vn", emailSubject, emailBody);
+
                         TempData["Message"] = "Successful application!";
                         TempData["MessageType"] = "success";
                         TempData["Type"] = "Success";

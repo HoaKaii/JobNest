@@ -19,7 +19,7 @@
 {
     <div class="input-group">
         <input type="text" class="form-control bg-white search-input" placeholder="Tìm kiếm..."
-               aria-label="Search" aria-describedby="basic-addon2" name="searchString" value="@ViewBag.SearchString">
+               aria-label="Search" aria-describedby="basic-addon2" name="searchName" value="@ViewBag.SearchName">
         <div class="input-group-append">
             <button class="btn btn-primary" type="submit">
                 <i class="fas fa-search fa-sm"></i>
@@ -92,7 +92,7 @@
                     }
                 </tbody>
             </table>
-            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, @searchString = @ViewBag.SearchString }))
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, @searchName = @ViewBag.SearchName }))
         </div>
     </div>
 </div>

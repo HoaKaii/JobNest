@@ -27,6 +27,7 @@ namespace JobsFinder_Main.Models
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Please enter your phone number.")]
+        [RegularExpression(@"^(0[1-9])+([0-9]{8})\b$", ErrorMessage = "Invalid phone number.")]
         public string Phone { get; set; }
 
         [Required(ErrorMessage = "Please enter your email.")]

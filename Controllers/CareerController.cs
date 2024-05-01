@@ -15,11 +15,16 @@ namespace JobsFinder_Main.Controllers
             return View();
         }
 
-        [ChildActionOnly]
         public ActionResult ListCareer()
         {
             var model = new CareerDao().GetOption();
-            return PartialView(model);
+            return PartialView("ListCareer",model);
+        }
+
+        public ActionResult ListAll()
+        {
+            var model = new CareerDao().ListAll();
+            return PartialView("ListCareer", model);
         }
     }
 }

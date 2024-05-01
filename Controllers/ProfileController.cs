@@ -15,6 +15,7 @@ using ServiceStack;
 using System.Text.RegularExpressions;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNet.Identity;
+using JobsFinder_Main.Filters;
 
 
 namespace JobsFinder_Main.Controllers
@@ -35,7 +36,8 @@ namespace JobsFinder_Main.Controllers
 
         // POST: Profile/Create
         [HttpPost]
-        public ActionResult Create(Profile profile)
+        [JobSeekerAuthorization]
+        public ActionResult Create(Profile profile, HttpPostedFileBase imgfile)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -49,9 +51,12 @@ namespace JobsFinder_Main.Controllers
                     {
                         updateProfile.HoVaTen = profile.HoVaTen;
                     }
-                    if (!string.IsNullOrEmpty(profile.AnhCaNhan))
+                    if (imgfile != null)
                     {
-                        updateProfile.AnhCaNhan = profile.AnhCaNhan;
+                        profile.AnhCaNhan = imgfile.FileName;
+                        string path = Server.MapPath("~/Content/Profile/" + imgfile.FileName);
+                        imgfile.SaveAs(path);
+                        updateProfile.AnhCaNhan = "/Content/Profile/" + profile.AnhCaNhan;
                     }
                     if (!string.IsNullOrEmpty(profile.GioiTinh))
                     {
@@ -126,7 +131,6 @@ namespace JobsFinder_Main.Controllers
                 return RedirectToAction("Login", "User");
             }
         }
-
         public ActionResult Detail(long id)
         {
             var profile = new ProfileDao().ViewDetail(id);

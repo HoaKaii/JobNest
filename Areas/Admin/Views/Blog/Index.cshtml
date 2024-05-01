@@ -53,6 +53,7 @@
                     <tr>
                         <th></th>
                         <th>Title</th>
+                        <th>Summary</th>
                         <th>Image</th>
                         <th>Created Date</th>
                         <th>Updated Date</th>
@@ -64,6 +65,7 @@
                     <tr>
                         <th></th>
                         <th>Title</th>
+                        <th>Summary</th>
                         <th>Image</th>
                         <th>Created Date</th>
                         <th>Updated Date</th>
@@ -77,12 +79,13 @@
                         <tr id="row_@item.ID">
                             <td>@item.ID</td>
                             <td>@item.Name</td>
+                            <td>@item.Summary</td>
                             <th>@item.Image</th>
                             <td>@item.CreatedDate</td>
                             <td>@item.ModifiedDate</td>
                             <td><a href="#" class="btn-active" data-id="@item.ID">@(item.Status == true ? "Active" : "Unactive")</a></td>
-                            <th>@item.TopHot</th>
-                            <td>
+                            <td>@item.TopHot</td>
+                            <td> 
                                 <a href="/Admin/Blog/Edit/@item.ID">Edit</a>
                                 @Ajax.ActionLink("Delete", "Delete", new { @id = item.ID }, new AjaxOptions
                            {

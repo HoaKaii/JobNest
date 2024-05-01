@@ -54,12 +54,11 @@
     </div>
 </div>
 <!-- Category End -->
-
 <div class="container-xxl py-5 box-categoryJob">
     <div class="container">
         <div class="title d-flex">
             <h4 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Popular professions</h4>
-            <a href="/nganh-nghe" class="button" style="font-size: 14px; height: max-content; border: none; background: none; color: #25316D;">
+            <a href="#" class="buttonView" style="font-size: 14px; height: max-content; border: none; background: none; color: #25316D;">
                 View all
                 <i class="bi bi-arrow-right-short"></i>
             </a>
@@ -74,7 +73,7 @@
 <div class="container-xxl py-5">
     <div class="container">
         <div class="title d-flex">
-            <h4 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Featured jobs</h4>
+            <h4 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">New jobs</h4>
             <a href="/cong-viec" class="button" style="font-size: 14px; height: max-content; border: none; background: none; color: #25316D;">
                 View all
                 <i class="bi bi-arrow-right-short"></i>
@@ -90,13 +89,32 @@
         </div>
     </div>
 </div>
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="title d-flex">
+            <h4 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Featured jobs</h4>
+            <a href="/cong-viec" class="button" style="font-size: 14px; height: max-content; border: none; background: none; color: #25316D;">
+                View all
+                <i class="bi bi-arrow-right-short"></i>
+            </a>
+        </div>
+        <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.3s">
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane fade show p-0 active">
+                    @Html.Partial("JobFeaturedList")
+                    <a class="btn btn-primary py-3 px-5 btn-viewAll" href="/cong-viec">See more jobs</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Jobs End -->
 <!-- Category Start -->
 <div class="container-xxl py-1 jobsCategory py-5" style="background: #E7F0FA;">
     <div class="container">
         <div class="title d-flex">
             <h4 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Categories</h4>
-            <a href="/danh-muc-cong-viec" class="button" style="font-size: 14px; height: max-content; border: none; background: none; color: #25316D;">
+            <a href="#" class="button" style="font-size: 14px; height: max-content; border: none; background: none; color: #25316D;">
                 View all
                 <i class="bi bi-arrow-right-short"></i>
             </a>
@@ -142,138 +160,4 @@
     @{ Html.RenderAction("Testimonial", "Company"); }
 </div>
 <!-- Testimonial End -->
-<section class="section pb-0" data-wow-delay="0.3s">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-4 mb-5" data-wow-delay="0.5s">
-                <h2 class="h5 section-title">For you</h2>
-                <article class="card">
-                    <div class="post-slider slider-sm">
-                        <img src="~/Assets/Client/Blog/images/post/post-1.jpg" class="card-img-top" alt="post-thumb">
-                    </div>
-
-                    <div class="card-body">
-                        <h3 class="h4 mb-3"><a class="post-title" href="post-details.html">Use apples to give your bakes caramel and a moist texture</a></h3>
-                        <ul class="card-meta list-inline">
-                            <li class="list-inline-item">
-                                <a href="author-single.html" class="card-meta-author">
-                                    <img src="~/Assets/Client/Blog//images/john-doe.jpg">
-                                    <span>Charls Xaviar</span>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <i class="ti-timer"></i>2 Min To Read
-                            </li>
-                            <li class="list-inline-item">
-                                <i class="ti-calendar"></i>14 jan, 2020
-                            </li>
-                            <li class="list-inline-item">
-                                <ul class="card-meta-tag list-inline">
-                                    <li class="list-inline-item"><a href="tags.html">Color</a></li>
-                                    <li class="list-inline-item"><a href="tags.html">Recipe</a></li>
-                                    <li class="list-inline-item"><a href="tags.html">Fish</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                        <p>It’s no secret that the digital industry is booming. From exciting startups to …</p>
-                        <a href="post-details.html" class="btn btn-outline-primary">Read More</a>
-                    </div>
-                </article>
-            </div>
-            <div class="col-lg-4 mb-5" data-wow-delay="0.7s">
-                <h2 class="h5 section-title">Trends</h2>
-
-                <article class="card mb-4">
-                    <div class="card-body d-flex">
-                        <img class="card-img-sm" src="~/Assets/Client/Blog//images/post/post-3.jpg">
-                        <div class="ml-3" style="margin-left: 16px;">
-                            <h4><a href="post-details.html" class="post-title">Advice From a Twenty Something</a></h4>
-                            <ul class="card-meta list-inline mb-0">
-                                <li class="list-inline-item mb-0">
-                                    <i class="ti-calendar"></i>14 jan, 2020
-                                </li>
-                                <li class="list-inline-item mb-0">
-                                    <i class="ti-timer"></i>2 Min To Read
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="card mb-4">
-                    <div class="card-body d-flex">
-                        <img class="card-img-sm" src="~/Assets/Client/Blog/images/post/post-2.jpg">
-                        <div class="ml-3" style="margin-left: 16px;">
-                            <h4><a href="post-details.html" class="post-title">The Design Files - Homes Minimalist</a></h4>
-                            <ul class="card-meta list-inline mb-0">
-                                <li class="list-inline-item mb-0">
-                                    <i class="ti-calendar"></i>14 jan, 2020
-                                </li>
-                                <li class="list-inline-item mb-0">
-                                    <i class="ti-timer"></i>2 Min To Read
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="card mb-4">
-                    <div class="card-body d-flex">
-                        <img class="card-img-sm" src="~/Assets/Client/Blog/images/post/post-4.jpg">
-                        <div class="ml-3" style="margin-left: 16px;">
-                            <h4><a href="post-details.html" class="post-title">The Skinny Confidential</a></h4>
-                            <ul class="card-meta list-inline mb-0">
-                                <li class="list-inline-item mb-0">
-                                    <i class="ti-calendar"></i>14 jan, 2020
-                                </li>
-                                <li class="list-inline-item mb-0">
-                                    <i class="ti-timer"></i>2 Min To Read
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </article>
-            </div>
-
-            <div class="col-lg-4 mb-5" data-wow-delay="0.9s">
-                <h2 class="h5 section-title">Popular</h2>
-
-                <article class="card">
-                    <div class="post-slider slider-sm">
-                        <img src="~/Assets/Client/Blog/images/post/post-5.jpg" class="card-img-top" alt="post-thumb">
-                    </div>
-                    <div class="card-body">
-                        <h3 class="h4 mb-3"><a class="post-title" href="post-details.html">How To Make Cupcakes and Cashmere Recipe At Home</a></h3>
-                        <ul class="card-meta list-inline">
-                            <li class="list-inline-item">
-                                <a href="author-single.html" class="card-meta-author">
-                                    <img src="~/Assets/Client/Blog/images/kate-stone.jpg" alt="Kate Stone">
-                                    <span>Kate Stone</span>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <i class="ti-timer"></i>2 Min To Read
-                            </li>
-                            <li class="list-inline-item">
-                                <i class="ti-calendar"></i>14 jan, 2020
-                            </li>
-                            <li class="list-inline-item">
-                                <ul class="card-meta-tag list-inline">
-                                    <li class="list-inline-item"><a href="tags.html">City</a></li>
-                                    <li class="list-inline-item"><a href="tags.html">Food</a></li>
-                                    <li class="list-inline-item"><a href="tags.html">Taste</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                        <p>It’s no secret that the digital industry is booming. From exciting startups to …</p>
-                        <a href="post-details.html" class="btn btn-outline-primary">Read More</a>
-                    </div>
-                </article>
-            </div>
-            <div class="col-12">
-                <div class="border-bottom border-default"></div>
-            </div>
-        </div>
-        <a class="btn btn-primary py-3 px-5 btn-viewAll mt-5" href="/tin-tuc">View more blogs</a>
-    </div>
-</section>
+@{ Html.RenderAction("BlogHome", "Blog"); }

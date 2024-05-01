@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using JobsFinder_Main.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System;
 
 
 namespace JobsFinder_Main.Areas.Admin.Controllers
@@ -67,8 +68,9 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
                     Email = user.Email,
                     Name = user.FullName,
                     PhoneNumber = user.Phone,
-                    Address = user.Address
-                };
+                    Address = user.Address,
+                    CreatedDate = DateTime.Now
+            };
 
                 var result = await _userManager.CreateAsync(appUser, user.Password);
 

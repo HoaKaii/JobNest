@@ -46,7 +46,7 @@
         <p style="left: 120px; top: 130px;" class="position-absolute">@Model.LinkPage</p>
     </div>
     <h5 class="mb-3">Edit enterprise</h5>
-    using (Html.BeginForm("EditCompany", "User", FormMethod.Post, new { method = "post" }))
+    using (Html.BeginForm("EditCompany", "User", FormMethod.Post, new { @enctype = "multipart/form-data" }))
     {
         @Html.AntiForgeryToken()
 
@@ -64,10 +64,9 @@
                 <p>Profile picture</p>
                 <div class="col-md-10">
                     <div class="d-flex align-items-center">
-                        @Html.TextBoxFor(model => model.Avatar, new { @class = "form-control txtImage", @id = "txtAvatar" })
-                        <a id="btnSelectAvatar" style="white-space: nowrap;" href="#">Tải lên hình ảnh</a>
+                        <input type="file" name="imgfile" class="form-control" />
                     </div>
-
+                    @Html.TextBoxFor(model => model.Avatar, new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Avatar, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -76,9 +75,9 @@
                 <p>Cover photo</p>
                 <div class="col-md-10">
                     <div class="d-flex align-items-center">
-                        @Html.TextBoxFor(model => model.Background, new { @class = "form-control txtImage", @id = "txtBackground" })
-                        <a id="btnSelectBackground" style="white-space: nowrap;" href="#">Tải lên hình ảnh</a>
+                        <input type="file" name="coverfile" class="form-control" />
                     </div>
+                    @Html.TextBoxFor(model => model.Background, new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Background, "", new { @class = "text-danger" })
                 </div>
             </div>

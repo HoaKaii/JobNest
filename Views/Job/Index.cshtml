@@ -21,7 +21,7 @@
                 {
                     @Html.Partial("_JobItem", job)
                 }
-                @Html.PagedListPager(Model, page => Url.Action("Index", new { page, @searchString = @ViewBag.SearchString }))
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page, @searchName = @ViewBag.SearchName, @searchLocation = @ViewBag.SearchLocation, @fillterCareer = @ViewBag.FillterCareer, @fillterCategory = @ViewBag.FillterCategory, @fillterGender = @ViewBag.FillterGender, @fillterEXP = @ViewBag.FillterEXP }))
 
                 <style>
                     .pagination {

@@ -20,25 +20,7 @@
         }
         initCKEditor(['txtDescription', 'txtRequestCandidate', 'txtInterest']);
     </script>
-    <script>
-        $(document).ready(function () {
-            $('.user-section, .company-section').hide();
-            $('input[name="UserOrCompany"]').change(function () {
-                var selectedOption = $('input[name="UserOrCompany"]:checked').val();
-                $('.user-section, .company-section').hide();
-                if (selectedOption === 'User') {
-                    $('.user-section').show();
-                    $('.company-section select').val('');
-                } else if (selectedOption === 'Company') {
-                    $('.company-section').show();
-                    $('.user-section select').val('');
-                }
-            });
-        });
-    </script>
-
-
-}
+    }
 
 @using (Html.BeginForm("Create", "Job", FormMethod.Post))
 {
@@ -46,33 +28,6 @@
 
     <div class="form-horizontal">
         <hr />
-        <div class="form-group">
-            <label class="control-label col-md-2">Option</label>
-            <div class="col-md-10">
-                <label class="radio-inline">
-                    @Html.RadioButton("UserOrCompany", "User", true, new { @class = "radio-option" }) User
-                </label>
-                <label class="radio-inline">
-                    @Html.RadioButton("UserOrCompany", "Company", false, new { @class = "radio-option" }) Company
-                </label>
-            </div>
-        </div>
-
-
-        <div class="form-group user-section">
-            @Html.LabelFor(model => model.UserID, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @if (ViewBag.UserId != null)
-                {
-                    @Html.DropDownListFor(model => model.UserID, (SelectList)ViewBag.UserId, new { @class = "form-control" })
-                }
-                else
-                {
-                    @Html.DropDownListFor(model => model.UserID, null, new { @class = "form-control" })
-                }
-                @Html.ValidationMessageFor(model => model.UserID, "", new { @class = "text-danger" })
-            </div>
-        </div>
 
         <div class="form-group company-section">
             @Html.LabelFor(model => model.CompanyID, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -147,7 +102,6 @@
             </div>
         </div>
 
-
         <div class="form-group">
             @Html.LabelFor(model => model.Quantity, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -199,7 +153,6 @@
             </div>
         </div>
 
-
         <div class="form-group">
             @Html.LabelFor(model => model.Rank, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -216,11 +169,10 @@
                     new SelectListItem { Text = "Male", Value = "Male" },
                     new SelectListItem { Text = "Female", Value = "Female" },
                     new SelectListItem { Text = "All", Value = "All" }
-                }, "Chọn giới tính", new { @class = "form-control" })
+                }, "Select gender", new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
             </div>
         </div>
-
 
         <div class="form-group">
             @Html.LabelFor(model => model.Experience, htmlAttributes: new { @class = "control-label col-md-2" })

@@ -1,13 +1,10 @@
 ﻿using BotDetect.Web.Mvc;
-using JobsFinder_Main.Common;
 using JobsFinder_Main.Models;
 using Model.DAO;
 using Model.EF;
 using System;
 using System.Linq;
 using System.Web.Mvc;
-using Facebook;
-using System.Configuration;
 using ServiceStack;
 using System.Text.RegularExpressions;
 using JobsFinder_Main.Identity;
@@ -15,28 +12,24 @@ using System.Web.Helpers;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using System.Web;
-using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity.EntityFramework;
+using JobsFinder_Main.Filters;
+using System.Threading.Tasks;
+using JobsFinder_Main.Common;
 
 namespace JobsFinder_Main.Controllers
 {
     public class UserController : Controller
     {
-        private Uri RedirectUri
+        private readonly UserManager<AppUser> _userManager;
+        private readonly EmailService _emailService;
+        public UserController()
         {
-            get
-            {
-                var uriBuilder = new UriBuilder(Request.Url)
-                {
-                    Query = null,
-                    Fragment = null,
-                    Path = Url.Action("FacebookCallBack")
-                };
-                return uriBuilder.Uri;
-            }
+            _userManager = new UserManager<AppUser>(new UserStore<AppUser>(new AppDbContext()));
+            _emailService = new EmailService();
         }
 
-        // GET: User
+        [HttpGet]
         public ActionResult Register()
         {
             return View();
@@ -48,9 +41,6 @@ namespace JobsFinder_Main.Controllers
         {
             if (ModelState.IsValid)
             {
-                var appDbContext = new AppDbContext();
-                var userStore = new AppUserStore(appDbContext);
-                var userManager = new AppUserManager(userStore);
                 var passwdHash = Crypto.HashPassword(model.Password);
                 var user = new AppUser()
                 {
@@ -60,12 +50,13 @@ namespace JobsFinder_Main.Controllers
                     Address = model.Address,
                     PhoneNumber = model.Phone,
                     Name = model.Name,
-                    Avatar = "./Assets/Client/JobsFinder/img/Logo.png"
+                    Avatar = "./Assets/Client/JobsFinder/img/Logo.png",
+                    CreatedDate = DateTime.Now
                 };
-                IdentityResult identityResult = userManager.Create(user);
+                IdentityResult identityResult = _userManager.Create(user);
                 if (identityResult.Succeeded)
                 {
-                    userManager.AddToRole(user.Id, "JobSeeker");
+                    _userManager.AddToRole(user.Id, "JobSeeker");
 
                     var profile = new Profile()
                     {
@@ -80,7 +71,7 @@ namespace JobsFinder_Main.Controllers
                     profileDao.Insert(profile);
 
                     var authenManager = HttpContext.GetOwinContext().Authentication;
-                    var userIdentity = userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+                    var userIdentity = _userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
                     authenManager.SignIn(new AuthenticationProperties(), userIdentity);
 
                     model = new RegisterModel();
@@ -104,7 +95,6 @@ namespace JobsFinder_Main.Controllers
             }
         }
 
-        // GET: Recruiter
         public ActionResult Register_Recruiter()
         {
             return View();
@@ -116,12 +106,9 @@ namespace JobsFinder_Main.Controllers
         {
             if (ModelState.IsValid)
             {
-                var appDbContext = new AppDbContext();
-                var userStore = new AppUserStore(appDbContext);
-                var userManager = new AppUserManager(userStore);
                 var passwdHash = Crypto.HashPassword(model.Password);
                 var user = new AppUser()
-                {  
+                {
                     Email = model.Email,
                     UserName = model.UserName,
                     PasswordHash = passwdHash,
@@ -130,12 +117,12 @@ namespace JobsFinder_Main.Controllers
                     Name = model.Name,
                     Avatar = "./Assets/Client/JobsFinder/img/Logo.png"
                 };
-                IdentityResult identityResult = userManager.Create(user);
+                IdentityResult identityResult = _userManager.Create(user);
                 if (identityResult.Succeeded)
                 {
-                    userManager.AddToRole(user.Id, "Recruiter");
+                    _userManager.AddToRole(user.Id, "Recruiter");
                     var authenManager = HttpContext.GetOwinContext().Authentication;
-                    var userIdentity = userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+                    var userIdentity = _userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
                     authenManager.SignIn(new AuthenticationProperties(), userIdentity);
 
                     model = new RegisterModel();
@@ -166,17 +153,19 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult Login(LoginModel model)
         {
-            var appDbContext = new AppDbContext();
-            var userStore = new AppUserStore(appDbContext);
-            var userManager = new AppUserManager(userStore);
-            var user = userManager.Find(model.UserName, model.Password);
+            var user = _userManager.Find(model.UserName, model.Password);
 
-            if (user != null && userManager.IsInRole(user.Id, "JobSeeker"))
+            if (user != null && _userManager.IsInRole(user.Id, "JobSeeker"))
             {
                 var authenManager = HttpContext.GetOwinContext().Authentication;
-                var userIdentity = userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+                var userIdentity = _userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
                 authenManager.SignIn(new AuthenticationProperties(), userIdentity);
                 return RedirectToAction("Index", "Home");
+            }
+            else if (user != null && !user.Status)
+            {
+                ModelState.AddModelError("", "Your account is currently inactive.");
+                return View();
             }
             else
             {
@@ -192,17 +181,19 @@ namespace JobsFinder_Main.Controllers
         [HttpPost]
         public ActionResult Login_Recruiter(LoginModel model)
         {
-            var appDbContext = new AppDbContext();
-            var userStore = new AppUserStore(appDbContext);
-            var userManager = new AppUserManager(userStore);
-            var user = userManager.Find(model.UserName, model.Password);
+            var user = _userManager.Find(model.UserName, model.Password);
 
-            if (user != null && userManager.IsInRole(user.Id, "Recruiter"))
+            if (user != null && _userManager.IsInRole(user.Id, "Recruiter"))
             {
                 var authenManager = HttpContext.GetOwinContext().Authentication;
-                var userIdentity = userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+                var userIdentity = _userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
                 authenManager.SignIn(new AuthenticationProperties(), userIdentity);
                 return RedirectToAction("Index", "Home");
+            }
+            else if (user != null && !user.Status)
+            {
+                ModelState.AddModelError("", "Your account is currently inactive.");
+                return View();
             }
             else
             {
@@ -218,82 +209,17 @@ namespace JobsFinder_Main.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        /*public ActionResult FacebookCallBack(string code)
-        {
-            var fb = new FacebookClient();
-            dynamic result = fb.Post("oauth/access_token", new
-            {
-                client_id = ConfigurationManager.AppSettings["FbAppId"],
-                client_secret = ConfigurationManager.AppSettings["FbAppSecret"],
-                redirect_uri = RedirectUri.AbsoluteUri,
-                code
-            });
-
-            var accessToken = result.access_token;
-            if (!string.IsNullOrEmpty(accessToken))
-            {
-                fb.AccessToken = accessToken;
-
-                dynamic me = fb.Get("me?fields=first_name,middle_name,last_name,id,email,picture");
-                string email = me.email;
-                string firstName = me.first_name;
-                string middleName = me.middle_name;
-                string lastName = me.last_name;
-                string pictureUrl = me.picture.data.url;
-
-                var user = new User
-                {
-                    Email = email,
-                    UserName = email,
-                    Status = true,
-                    Name = firstName + " " + middleName + " " + lastName,
-                    CreatedDate = DateTime.Now,
-                    Avatar = pictureUrl,
-                };
-                var resultInsert = new UserDao().InsertForFacebook(user);
-                if (resultInsert > 0)
-                {
-                    var userSession = new UserLogin
-                    {
-                        UserName = user.UserName,
-                        UserID = user.ID,
-                        Email = user.Email,
-                        Name = user.Name,
-                        Avatar = user.Avatar
-                    };
-                    Session.Add(CommonConstants.USER_SESSION, userSession);
-                }
-            }
-            return Redirect("/");
-        }*/
-
-        public ActionResult LoginFaceBook()
-        {
-            var fb = new FacebookClient();
-            var loginUrl = fb.GetLoginUrl(new
-            {
-                client_id = ConfigurationManager.AppSettings["FbAppId"],
-                client_secret = ConfigurationManager.AppSettings["FbAppSecret"],
-                redirect_uri = RedirectUri.AbsoluteUri,
-                response_type = "code",
-                scope = "email",
-            });
-            return Redirect(loginUrl.AbsoluteUri);
-        }
         public ActionResult Update()
         {
             return View();
         }
 
         [HttpPost]
-        public ActionResult Update(AppUser model)
+        public ActionResult Update(AppUser model, HttpPostedFileBase imgfile)
         {
             if (ModelState.IsValid)
             {
-                var appDbContext = new AppDbContext();
-                var userStore = new AppUserStore(appDbContext);
-                var userManager = new AppUserManager(userStore);
-                var currentUser = userManager.FindByName(User.Identity.Name);
+                var currentUser = _userManager.FindByName(User.Identity.Name);
 
                 if (currentUser != null)
                 {
@@ -303,7 +229,7 @@ namespace JobsFinder_Main.Controllers
                     }
                     if (!string.IsNullOrEmpty(model.PasswordHash))
                     {
-                        var newPasswordHash = userManager.PasswordHasher.HashPassword(model.PasswordHash);
+                        var newPasswordHash = _userManager.PasswordHasher.HashPassword(model.PasswordHash);
                         currentUser.PasswordHash = newPasswordHash;
                     }
                     if (!string.IsNullOrEmpty(model.PhoneNumber))
@@ -314,12 +240,40 @@ namespace JobsFinder_Main.Controllers
                     {
                         currentUser.Address = model.Address;
                     }
-                    if (!string.IsNullOrEmpty(model.Avatar))
+                    if (imgfile != null)
                     {
-                        currentUser.Avatar = model.Avatar;
+                        model.Avatar = imgfile.FileName;
+                        string path = Server.MapPath("~/Content/Profile/" + imgfile.FileName);
+                        imgfile.SaveAs(path);
+                        currentUser.Avatar = "/Content/Profile/" + model.Avatar;
                     }
 
-                    var result = userManager.Update(currentUser);
+                    var result = _userManager.Update(currentUser);
+
+                    if (User.IsInRole("JobSeeker"))
+                    {
+                        var profile = new Profile
+                        {
+                            UserID = currentUser.Id,
+                            HoVaTen = model.Name,
+                            AnhCaNhan = model.Avatar,
+                            SoDienThoai = model.PhoneNumber,
+                            DiaChiHienTai = model.Address
+                        };
+                        var profileDao = new ProfileDao();
+                        var profileUpdated = profileDao.Update(profile);
+
+                        if (result.Succeeded && profileUpdated)
+                        {
+                            TempData["Message"] = "Update successful!";
+                            TempData["MessageType"] = "success";
+                            return RedirectToAction("Manager", "User");
+                        }
+                        else
+                        {
+                            AddErrors(result);
+                        }
+                    }
                     if (result.Succeeded)
                     {
                         TempData["Message"] = "Update successful!";
@@ -339,6 +293,7 @@ namespace JobsFinder_Main.Controllers
             }
             return View(model);
         }
+
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
@@ -348,30 +303,21 @@ namespace JobsFinder_Main.Controllers
         }
 
         [HttpGet]
+        [AuthenFilter]
         public ActionResult Manager()
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                var userId = User.Identity.GetUserId();
-                var appDbContext = new AppDbContext();
-                var userStore = new AppUserStore(appDbContext);
-                var userManager = new AppUserManager(userStore);
-                var user = userManager.FindById(userId);
+            var userId = User.Identity.GetUserId();
+            var user = _userManager.FindById(userId);
 
-                if (user != null)
+            if (user != null)
+            {
+                if (User.IsInRole("JobSeeker"))
                 {
-                    if (User.IsInRole("JobSeeker"))
-                    {
-                        return RedirectToAction("Manager_JobSeeker", "User");
-                    }
-                    else
-                    {
-                        return View(user);
-                    }
+                    return RedirectToAction("Manager_JobSeeker", "User");
                 }
                 else
                 {
-                    return RedirectToAction("Login_Recruiter", "User");
+                    return View(user);
                 }
             }
             else
@@ -381,24 +327,15 @@ namespace JobsFinder_Main.Controllers
         }
 
         [HttpGet]
+        [AuthenFilter]
         public ActionResult Manager_JobSeeker()
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                var userId = User.Identity.GetUserId();
-                var appDbContext = new AppDbContext();
-                var userStore = new AppUserStore(appDbContext);
-                var userManager = new AppUserManager(userStore);
-                var user = userManager.FindById(userId);
+            var userId = User.Identity.GetUserId();
+            var user = _userManager.FindById(userId);
 
-                if (user != null)
-                {
-                    return View(user);   
-                }
-                else
-                {
-                    return RedirectToAction("Login", "User");
-                }
+            if (user != null)
+            {
+                return View(user);
             }
             else
             {
@@ -407,6 +344,7 @@ namespace JobsFinder_Main.Controllers
         }
 
         [HttpGet]
+        [RecruiterAuthorization]
         public ActionResult CompanyManager()
         {
             if (!User.Identity.IsAuthenticated)
@@ -415,10 +353,7 @@ namespace JobsFinder_Main.Controllers
             }
             else
             {
-                var appDbContext = new AppDbContext();
-                var userStore = new AppUserStore(appDbContext);
-                var userManager = new AppUserManager(userStore);
-                var currentUser = userManager.FindByName(User.Identity.Name);
+                var currentUser = _userManager.FindByName(User.Identity.Name);
 
                 if (currentUser != null)
                 {
@@ -447,6 +382,7 @@ namespace JobsFinder_Main.Controllers
         }
 
         [HttpGet]
+        [RecruiterAuthorization]
         public ActionResult JobManager(AppUser user)
         {
             if (!User.Identity.IsAuthenticated)
@@ -475,7 +411,7 @@ namespace JobsFinder_Main.Controllers
                     job.CategoryID = item.CategoryID;
                     job.Details = item.Details;
                     job.Deadline = item.Deadline;
-                    job.Rank = item.Rank; ;
+                    job.Rank = item.Rank;
                     job.Gender = item.Gender;
                     job.Experience = item.Experience;
                     job.WorkLocation = item.WorkLocation;
@@ -490,6 +426,7 @@ namespace JobsFinder_Main.Controllers
 
         [HttpGet]
         [ChildActionOnly]
+        [RecruiterAuthorization]
         public ActionResult CreateCompany()
         {
             return View();
@@ -497,6 +434,7 @@ namespace JobsFinder_Main.Controllers
 
         [HttpPost]
         [ValidateInput(false)]
+        [RecruiterAuthorization]
         public ActionResult CreateCompany(CompanyModel model)
         {
             if (!User.Identity.IsAuthenticated)
@@ -507,10 +445,7 @@ namespace JobsFinder_Main.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var appDbContext = new AppDbContext();
-                    var userStore = new AppUserStore(appDbContext);
-                    var userManager = new AppUserManager(userStore);
-                    var currentUser = userManager.FindByName(User.Identity.Name);
+                    var currentUser = _userManager.FindByName(User.Identity.Name);
 
                     if (currentUser != null)
                     {
@@ -557,13 +492,13 @@ namespace JobsFinder_Main.Controllers
                 }
                 else
                 {
-                    // Model is not valid, return to the view with errors
                     return View(model);
                 }
             }
         }
 
         [HttpDelete]
+        [RecruiterAuthorization]
         public ActionResult DeleteCompany(int ID)
         {
             if (!User.Identity.IsAuthenticated)
@@ -593,6 +528,7 @@ namespace JobsFinder_Main.Controllers
         }
 
         [HttpDelete]
+        [RecruiterAuthorization]
         public ActionResult DeleteJob(int id)
         {
             if (!User.Identity.IsAuthenticated)
@@ -613,6 +549,7 @@ namespace JobsFinder_Main.Controllers
 
 
         [HttpGet]
+        [RecruiterAuthorization]
         public ActionResult EditCompany(int ID)
         {
             var company = new CompanyDao().ViewDetail(ID);
@@ -621,7 +558,8 @@ namespace JobsFinder_Main.Controllers
 
         [HttpPost]
         [ValidateInput(false)]
-        public ActionResult EditCompany(Company model)
+        [RecruiterAuthorization]
+        public ActionResult EditCompany(Company model, HttpPostedFileBase imgfile, HttpPostedFileBase coverfile)
         {
             if (!User.Identity.IsAuthenticated)
             {
@@ -631,10 +569,7 @@ namespace JobsFinder_Main.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var appDbContext = new AppDbContext();
-                    var userStore = new AppUserStore(appDbContext);
-                    var userManager = new AppUserManager(userStore);
-                    var currentUser = userManager.FindByName(User.Identity.Name);
+                    var currentUser = _userManager.FindByName(User.Identity.Name);
 
                     if (currentUser != null)
                     {
@@ -654,13 +589,19 @@ namespace JobsFinder_Main.Controllers
                             {
                                 company.Location = model.Location;
                             }
-                            if (!string.IsNullOrEmpty(model.Avatar))
+                            if (imgfile != null)
                             {
-                                company.Avatar = model.Avatar;
+                                model.Avatar = imgfile.FileName;
+                                string path = Server.MapPath("~/Content/Profile/" + imgfile.FileName);
+                                imgfile.SaveAs(path);
+                                company.Avatar = "/Content/Profile/" + model.Avatar;
                             }
-                            if (!string.IsNullOrEmpty(model.Background))
+                            if (coverfile != null)
                             {
-                                company.Background = model.Background;
+                                model.Background = coverfile.FileName;
+                                string path = Server.MapPath("~/Content/Profile/" + coverfile.FileName);
+                                coverfile.SaveAs(path);
+                                company.Background = "/Content/Profile/" + model.Background;
                             }
                             if (!string.IsNullOrEmpty(model.Description))
                             {
@@ -692,6 +633,7 @@ namespace JobsFinder_Main.Controllers
         }
 
         [HttpGet]
+        [RecruiterAuthorization]
         public ActionResult CreateJob()
         {
             return View();
@@ -699,6 +641,7 @@ namespace JobsFinder_Main.Controllers
 
         [HttpPost]
         [ValidateInput(false)]
+        [RecruiterAuthorization]
         public ActionResult CreateJob(JobModel model)
         {
             if (!User.Identity.IsAuthenticated)
@@ -766,6 +709,7 @@ namespace JobsFinder_Main.Controllers
         }
 
         [HttpGet]
+        [RecruiterAuthorization]
         public ActionResult ListJobs()
         {
             if (!User.Identity.IsAuthenticated)
@@ -774,10 +718,7 @@ namespace JobsFinder_Main.Controllers
             }
             else
             {
-                var appDbContext = new AppDbContext();
-                var userStore = new AppUserStore(appDbContext);
-                var userManager = new AppUserManager(userStore);
-                var currentUser = userManager.FindByName(User.Identity.Name);
+                var currentUser = _userManager.FindByName(User.Identity.Name);
 
                 if (currentUser == null)
                 {
@@ -791,6 +732,7 @@ namespace JobsFinder_Main.Controllers
         }
 
         [HttpGet]
+        [RecruiterAuthorization]
         public ActionResult ListCompany()
         {
             if (!User.Identity.IsAuthenticated)
@@ -798,10 +740,7 @@ namespace JobsFinder_Main.Controllers
                 return RedirectToAction("Login_Recruiter", "User");
             }
 
-            var appDbContext = new AppDbContext();
-            var userStore = new AppUserStore(appDbContext);
-            var userManager = new AppUserManager(userStore);
-            var currentUser = userManager.FindByName(User.Identity.Name);
+            var currentUser = _userManager.FindByName(User.Identity.Name);
 
             if (currentUser == null)
             {
@@ -814,6 +753,7 @@ namespace JobsFinder_Main.Controllers
         }
 
         [HttpGet]
+        [RecruiterAuthorization]
         public ActionResult EditJob(int ID)
         {
             var job = new JobDao().ViewDetail(ID);
@@ -822,6 +762,7 @@ namespace JobsFinder_Main.Controllers
 
         [HttpPost]
         [ValidateInput(false)]
+        [RecruiterAuthorization]
         public ActionResult EditJob(Job model)
         {
             if (!User.Identity.IsAuthenticated)
@@ -895,6 +836,84 @@ namespace JobsFinder_Main.Controllers
 
             var companyDao = new CompanyDao();
             ViewBag.CompanyId = new SelectList(companyDao.ListAll(), "ID", "Name", selectedId);
+        }
+        public ActionResult ForgotPassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ForgotPassword(ForgotPasswordModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    return View("ForgotPasswordConfirmation");
+                }
+
+                var token = TokenGenerator.GenerateToken();
+                var callbackUrl = Url.Action("ResetPassword", "User", new { userId = user.Id,token = token }, protocol: Request.Url.Scheme);
+                _emailService.SendEmail(user.Email, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                return RedirectToAction("ForgotPasswordConfirmation", "User");
+            }
+
+            return View(model);
+        }
+
+        public ActionResult ForgotPasswordConfirmation()
+        {
+            return View();
+        }
+        [HttpGet]
+        public ActionResult ResetPassword(string userId, string token)
+        {
+            var model = new ResetPasswordViewModel
+            {
+                UserId = userId,
+                Token = token
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await _userManager.FindByIdAsync(model.UserId);
+
+            if (user == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var newPassword = _userManager.PasswordHasher.HashPassword(model.NewPassword);
+            user.PasswordHash = newPassword;
+            var result = _userManager.Update(user);
+            if (result.Succeeded)
+            {
+                TempData["Message"] = "Reset password successfull!";
+                TempData["MessageType"] = "success";
+                TempData["Type"] = "Success";
+                return RedirectToAction("Login", "User");
+            }
+            else
+            {
+                TempData["Message"] = "Reset password unsuccessfull!";
+                TempData["MessageType"] = "error";
+                TempData["Type"] = "Error";
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error);
+                }
+                return View(model);
+            }
         }
     }
 }
