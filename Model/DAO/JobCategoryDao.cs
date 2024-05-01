@@ -115,12 +115,16 @@ namespace Model.DAO
             }
             else
             {
-                return "Không chứa danh mục";
+                return "No categories available.";
             }
         }
         public int CountJobCategories()
         {
             return db.JobCategories.Count();
+        }
+        public List<JobCategory> GetAllCategories()
+        {
+            return db.JobCategories.ToList();
         }
     }
 }

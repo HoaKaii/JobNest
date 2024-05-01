@@ -63,7 +63,7 @@ namespace Model.DAO
         }
         public List<Career> GetOption()
         {
-            return db.Careers.Take(12).ToList();
+            return db.Careers.Take(8).ToList();
         }
         public Career GetByID(string careerName)
         {
@@ -89,6 +89,22 @@ namespace Model.DAO
         public int CountCareers()
         {
             return db.Careers.Count();
+        }
+        public string GetName(long? careerID)
+        {
+            var career = db.Careers.FirstOrDefault(x => x.ID == careerID);
+            if (career != null)
+            {
+                return career.Name;
+            }
+            else
+            {
+                return "No careers available.";
+            }
+        }
+        public List<Career> GetAllCareers()
+        {
+            return db.Careers.ToList();
         }
     }
 }

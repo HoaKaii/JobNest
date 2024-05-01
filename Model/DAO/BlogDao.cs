@@ -3,107 +3,162 @@ using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mime;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Model.DAO
 {
     public class BlogDao
     {
-        readonly JobsFinderDBContext db = null;
+        private readonly JobsFinderDBContext _db = null;
+
         public BlogDao()
         {
-            db = new JobsFinderDBContext();
+            _db = new JobsFinderDBContext();
         }
 
-        public long Insert(Blog entity)
+        public long InsertOrUpdate(Blog entity)
         {
-            if (entity.Status == null)
+            if (entity.ID == 0)
             {
-                entity.Status = false;
+                if (entity.Status == null)
+                    entity.Status = true;
+
+                if (entity.CreatedDate == null)
+                    entity.CreatedDate = DateTime.Now;
+
+                if (entity.MetaTitle == null)
+                {
+                    string name = entity.Name;
+                    string slug = Regex.Replace(name, @"[^a-zA-Z0-9]", "").ToLower();
+                    slug = slug.Replace(" ", "-");
+                    entity.MetaTitle = slug;
+                }
+
+                if (entity.Image == null)
+                    entity.Image = "/Data/images/Test/blog.jpg";
+
+                _db.Blogs.Add(entity);
             }
-            if (entity.CreatedDate == null)
+            else
             {
-                entity.CreatedDate = DateTime.Now;
-            }
-            if (entity.MetaTitle == null)
-            {
-                string name = entity.Name;
-                string slug = Regex.Replace(name, @"[^a-zA-Z0-9]", "").ToLower();
-                slug = slug.Replace(" ", "-");
-                entity.MetaTitle = slug;
-            }
-            if (entity.Image == null)
-            {
-                entity.Image = "/Data/images/Test/blog.jpg";
+                var blog = _db.Blogs.FirstOrDefault(b => b.ID == entity.ID);
+                if (blog != null)
+                {
+                    blog.Name = entity.Name;
+                    blog.Image = entity.Image;
+                    blog.CategoryID = entity.CategoryID;
+                    blog.ModifiedDate = DateTime.Now;
+                    blog.TopHot = entity.TopHot;
+                }
             }
 
-            db.Blogs.Add(entity);
-            db.SaveChanges();
+            _db.SaveChanges();
             return entity.ID;
         }
-        public bool Update(Blog entity)
-        {
-            try
-            {
-                var blog = db.Blogs.Find(entity.ID);
-                blog.Name = entity.Name;
-                blog.Image = entity.Image;
-                blog.CategoryID =  entity.CategoryID;
-                blog.ModifiedDate = DateTime.Now;
-                blog.Status = entity.Status;
-                return true;
-            } catch (Exception)
-            {
-                return false;
-            }
-        }
 
-        public IPagedList<Blog> ListAllPaging(string searchString, int page, int pageSize)
+        public IPagedList<Blog> ListAllPaging(string searchName, string fillterCategory, int page, int pageSize)
         {
-            IQueryable<Blog> model = db.Blogs;
-            if (!string.IsNullOrEmpty(searchString))
+            IQueryable<Blog> model = _db.Blogs;
+
+            if (!string.IsNullOrEmpty(searchName))
             {
-                model = model.Where(x => x.Name.Contains(searchString));
+                model = model.Where(x => x.Name.Contains(searchName));
             }
-            return model.OrderByDescending(x => x.CreatedDate).ToPagedList(page, pageSize);
+            if (!string.IsNullOrEmpty(fillterCategory))
+            {
+                model = model.Where(x => x.CategoryID.ToString().Contains(fillterCategory));
+            }
+
+            return model.Where(x => x.Status == true).OrderByDescending(x => x.CreatedDate).ToPagedList(page, pageSize);
         }
 
         public Blog GetById(long id)
         {
-            return db.Blogs.Find(id);
+            return _db.Blogs.FirstOrDefault(x => x.ID == id);
         }
-        public Blog ViewDetail(int id)
+
+        public bool Delete(int id)
         {
-            return db.Blogs.Find(id);
-        }
-        public bool Delete(int  id)
-        {
-            try
+            var blog = _db.Blogs.FirstOrDefault(x => x.ID == id);
+            if (blog != null)
             {
-                var blog = db.Blogs.Find(id);
-                db.Blogs.Remove(blog);
-                db.SaveChanges();
+                _db.Blogs.Remove(blog);
+                _db.SaveChanges();
                 return true;
-            } catch (Exception)
-            {
-                return false;
             }
+            return false;
         }
+
         public bool ChangeStatus(int id)
         {
-            var blog = db.Blogs.Find(id);
-            blog.Status = !blog.Status;
-
-            db.SaveChanges();
-
-            return (bool)blog.Status;
+            var blog = _db.Blogs.FirstOrDefault(x => x.ID == id);
+            if (blog != null)
+            {
+                blog.Status = !blog.Status;
+                _db.SaveChanges();
+                return (bool)blog.Status;
+            }
+            return false;
         }
+
+        public Blog ViewDetail(int id)
+        {
+            return _db.Blogs.Find(id);
+        }
+
         public int CountBlogs()
         {
-            return db.Blogs.Count();
+            return _db.Blogs.Count();
+        }
+        public Blog GetForYouBlog()
+        {
+            return _db.Blogs.OrderByDescending(x => x.CreatedDate).FirstOrDefault();
+        }
+
+        public Blog GetPopularBlog()
+        {
+            return _db.Blogs.OrderByDescending(x => x.ViewCount).FirstOrDefault();
+        }
+
+        public List<Blog> GetTrendBlogs()
+        {
+            return _db.Blogs.Where(x => x.TopHot == true).OrderByDescending(x => x.ViewCount).Take(3).ToList();
+        }
+        public string GetCategory(long? cateID)
+        {
+            var category = new BlogCategoryDao();
+            long? categoryID = GetCategoryID(cateID);
+            string name;
+            if (categoryID != null)
+            {
+                name = category.GetName(categoryID);
+            }
+            else
+            {
+                name = "Không có danh mục";
+            }
+            return name;
+        }
+        public long? GetCategoryID(long? id)
+        {
+            var job = _db.Blogs.FirstOrDefault(x => x.CategoryID == id);
+            if (job != null)
+            {
+                return job.CategoryID;
+            }
+            return null;
+        }
+        public int CountBlogsCreatedToday()
+        {
+            DateTime today = DateTime.Today;
+            DateTime startDate = today;
+            DateTime endDate = today.AddDays(1).AddSeconds(-1);
+
+            return _db.Blogs.Count(j => j.CreatedDate >= startDate && j.CreatedDate <= endDate);
+        }
+        public int CountBlogsByCategoryId(long categoryId)
+        {
+            return _db.Blogs.Count(j => j.CategoryID == categoryId);
         }
     }
 }

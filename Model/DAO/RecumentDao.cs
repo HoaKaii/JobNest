@@ -88,7 +88,8 @@ namespace Model.DAO
             if (check != null)
             {
                 return false;
-            } else
+            }
+            else
             {
                 return true;
             }
@@ -99,9 +100,10 @@ namespace Model.DAO
             return db.Recuments.Where(x => x.UserID == userID).ToList();
         }
 
-        public Job GetJob(int jobID)
+        public string GetJobName(int jobID)
         {
-            return db.Jobs.Where(x => x.ID == jobID).FirstOrDefault();
+           var job = db.Jobs.Where(x => x.ID == jobID).FirstOrDefault();
+            return job.Name;
         }
 
         public bool Confirm(Recument entity)
@@ -118,6 +120,16 @@ namespace Model.DAO
             {
                 return false;
             }
+        }
+        public string GetJobName(long jobID)
+        {
+            var job = db.Jobs.FirstOrDefault(j => j.ID == jobID);
+            return job.Name;
+        }
+
+        public Job GetJob(int jobID)
+        {
+            return db.Jobs.Where(x => x.ID == jobID).FirstOrDefault();
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Model.DAO
         {
             if (entity.Status == null)
             {
-                entity.Status = false;
+                entity.Status = true;
             }
             if(entity.CreatedDate == null)
             {
@@ -50,6 +50,7 @@ namespace Model.DAO
                 company.LinkPage = entity.LinkPage;
                 company.Description = entity.Description;;
                 company.Avatar = entity.Avatar;
+                company.Background = entity.Background;
                 company.Employees = entity.Employees;
                 company.Location = entity.Location;
                 company.ModifiedDate = DateTime.Now;
@@ -63,13 +64,9 @@ namespace Model.DAO
             }
         }
 
-        public IPagedList<Company> ListAllPaging(string searchString, string  searchName, string searchLocation, int page, int pageSize)
+        public IPagedList<Company> ListAllPaging(string  searchName, string searchLocation, int page, int pageSize)
         {
             IQueryable<Company> model = db.Companies;
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                model = model.Where(x => x.Name.Contains(searchString));
-            }
             if (!string.IsNullOrEmpty(searchName))
             {
                 model = model.Where(x => x.Name.Contains(searchName));
@@ -160,7 +157,7 @@ namespace Model.DAO
             }
         }
 
-        public Company ViewDetail(int id)
+        public Company ViewDetail(int? id)
         {
             return db.Companies.Find(id);
         }
@@ -191,6 +188,21 @@ namespace Model.DAO
             {
                 return false;
             }
+        }
+        public string GetCompany(int? jobID)
+        {
+            var job = db.Jobs.FirstOrDefault(j => j.ID == jobID);
+            var companyID = job.CompanyID;
+            var company = db.Companies.FirstOrDefault(j => j.ID == companyID);
+            return company.Name;
+        }
+        public int CountCompaniesCreatedToday()
+        {
+            DateTime today = DateTime.Today;
+            DateTime startDate = today;
+            DateTime endDate = today.AddDays(1).AddSeconds(-1);
+
+            return db.Companies.Count(j => j.CreatedDate >= startDate && j.CreatedDate <= endDate);
         }
     }
 }

@@ -10,21 +10,15 @@ namespace Model.EF
         public JobsFinderDBContext()
             : base("name=JobsFinderDBContext")
         {
-        }
 
-        public virtual DbSet<About> Abouts { get; set; }
-        public virtual DbSet<AboutCategory> AboutCategories { get; set; }
+        }
         public virtual DbSet<Admin> Admins { get; set; }
         public virtual DbSet<Blog> Blogs { get; set; }
         public virtual DbSet<BlogCategory> BlogCategories { get; set; }
-        public virtual DbSet<BlogTag> BlogTags { get; set; }
         public virtual DbSet<Career> Careers { get; set; }
         public virtual DbSet<ChungChi> ChungChis { get; set; }
         public virtual DbSet<Company> Companies { get; set; }
-        public virtual DbSet<CompanyCreatedJob> CompanyCreatedJobs { get; set; }
         public virtual DbSet<DuAn> DuAns { get; set; }
-        public virtual DbSet<Feedback> Feedbacks { get; set; }
-        public virtual DbSet<Footer> Footers { get; set; }
         public virtual DbSet<GiaiThuong> GiaiThuongs { get; set; }
         public virtual DbSet<HoatDong> HoatDongs { get; set; }
         public virtual DbSet<HocVan> HocVans { get; set; }
@@ -40,30 +34,9 @@ namespace Model.EF
         public virtual DbSet<Profile> Profiles { get; set; }
         public virtual DbSet<Recument> Recuments { get; set; }
         public virtual DbSet<SanPham> SanPhams { get; set; }
-        public virtual DbSet<Slide> Slides { get; set; }
-        public virtual DbSet<Tag> Tags { get; set; }
-        public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<UserCreatedCompany> UserCreatedCompanies { get; set; }
-        public virtual DbSet<UserCreatedJob> UserCreatedJobs { get; set; }
-
+        public virtual DbSet<Review> Reviews { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<About>()
-                .Property(e => e.CreatedBy)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<About>()
-                .Property(e => e.ModifiedBy)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<AboutCategory>()
-                .Property(e => e.CreatedBy)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<AboutCategory>()
-                .Property(e => e.ModifiedBy)
-                .IsUnicode(false);
-
             modelBuilder.Entity<Admin>()
                 .Property(e => e.UserName)
                 .IsUnicode(false);
@@ -80,14 +53,6 @@ namespace Model.EF
                 .Property(e => e.ModifiedBy)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<Blog>()
-                .Property(e => e.CreatedBy)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<Blog>()
-                .Property(e => e.ModifiedBy)
-                .IsUnicode(false);
-
             modelBuilder.Entity<BlogCategory>()
                 .Property(e => e.CreatedBy)
                 .IsUnicode(false);
@@ -126,10 +91,6 @@ namespace Model.EF
 
             modelBuilder.Entity<DuAn>()
                 .Property(e => e.ModifiedBy)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<Footer>()
-                .Property(e => e.ID)
                 .IsUnicode(false);
 
             modelBuilder.Entity<GiaiThuong>()
@@ -213,30 +174,6 @@ namespace Model.EF
                 .IsUnicode(false);
 
             modelBuilder.Entity<SanPham>()
-                .Property(e => e.ModifiedBy)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<Slide>()
-                .Property(e => e.CreatedBy)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<Slide>()
-                .Property(e => e.ModifiedBy)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<User>()
-                .Property(e => e.UserName)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<User>()
-                .Property(e => e.Password)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<User>()
-                .Property(e => e.CreatedBy)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<User>()
                 .Property(e => e.ModifiedBy)
                 .IsUnicode(false);
         }

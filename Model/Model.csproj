@@ -270,6 +270,7 @@
     <Compile Include="DAO\DuAnDao.cs" />
     <Compile Include="DAO\HoatDongDao.cs" />
     <Compile Include="DAO\RecumentDao.cs" />
+    <Compile Include="DAO\ReviewDao.cs" />
     <Compile Include="DAO\SanPhamDao.cs" />
     <Compile Include="DAO\KhoaHocDao.cs" />
     <Compile Include="DAO\CommonDao.cs" />
@@ -284,20 +285,13 @@
     <Compile Include="DAO\MenuDao.cs" />
     <Compile Include="DAO\AdminDao.cs" />
     <Compile Include="DAO\ProfileDao.cs" />
-    <Compile Include="DAO\UserDao.cs" />
-    <Compile Include="EF\About.cs" />
-    <Compile Include="EF\AboutCategory.cs" />
     <Compile Include="EF\Admin.cs" />
     <Compile Include="EF\Blog.cs" />
     <Compile Include="EF\BlogCategory.cs" />
-    <Compile Include="EF\BlogTag.cs" />
     <Compile Include="EF\Career.cs" />
     <Compile Include="EF\ChungChi.cs" />
     <Compile Include="EF\Company.cs" />
-    <Compile Include="EF\CompanyCreatedJob.cs" />
     <Compile Include="EF\DuAn.cs" />
-    <Compile Include="EF\Feedback.cs" />
-    <Compile Include="EF\Footer.cs" />
     <Compile Include="EF\GiaiThuong.cs" />
     <Compile Include="EF\HoatDong.cs" />
     <Compile Include="EF\HocVan.cs" />
@@ -313,14 +307,11 @@
     <Compile Include="EF\MenuType.cs" />
     <Compile Include="EF\Profile.cs" />
     <Compile Include="EF\Recument.cs" />
+    <Compile Include="EF\Review.cs" />
     <Compile Include="EF\SanPham.cs" />
-    <Compile Include="EF\Slide.cs" />
-    <Compile Include="EF\Tag.cs" />
-    <Compile Include="EF\User.cs" />
-    <Compile Include="EF\UserCreatedCompany.cs" />
-    <Compile Include="EF\UserCreatedJob.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IUserService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\PagedList.css" />

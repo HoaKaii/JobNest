@@ -26,7 +26,7 @@ namespace Model.DAO
         {
             if (entity.Status == null)
             {
-                entity.Status = false;
+                entity.Status = true;
             }
             if (entity.CreatedDate == null)
             {
@@ -34,7 +34,7 @@ namespace Model.DAO
             }
             if (entity.Gender == null)
             {
-                entity.Gender = "Tất cả";
+                entity.Gender = "All";
             }
             if(entity.MetaTitle == null)
             {
@@ -59,6 +59,14 @@ namespace Model.DAO
             {
                 entity.Experience = "0";
             }
+            if (entity.CreatedBy == null)
+            {
+                entity.CreatedBy = "admin";
+            }
+            if (entity.Deadline == null)
+            {
+                entity.Deadline = DateTime.Now.AddDays(30);
+            }    
             db.Jobs.Add(entity);
             db.SaveChanges();
             return entity.ID;
@@ -111,14 +119,10 @@ namespace Model.DAO
             }
             
         }
-
-        public IPagedList<Job> ListAllPaging(string searchString, string searchName, string searchLocation, string fillterCareer, string fillterCategory, string fillterGender, string fillterEXP, int page, int pageSize)
+        public IPagedList<Job> ListAllPaging(string searchName, string searchLocation, string fillterCareer, string fillterCategory, string fillterGender, string fillterEXP, int page, int pageSize)
         {
             IQueryable<Job> model = db.Jobs;
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                model = model.Where(x => x.Name.Contains(searchString));
-            }
+
             if (!string.IsNullOrEmpty(searchName))
             {
                 model = model.Where(x => x.Name.Contains(searchName));
@@ -129,19 +133,27 @@ namespace Model.DAO
             }
             if (!string.IsNullOrEmpty(fillterCareer))
             {
-                model = model.Where(x => x.CarrerID.ToString().Contains(fillterCareer));
+                if (int.TryParse(fillterCareer, out int careerID))
+                {
+                    model = model.Where(x => x.CarrerID == careerID);
+                }
             }
+
             if (!string.IsNullOrEmpty(fillterCategory))
             {
-                model = model.Where(x => x.CategoryID.ToString().Contains(fillterCategory));
+                if (int.TryParse(fillterCategory, out int categoryID))
+                {
+                    model = model.Where(x => x.CategoryID == categoryID);
+                }
             }
+
             if (!string.IsNullOrEmpty(fillterGender))
             {
-                model = model.Where(x => x.Gender.Contains(fillterGender));
+                model = model.Where(x => x.Gender == fillterGender);
             }
             if (!string.IsNullOrEmpty(fillterEXP))
             {
-                model = model.Where(x  => x.Experience.Contains(fillterEXP));
+                model = model.Where(x  => x.Experience == fillterEXP);
             }
             return model.Where(x => x.Status == true)
             .OrderByDescending(x => x.CreatedDate)
@@ -149,11 +161,16 @@ namespace Model.DAO
         }
         public List<Job> ListAll()
         {
-            return db.Jobs.Where(x => x.Status == true).ToList();
+            return db.Jobs.ToList();
         }
         public List<Job> ListNew()
         {
-            return db.Jobs.Where(x => x.Status == true).OrderByDescending(x => x.CreatedDate).Take(10).ToList();
+            return db.Jobs.OrderByDescending(x => x.CreatedDate).Take(6).ToList();
+        }
+
+        public List<Job> ListFeatured()
+        {
+            return db.Jobs.OrderByDescending(x => x.ViewCount).Take(6).ToList();
         }
 
         public List<Job> ListSuggest()
@@ -245,12 +262,12 @@ namespace Model.DAO
                 decimal? salaryMin = job.SalaryMin;
                 decimal? salaryMax = job.SalaryMax;
 
-                string formattedSalaryMin = (salaryMin / 1000000m).ToString() + " triệu";
-                string formattedSalaryMax = (salaryMax / 1000000m).ToString() + " triệu";
+                string formattedSalaryMin = (salaryMin).ToString() + " $";
+                string formattedSalaryMax = (salaryMax).ToString() + " $";
                 return formattedSalaryMin + " - " + formattedSalaryMax;
             } else
             {
-                return "Thương lượng";
+                return "Negotiable";
             }
         }
         public string FormatTime(int? id)
@@ -273,17 +290,17 @@ namespace Model.DAO
             if (timeSinceCreation.TotalHours >= 24)
             {
                 int daysAgo = (int)timeSinceCreation.TotalDays;
-                timeAgo = $"{daysAgo} ngày trước";
+                timeAgo = $"{daysAgo} days ago";
             }
             else if (timeSinceCreation.TotalHours >= 1)
             {
                 int hoursAgo = (int)timeSinceCreation.TotalHours;
-                timeAgo = $"{hoursAgo} giờ trước";
+                timeAgo = $"{hoursAgo} hours ago";
             }
             else
             {
                 int minutesAgo = (int)timeSinceCreation.TotalMinutes;
-                timeAgo = $"{minutesAgo} phút trước";
+                timeAgo = $"{minutesAgo} minute ago";
             }
             return timeAgo;
         }
@@ -307,18 +324,15 @@ namespace Model.DAO
 
             if (remainingDays <= 0)
             {
-                job.Status = true;
+                job.Status = false;
                 db.SaveChanges();
-                return "hahaha";
             }
-
-            return $"Còn {remainingDays} ngày để ứng tuyển";
+            return $"You have {remainingDays} days left to apply";
         }
 
         public string SubTitle(int? comID, string uID)
         {
             var companyDao = new CompanyDao();
-            var userDao = new UserDao();
             int? companyID =  GetCompanyID(comID);
             string userID =  GetUserID(uID);
             string name;
@@ -328,11 +342,11 @@ namespace Model.DAO
             }
             else if (userID != null)
             {
-                name = userDao.GetName(userID);
+                name = "JobNest";
             }
             else
             {
-                name = "JobsFinder";
+                name = "JobNest";
             }
             return name;
         }
@@ -346,7 +360,7 @@ namespace Model.DAO
                 name = category.GetName(categoryID);
             } else
             {
-                name = "Không có danh mục";
+                name = "No categories available.";
             }
             return name;
         }
@@ -361,14 +375,13 @@ namespace Model.DAO
             }
             else
             {
-                name = "JobsFinder";
+                name = "JobNest";
             }
             return name;
         }
         public string GetAvatarFromCompany(int? comID, string uID)
         {
             var companyDao = new CompanyDao();
-            var userDao = new UserDao();
             int? companyID =  GetCompanyID(comID);
             string userID =  GetUserID(uID);
             string name;
@@ -378,13 +391,58 @@ namespace Model.DAO
             }
             else if (userID != null)
             {
-                name = userDao.GetAvatar(userID);
+                name = "./Assets/Client/JobsFinder/img/Logo.png";
             }
             else
             {
                 name = "./Assets/Client/JobsFinder/img/Logo.png";
             }
             return name;
+        }
+        public string GetCareer(long? careerID)
+        {
+            var career = new CareerDao();
+            string name;
+            if (careerID != null)
+            {
+                name = career.GetName(careerID);
+            }
+            else
+            {
+                name = "No careers available.";
+            }
+            return name;
+        }
+        public void UpdateViewCount(long jobId)
+        {
+            var job = db.Jobs.FirstOrDefault(j => j.ID == jobId);
+            if (job != null)
+            {
+                job.ViewCount++;
+                db.SaveChanges();
+            }
+        }
+        public int CountJobsByCategoryId(long categoryId)
+        {
+            return db.Jobs.Count(j => j.CategoryID == categoryId);
+        }
+        public int CountJobsByCareerId(long careerId)
+        {
+            return db.Jobs.Count(j => j.CarrerID == careerId);
+        }
+        public int CountJobsByGender(string gender)
+        {
+            return db.Jobs.Count(j => j.Gender.ToLower() == gender.ToLower());
+        }
+        public int CountJobsCreatedToday()
+        {
+            DateTime today = DateTime.Today;
+
+            DateTime startDate = today;
+
+            DateTime endDate = today.AddDays(1).AddSeconds(-1);
+
+            return db.Jobs.Count(j => j.CreatedDate >= startDate && j.CreatedDate <= endDate);
         }
     }
 }

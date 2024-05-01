@@ -20,7 +20,7 @@ namespace Model.DAO
         {
             if (entity.Status == null)
             {
-                entity.Status = false;
+                entity.Status = true;
             }
             if(entity.CreatedDate  == null)
             {
@@ -104,6 +104,22 @@ namespace Model.DAO
         public int CountBlogCategories()
         {
             return db.BlogCategories.Count();
+        }
+        public string GetName(long? categoryID)
+        {
+            var category = db.BlogCategories.FirstOrDefault(x => x.ID == categoryID);
+            if (category != null)
+            {
+                return category.Name;
+            }
+            else
+            {
+                return "Không chứa danh mục";
+            }
+        }
+        public List<BlogCategory> GetAllBlogCategories()
+        {
+            return db.BlogCategories.ToList();
         }
     }
 }
