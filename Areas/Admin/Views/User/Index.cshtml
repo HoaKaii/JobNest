@@ -7,6 +7,9 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
+@using Microsoft.AspNet.Identity;
+@using Microsoft.AspNet.Identity.EntityFramework;
+
 @section header{
     <h1>List of users</h1>
 }
@@ -52,7 +55,7 @@
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th></th>
+                        <th>ID</th>
                         <th>Username</th>
                         <th>Full Name</th>
                         <th>Address</th>
@@ -64,6 +67,19 @@
 
                     </tr>
                 </thead>
+                <tfoot>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Full Name</th>
+                        <th>Address</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Status</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
                 <tbody>
                     @foreach (var item in Model)
                     {
@@ -75,7 +91,20 @@
                             <td>@item.Email</td>
                             <td>@item.PhoneNumber</td>
                             <td><a href="#" class="btn-active" data-id="@item.Id">@(item.Status == true ? "Active" : "Inactive")</a></td>
-                            <td>Unknow</td>
+                            <td>
+                                @{
+                                    var userManager = new UserManager<AppUser>(new UserStore<AppUser>(new AppDbContext()));
+                                    var roles = userManager.GetRoles(item.Id);
+                                    if (roles.Any())
+                                    {
+                                        <text>@roles.First()</text>
+                                    }
+                                    else
+                                    {
+                                        <text>No Role Assigned</text>
+                                    }
+                                }
+                            </td>
                             <td>
                                 <a class="edit-link" href="/Admin/User/Edit/@item.Id">Edit</a>
                                 @Ajax.ActionLink("Delete", "Delete", new { id = item.Id }, new AjaxOptions

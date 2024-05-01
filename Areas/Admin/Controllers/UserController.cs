@@ -61,7 +61,7 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-               
+
                 var appUser = new AppUser
                 {
                     UserName = user.UserName,
@@ -69,7 +69,8 @@ namespace JobsFinder_Main.Areas.Admin.Controllers
                     Name = user.FullName,
                     PhoneNumber = user.Phone,
                     Address = user.Address,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    Status = true
             };
 
                 var result = await _userManager.CreateAsync(appUser, user.Password);

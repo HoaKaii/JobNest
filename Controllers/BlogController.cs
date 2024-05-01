@@ -37,6 +37,7 @@ namespace JobsFinder_Main.Controllers
             {
                 return HttpNotFound();
             }
+            _blogDao.UpdateViewCount(id);
 
             return View(blog);
         }
