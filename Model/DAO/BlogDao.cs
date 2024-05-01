@@ -37,6 +37,9 @@ namespace Model.DAO
                 if (entity.Image == null)
                     entity.Image = "/Data/images/Test/blog.jpg";
 
+                if (entity.ViewCount == null)
+                    entity.ViewCount = 0;
+
                 _db.Blogs.Add(entity);
             }
             else
@@ -45,6 +48,8 @@ namespace Model.DAO
                 if (blog != null)
                 {
                     blog.Name = entity.Name;
+                    blog.Summary = entity.Summary;
+                    blog.Description = entity.Description;
                     blog.Image = entity.Image;
                     blog.CategoryID = entity.CategoryID;
                     blog.ModifiedDate = DateTime.Now;
@@ -159,6 +164,15 @@ namespace Model.DAO
         public int CountBlogsByCategoryId(long categoryId)
         {
             return _db.Blogs.Count(j => j.CategoryID == categoryId);
+        }
+        public void UpdateViewCount(long blogId)
+        {
+            var blog = _db.Blogs.FirstOrDefault(j => j.ID == blogId);
+            if (blog != null)
+            {
+                blog.ViewCount++;
+                _db.SaveChanges();
+            }
         }
     }
 }
